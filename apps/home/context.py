@@ -1,6 +1,7 @@
 """Контекст главной страницы автомобильного каталога."""
 
 from apps.products.models import Brand
+from apps.products.furniture_categories import furniture_category_urls
 from apps.appointments.forms import CallbackRequestForm
 from apps.products.repository import CatalogRepository
 from django.db.models import Count, Q
@@ -61,4 +62,5 @@ class HomeContextBuilder:
             "contact_settings": contact_settings,
             "wishlist_ids": wishlist_ids,
             "callback_form": CallbackRequestForm(),
+            "furniture_category_urls": furniture_category_urls(),
         }
