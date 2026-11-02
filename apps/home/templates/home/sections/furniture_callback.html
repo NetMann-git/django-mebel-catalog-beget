@@ -1,0 +1,9 @@
+<section class="fm-callback" id="callback" aria-labelledby="fm-callback-title">
+{% include 'home/includes/furniture_photo.html' with box='0 1326 280 121' source='home/images/furniture-reference-02.jpg' source_width='1024' source_height='1536' alt='Обеденная зона с деревянной мебелью — изображение из макета' photo_class='fm-callback-photo' %}
+<div class="fm-container fm-callback-inner"><div class="fm-callback-copy"><h2 id="fm-callback-title">Расскажите, какую мебель вы хотите</h2><p>Оставьте заявку — мы подберём решение,<br>подготовим расчёт и свяжемся с вами.</p><ul><li>Подбор решения</li><li>Обсуждение проекта</li><li>Консультация</li></ul></div>
+<div class="fm-form-panel"><form id="home-callback-form" method="post" action="{% url 'appointments:callback_submit' %}" novalidate>{% csrf_token %}
+<div class="home-callback__field" data-field="name"><label class="fm-sr-only" for="callback-name">Ваше имя</label>{{ callback_form.name }}<span class="home-callback__error" aria-live="polite"></span></div>
+<div class="home-callback__field" data-field="phone"><label class="fm-sr-only" for="callback-phone">Телефон</label>{{ callback_form.phone }}<span class="home-callback__error" aria-live="polite"></span></div>
+<div class="fm-honeypot" aria-hidden="true"><label for="callback-website">Ваш сайт</label><input id="callback-website" name="website" tabindex="-1" autocomplete="off"></div>
+<button class="fm-button" type="submit">Отправить заявку <span aria-hidden="true">→</span></button>
+<p class="fm-form-legal">Нажимая кнопку, вы соглашаетесь с <a href="{% url 'personal_data_consent' %}">обработкой персональных данных</a>.</p></form><div id="home-callback-status" class="home-callback__status" role="status" aria-live="polite"></div></div></div></section>

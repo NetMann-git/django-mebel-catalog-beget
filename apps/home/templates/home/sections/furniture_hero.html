@@ -1,16 +1,4 @@
-{% load static %}
-<section class="lf-hero" aria-labelledby="lf-title">
-  <div class="lf-hero-copy">
-    <p class="lf-eyebrow">Мебельная мастерская · lustrid.ru</p>
-    <h1 id="lf-title">Мебель на заказ<br>под ваш интерьер<br>и задачи</h1>
-    <p class="lf-intro">Изготавливаем. Подбираем материалы. Собираем.</p>
-    <p class="lf-description">Кухни, шкафы, прилавки и мебель из дерева — по индивидуальным размерам. От замера до готовой мебели.</p>
-    <a class="lf-button" href="#lf-directions">Выбрать направление <span aria-hidden="true">↗</span></a>
-    <ul class="lf-benefits"><li>Индивидуальные<br>размеры</li><li>Подбор материалов<br>и фурнитуры</li><li>Профессиональная<br>сборка</li></ul>
-  </div>
-  <figure class="lf-visual"><img src="{% static 'home/images/furniture-sketch.svg' %}" width="800" height="650" alt="Схематичный эскиз кухни: шкафы, рабочая поверхность и остров"><figcaption>От идеи — к продуманным деталям</figcaption></figure>
-</section>
-<section class="lf-directions" id="lf-directions" aria-labelledby="lf-directions-title">
-  <p class="lf-eyebrow">Для дома и бизнеса</p><h2 id="lf-directions-title">Изготавливаем под ваши задачи</h2>
-  <div class="lf-direction-grid"><article><span>01</span><h3>Мебель для дома</h3><p>Кухни, шкафы, гардеробные и встроенные системы хранения.</p></article><article><span>02</span><h3>Столярные изделия</h3><p>Мебель из массива, лестницы, двери, подоконники и столешницы.</p></article><article><span>03</span><h3>Мебель для бизнеса</h3><p>Прилавки, витрины, стеллажи и мебель для гостиниц.</p></article></div>
-</section>
+<section class="fm-hero" aria-labelledby="fm-title">
+{% include 'home/includes/furniture_photo.html' with box='514 42 510 274' source='home/images/furniture-reference-02.jpg' source_width='1024' source_height='1536' alt='Кухня в тёплых оттенках дерева — изображение из дизайн-макета' photo_class='fm-hero-photo' %}
+<div class="fm-container fm-hero-inner"><div class="fm-hero-copy"><p class="fm-eyebrow">Мебель на заказ</p><h1 id="fm-title">Продуманная мебель<br>для вашего пространства</h1><p class="fm-hero-description">Кухни, шкафы, гардеробные, стеллажи, полки<br class="fm-desktop-break"> и многое другое — по индивидуальным размерам.<br>От проекта до установки.</p><div class="fm-hero-actions"><a class="fm-button fm-button-light" href="#callback">Рассчитать проект <span aria-hidden="true">→</span></a><a class="fm-text-link" href="#portfolio">Смотреть работы <span aria-hidden="true">→</span></a></div></div>
+<ul class="fm-hero-benefits"><li>{% include 'home/includes/furniture_icon.html' with icon='workshop' %}<span>Собственное<br>производство</span></li><li>{% include 'home/includes/furniture_icon.html' with icon='ruler' %}<span>Индивидуальные<br>размеры</span></li><li>{% include 'home/includes/furniture_icon.html' with icon='wood' %}<span>Подбор<br>материалов</span></li><li>{% include 'home/includes/furniture_icon.html' with icon='tools' %}<span>Профессиональная<br>сборка</span></li></ul></div></section>
