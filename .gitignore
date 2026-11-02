@@ -52,3 +52,6 @@ Thumbs.db
 # Файлы cache
 cache/
 *.djcache
+
+# Файлы backups
+patch-backups/
