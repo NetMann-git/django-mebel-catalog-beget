@@ -5,6 +5,10 @@ from .models import CarModel
 # apps/products/admin.py
 
 from django.contrib import admin
+from django.core.exceptions import PermissionDenied
+from django.urls import path, reverse
+from functools import partial
+from . import gallery_management
 from django.utils.html import format_html
 from easy_thumbnails.files import get_thumbnailer
 from .product_attribute_forms import ProductAttributeForm
@@ -71,13 +75,6 @@ class AttributeTypeAdmin(admin.ModelAdmin):
         return super().get_inlines(request, obj)
 
 
-class ProductGalleryInline(admin.TabularInline):
-    model = ProductGalleryImage
-    extra = 1
-    fields = ("image", "alt", "sort_order")
-    ordering = ("sort_order",)
-
-
 class ProductAttributeInline(admin.TabularInline):
     model = ProductAttribute
     form = ProductAttributeForm
@@ -102,6 +99,53 @@ class CategoryAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     form = ProductModelForm
     save_on_top = True
+    change_form_template = 'admin/products/product/change_form.html'
+
+    def can_manage_gallery(self, request, obj):
+        return self.has_change_permission(request, obj) and request.user.has_perms([
+            'products.add_productgalleryimage', 'products.change_productgalleryimage',
+            'products.delete_productgalleryimage',
+        ])
+
+    def get_fieldsets(self, request, obj=None):
+        # Cover is managed by the gallery, so saving an old form cannot reset it.
+        return [(name, {**options, 'fields': tuple(
+            field for field in options['fields'] if field != 'image'
+        )}) for name, options in super().get_fieldsets(request, obj)]
+
+    def get_urls(self):
+        urls = []
+        for action in ('prepare', 'upload', 'cover', 'delete', 'reorder'):
+            urls.append(path(
+                'gallery/<int:identifier>/' + action + '/',
+                self.admin_site.admin_view(partial(self.gallery_action, action=action)),
+                name='products_product_gallery_' + action,
+            ))
+        return urls + super().get_urls()
+
+    def gallery_action(self, request, identifier, action):
+        from django.shortcuts import get_object_or_404
+        if action in ('cover', 'delete'):
+            photo = get_object_or_404(ProductGalleryImage, pk=identifier)
+            obj = photo.product
+        else:
+            obj = get_object_or_404(Product, pk=identifier)
+        if not self.can_manage_gallery(request, obj):
+            raise PermissionDenied
+        # Admin authenticates and checks model permissions above. Reuse the
+        # existing POST-only handler beneath the manager-role decorator.
+        response = getattr(gallery_management, action).__wrapped__(request, identifier)
+        if response.status_code == 302:
+            response['Location'] = reverse('admin:products_product_change', args=[obj.pk]) + '#product-gallery'
+        return response
+
+    def changeform_view(self, request, object_id=None, form_url='', extra_context=None):
+        obj = self.get_object(request, object_id) if object_id else None
+        context = dict(extra_context or {})
+        context['gallery_product'] = obj
+        context['gallery_can_edit'] = obj is not None and self.can_manage_gallery(request, obj)
+        return super().changeform_view(request, object_id, form_url, context)
+
 
     def save_related(self, request, form, formsets, change):
         """Invalidate cached attributes after all inline values are saved."""
@@ -197,7 +241,6 @@ class ProductAdmin(admin.ModelAdmin):
     )
 
     inlines = [
-        ProductGalleryInline,
         ProductAttributeInline,
     ]
 

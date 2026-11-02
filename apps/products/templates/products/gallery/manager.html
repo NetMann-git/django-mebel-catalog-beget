@@ -2,21 +2,21 @@
 {% gallery_upload_limits as upload_limits %}
 {{ upload_limits|json_script:"gallery-upload-limits" }}
 <section class="car-gallery" id="product-gallery" aria-labelledby="car-gallery-title"
-         data-prepare="{% url 'catalog:gallery_prepare' product.pk %}"
-         data-upload="{% url 'catalog:gallery_add' product.pk %}">
-  <h3 id="car-gallery-title">Фотографии автомобиля</h3>
-  <p>Новые фото добавляются в конец. Обложка и старые фотографии сохраняются. Изменения галереи сохраняются отдельно от полей автомобиля.</p>
-  {% if product.image %}<p>Текущая обложка: <img class="car-gallery__cover" src="{% thumbnail product.image 120x90 crop %}" alt="Обложка автомобиля"></p>{% endif %}
-  <form method="post" action="{% url 'catalog:gallery_order' product.pk %}" class="car-gallery__saved-form">
+         data-prepare="{% if gallery_admin %}{% url 'admin:products_product_gallery_prepare' product.pk %}{% else %}{% url 'catalog:gallery_prepare' product.pk %}{% endif %}"
+         data-upload="{% if gallery_admin %}{% url 'admin:products_product_gallery_upload' product.pk %}{% else %}{% url 'catalog:gallery_add' product.pk %}{% endif %}">
+  <h3 id="car-gallery-title">Фотографии изделия</h3>
+  <p>Новые фото добавляются в конец. Обложка и старые фотографии сохраняются. Изменения галереи сохраняются отдельно от полей изделия.</p>
+  {% if product.image %}<p>Текущая обложка: <img class="car-gallery__cover" src="{{ product.image.url }}" alt="Обложка изделия"></p>{% endif %}
+  <form method="post" action="{% if gallery_admin %}{% url 'admin:products_product_gallery_reorder' product.pk %}{% else %}{% url 'catalog:gallery_order' product.pk %}{% endif %}" class="car-gallery__saved-form">
     {% csrf_token %}
     <div class="car-gallery__grid">
     {% for photo in product.gallery.all %}
       <article class="car-gallery__card">
-        <img src="{% thumbnail photo.image 240x180 crop %}" alt="{{ photo.alt|default:product.title }}" loading="lazy">
+        <img src="{{ photo.image.url }}" alt="{{ photo.alt|default:product.title }}" loading="lazy">
         {% if product.image.name == photo.image.name %}<strong>Обложка</strong>{% endif %}
         <label class="car-gallery__order"><span>Порядок</span><input inputmode="numeric" name="order_{{ photo.pk }}" type="number" min="0" max="1000000" value="{{ photo.sort_order }}" required></label>
-        <button type="submit" formaction="{% url 'catalog:gallery_cover' photo.pk %}" formnovalidate>Сделать обложкой</button>
-        <button type="submit" formaction="{% url 'catalog:gallery_delete' photo.pk %}" formnovalidate data-delete-photo>Удалить</button>
+        <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_cover' photo.pk %}{% else %}{% url 'catalog:gallery_cover' photo.pk %}{% endif %}" formnovalidate>Сделать обложкой</button>
+        <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_delete' photo.pk %}{% else %}{% url 'catalog:gallery_delete' photo.pk %}{% endif %}" formnovalidate data-delete-photo>Удалить</button>
       </article>
     {% empty %}<p>В галерее пока нет фотографий.</p>{% endfor %}
     </div>
@@ -25,7 +25,7 @@
   <div class="car-gallery__upload">
     <h4>Добавить фотографии</h4>
     <p data-limits></p>
-    <label>Выберите файлы из папки EncarPhotosApp или другой папки
+    <label>Выберите фотографии
       <input type="file" multiple accept="image/jpeg,image/png,image/webp,.jfif" data-files>
     </label>
     <p>Исходники сохраняются без пережатия. Начальный порядок — по числам в именах файлов.</p>

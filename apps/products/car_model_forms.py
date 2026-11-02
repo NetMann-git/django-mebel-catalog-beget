@@ -55,19 +55,22 @@ class ProductModelForm(EquipmentFormMixin, forms.ModelForm):
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
-        self.fields['title'].widget.attrs['data-slug-source'] = 'true'
-        self.fields['slug'].widget.attrs.update({
-            'data-slug-target': 'true', 'readonly': True,
-            'data-slug-existing': 'true' if self.instance.pk else 'false',
-        })
-        self.fields['slug'].help_text = (
-            'Новая карточка: адрес формируется автоматически. '
-            'Существующая: только после отметки «Обновить URL из названия».'
-        )
-        names = list(self.fields)
-        names.remove('regenerate_slug')
-        names.insert(names.index('slug') + 1, 'regenerate_slug')
-        self.order_fields(names)
+        if 'title' in self.fields:
+            self.fields['title'].widget.attrs['data-slug-source'] = 'true'
+        if 'slug' in self.fields:
+            self.fields['slug'].widget.attrs.update({
+                'data-slug-target': 'true', 'readonly': True,
+                'data-slug-existing': 'true' if self.instance.pk else 'false',
+            })
+            self.fields['slug'].help_text = (
+                'Новая карточка: адрес формируется автоматически. '
+                'Существующая: только после отметки «Обновить URL из названия».'
+            )
+        if 'regenerate_slug' in self.fields and 'slug' in self.fields:
+            names = list(self.fields)
+            names.remove('regenerate_slug')
+            names.insert(names.index('slug') + 1, 'regenerate_slug')
+            self.order_fields(names)
 
     def clean_slug(self) -> str:
         """Ignore a forged URL; approval is evaluated after all fields."""

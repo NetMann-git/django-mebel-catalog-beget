@@ -16,9 +16,9 @@
   const mb = bytes => (bytes / 1048576).toFixed(1) + ' МБ';
   const collator = new Intl.Collator('ru', {numeric: true, sensitivity: 'base'});
   let items = [], busy = false, editorDirty = false;
-  document.getElementById('product-form')?.addEventListener('input', () => { editorDirty = true; });
+  (document.getElementById('product-form') || document.getElementById('product_form'))?.addEventListener('input', () => { editorDirty = true; });
   root.querySelector('.car-gallery__saved-form').addEventListener('submit', event => {
-    if (editorDirty && !confirm('В полях автомобиля есть несохранённые изменения. Продолжить без их сохранения?')) event.preventDefault();
+    if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) event.preventDefault();
   });
   root.querySelector('[data-limits]').textContent = `За один выбор: до ${cap.files} файлов, по ${mb(cap.bytes)}, всего до ${mb(cap.total)}. До ${cap.pixels / 1000000} Мп на фото; в галерее — до ${cap.gallery} фото.`;
   function updateSummary() {
@@ -139,7 +139,7 @@
   start.addEventListener('click', run); retry.addEventListener('click', run);
   refresh.addEventListener('click', event => {
     event.preventDefault();
-    if (!editorDirty || confirm('В полях автомобиля есть несохранённые изменения. Обновить страницу без их сохранения?')) location.reload();
+    if (!editorDirty || confirm('В полях изделия есть несохранённые изменения. Обновить страницу без их сохранения?')) location.reload();
   });
   root.querySelectorAll('[data-delete-photo]').forEach(button => button.addEventListener('click', event => {
     if (!confirm('Удалить эту фотографию?')) event.preventDefault();

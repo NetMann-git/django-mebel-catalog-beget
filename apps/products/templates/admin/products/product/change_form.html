@@ -1,0 +1,21 @@
+{% extends "admin/change_form.html" %}
+{% load static %}
+{% block extrastyle %}{{ block.super }}
+<link rel="stylesheet" href="{% static 'products/css/gallery-manager.css' %}">
+{% endblock %}
+{% block object-tools-items %}
+{{ block.super }}
+{% if gallery_can_edit %}<li><a href="#product-gallery">Фотографии</a></li>{% endif %}
+{% endblock %}
+{% block content %}
+{{ block.super }}
+{% if gallery_can_edit %}
+<p>Галерея сохраняется отдельно. Сохраните изменения полей изделия перед действиями с фотографиями.</p>
+{% include 'products/gallery/manager.html' with product=gallery_product gallery_admin=True %}
+<script src="{% static 'products/js/gallery-manager.js' %}" defer></script>
+{% elif gallery_product %}
+<p>Для управления фотографиями нужны права изменения изделия, добавления, изменения и удаления фотографий галереи.</p>
+{% else %}
+<p>Сначала сохраните изделие кнопкой «Сохранить и продолжить редактирование». Затем появится галерея для загрузки фотографий и выбора главного фото.</p>
+{% endif %}
+{% endblock %}
