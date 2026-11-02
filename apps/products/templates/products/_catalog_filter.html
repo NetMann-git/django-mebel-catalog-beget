@@ -1,22 +1,11 @@
-{# Reusable filter: compact-filter.css gives the horizontal layout. #}
-<details class="catalog-compact__panel" id="catalog-filter-panel" open>
-<summary>Фильтры{% if active_filter_count %} · {{ active_filter_count }}{% endif %}</summary>
-<form method="get" class="catalog-compact__form" id="catalog-filter-form">
-{% for key, value in preserved_filters %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
-<input type="hidden" name="sort" value="{{ selected_sort }}">
-<div class="catalog-compact__primary">
-<div><label for="catalog-brand">Марка</label><select id="catalog-brand" name="brand"><option value="">Все марки</option>{% for brand in brands %}<option value="{{ brand.pk }}" {% if selected_brand|stringformat:'s' == brand.pk|stringformat:'s' %}selected{% endif %}>{{ brand.name }}</option>{% endfor %}</select></div>
-<div><label for="catalog-model">Модель</label><select id="catalog-model" name="model"><option value="">Все модели</option>{% for model in catalog_models %}<option value="{{ model.pk }}" data-brand="{{ model.brand_id }}" {% if selected_model|stringformat:'s' == model.pk|stringformat:'s' %}selected{% endif %}>{{ model.brand.name }} {{ model.name }}</option>{% endfor %}</select></div>
-<div><label for="catalog-year">Год выпуска</label><select id="catalog-year" name="year"><option value="">Любой год</option>{% for year in catalog_years %}<option value="{{ year }}" {% if selected_year|stringformat:'s' == year|stringformat:'s' %}selected{% endif %}>{{ year }}</option>{% endfor %}</select></div>
-
-<fieldset><legend>Цена, ₽</legend><div class="catalog-compact__range"><input type="number" min="0" step="any" name="price_min" placeholder="от" aria-label="Цена, ₽ от" value="{{ selected_price_min }}"><input type="number" min="0" step="any" name="price_max" placeholder="до" aria-label="Цена, ₽ до" value="{{ selected_price_max }}"></div></fieldset>
-<fieldset><legend>Пробег, км</legend><div class="catalog-compact__range"><input type="number" min="0" step="1" name="mileage_min" placeholder="от" aria-label="Пробег, км от" value="{{ selected_mileage_min }}"><input type="number" min="0" step="1" name="mileage_max" placeholder="до" aria-label="Пробег, км до" value="{{ selected_mileage_max }}"></div></fieldset>
-</div><details class="catalog-compact__advanced" {% if advanced_filters_open %}open{% endif %}><summary>Дополнительные параметры</summary><div class="catalog-compact__secondary">
-<fieldset><legend>Объём двигателя, л</legend><div class="catalog-compact__range"><input type="number" min="0" step="any" name="engine_volume_min" placeholder="от" aria-label="Объём двигателя, л от" value="{{ selected_engine_volume_min }}"><input type="number" min="0" step="any" name="engine_volume_max" placeholder="до" aria-label="Объём двигателя, л до" value="{{ selected_engine_volume_max }}"></div></fieldset>
-<fieldset><legend>Мощность, л.с.</legend><div class="catalog-compact__range"><input type="number" min="0" step="any" name="power_min" placeholder="от" aria-label="Мощность, л.с. от" value="{{ selected_power_min }}"><input type="number" min="0" step="any" name="power_max" placeholder="до" aria-label="Мощность, л.с. до" value="{{ selected_power_max }}"></div></fieldset>
-<div><label for="catalog-fuel">Тип топлива</label><select id="catalog-fuel" name="fuel_type"><option value="">Любой тип</option>{% for value in fuel_values %}<option value="{{ value.pk }}" {% if selected_fuel_type|stringformat:'s' == value.pk|stringformat:'s' %}selected{% endif %}>{{ value.value }}</option>{% endfor %}</select></div>
-<div><label for="catalog-query">Поиск по названию</label><input type="search" name="q" id="catalog-query" value="{{ search_query }}" placeholder="Название автомобиля"></div>
-</div></details>
+{% load catalog_query %}
+<aside class="fc-sidebar"><details id="catalog-filter-panel" open><summary>Подобрать мебель <span aria-hidden="true">+</span></summary>
+<form id="catalog-filter-form" method="get" action="{% url 'catalog:catalog' %}">
+{% for key, value in furniture_extra_filters %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
+{% if selected_sort %}<input type="hidden" name="sort" value="{{ selected_sort }}">{% endif %}
+<div class="fc-field"><label for="fc-search">Поиск по каталогу</label><input id="fc-search" type="search" name="q" value="{{ search_query }}" placeholder="Например, шкаф" maxlength="255"></div>
+<div class="fc-field"><label for="fc-category">Категория</label><select id="fc-category" name="category"><option value="">Все категории</option>{% for category in categories %}<option value="{{ category.pk }}" {% if selected_category == category.pk|stringformat:'s' %}selected{% endif %}>{{ category.title }}</option>{% endfor %}</select></div>
+<fieldset class="fc-price"><legend>Цена, ₽</legend><div><label class="fm-sr-only" for="fc-min">Цена от</label><input id="fc-min" name="price_min" inputmode="decimal" placeholder="От" value="{{ selected_price_min }}"><span aria-hidden="true">—</span><label class="fm-sr-only" for="fc-max">Цена до</label><input id="fc-max" name="price_max" inputmode="decimal" placeholder="До" value="{{ selected_price_max }}"></div></fieldset>
 {% if filter_errors %}<div class="catalog-filter-errors" role="alert">{% for error in filter_errors %}<p>{{ error }}</p>{% endfor %}</div>{% endif %}
-<div class="catalog-compact__actions"><button type="submit">Показать автомобили</button><a class="catalog-filter-reset" href="?">Сбросить</a></div>
-</form></details>
+<button class="fm-button" type="submit">Показать изделия <span aria-hidden="true">→</span></button><a class="catalog-filter-reset fc-reset" href="{% url 'catalog:catalog' %}">Сбросить фильтры</a>
+</form></details><div class="fc-sidebar-note">{% include 'home/includes/furniture_icon.html' with icon='ruler' %}<h2>Нужен свой размер?</h2><p>Изготовим мебель под ваш интерьер и задачи.</p><a href="{% url 'home' %}#callback">Обсудить проект →</a></div></aside>

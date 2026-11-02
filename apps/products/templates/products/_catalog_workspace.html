@@ -1,113 +1,13 @@
-{% load price_format l10n catalog_query %}
-{% include 'products/_catalog_filter.html' %}
-
-        <main class="catalog-content" id="catalog-results" tabindex="-1">
-
-            <h2 class="catalog-section-title">Автомобили</h2>
-
-            <!-- Панель инструментов: количество, очистка, сортировка -->
-            <div class="catalog-toolbar">
-
-                <div class="catalog-toolbar-left">
-
-                    <p class="catalog-count">
-                        Найдено автомобилей: {{ page_obj.paginator.count }}
-                    </p>
-
-                    {% if search_query or selected_brand or selected_model or selected_year or selected_fuel_type or selected_price_min or selected_price_max or selected_mileage_min or selected_mileage_max or selected_engine_volume_min or selected_engine_volume_max or selected_power_min or selected_power_max %}
-                        <a href="?" class="clear-filters">✕ Очистить все</a>
-                    {% endif %}
-
-                </div>
-
-                <!-- Сортировка -->
-                <form method="get" data-catalog-sort-form>
-
-                    <!-- Сохранить выбранные условия при смене сортировки. -->
-                    {% if selected_model %}<input type="hidden" name="model" value="{{ selected_model }}">{% endif %}
-                    {% for key, value in preserved_filters %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
-                    {% if selected_brand %}<input type="hidden" name="brand" value="{{ selected_brand }}">{% endif %}
-                    {% if selected_year %}<input type="hidden" name="year" value="{{ selected_year }}">{% endif %}
-                    {% if selected_fuel_type %}<input type="hidden" name="fuel_type" value="{{ selected_fuel_type }}">{% endif %}
-                    {% if selected_price_min %}<input type="hidden" name="price_min" value="{{ selected_price_min }}">{% endif %}
-                    {% if selected_price_max %}<input type="hidden" name="price_max" value="{{ selected_price_max }}">{% endif %}
-                    {% if selected_mileage_min %}<input type="hidden" name="mileage_min" value="{{ selected_mileage_min }}">{% endif %}
-                    {% if selected_mileage_max %}<input type="hidden" name="mileage_max" value="{{ selected_mileage_max }}">{% endif %}
-                    {% if selected_engine_volume_min %}<input type="hidden" name="engine_volume_min" value="{{ selected_engine_volume_min }}">{% endif %}
-                    {% if selected_engine_volume_max %}<input type="hidden" name="engine_volume_max" value="{{ selected_engine_volume_max }}">{% endif %}
-                    {% if selected_power_min %}<input type="hidden" name="power_min" value="{{ selected_power_min }}">{% endif %}
-                    {% if selected_power_max %}<input type="hidden" name="power_max" value="{{ selected_power_max }}">{% endif %}
-                    {% if search_query %}<input type="hidden" name="q" value="{{ search_query }}">{% endif %}
-
-                    <select name="sort" aria-label="Сортировка автомобилей">
-                        <option value="">По умолчанию</option>
-                        <option value="price_asc" {% if selected_sort == "price_asc" %}selected{% endif %}>Цена ↑</option>
-                        <option value="price_desc" {% if selected_sort == "price_desc" %}selected{% endif %}>Цена ↓</option>
-                        <option value="title_asc" {% if selected_sort == "title_asc" %}selected{% endif %}>Название А-Я</option>
-                        <option value="title_desc" {% if selected_sort == "title_desc" %}selected{% endif %}>Название Я-А</option>
-                        <option value="year_desc" {% if selected_sort == "year_desc" %}selected{% endif %}>Год (сначала новые)</option>
-                    </select>
-
-                    <button type="submit" class="catalog-sort-submit">Применить</button>
-                </form>
-
-            </div>
-
-            <!-- Отдельные условия можно снять без сброса остальных. -->
-            <div class="active-filters">
-                {% if search_query %}<a class="filter-chip" href="{% catalog_without 'q' %}">Поиск: {{ search_query }} ✕</a>{% endif %}
-                {% if selected_brand %}<a class="filter-chip" href="{% catalog_without 'brand' 'model' %}">Марка: {{ selected_brand_name|default:selected_brand }} ✕</a>{% endif %}
-                {% if selected_model %}<a class="filter-chip" href="{% catalog_without 'model' %}">Модель: {{ selected_model_name|default:selected_model }} ✕</a>{% endif %}
-                {% if selected_year %}<a class="filter-chip" href="{% catalog_without 'year' %}">Год: {{ selected_year }} ✕</a>{% endif %}
-                {% if selected_price_min or selected_price_max %}<a class="filter-chip" href="{% catalog_without 'price_min' 'price_max' %}">Цена: {{ selected_price_min|default:'0'|price_format }}–{{ selected_price_max|default:'∞'|price_format }} ₽ ✕</a>{% endif %}
-                {% if selected_mileage_min or selected_mileage_max %}<a class="filter-chip" href="{% catalog_without 'mileage_min' 'mileage_max' %}">Пробег: {{ selected_mileage_min|default:'0' }}–{{ selected_mileage_max|default:'∞' }} км ✕</a>{% endif %}
-                {% if selected_engine_volume_min or selected_engine_volume_max %}<a class="filter-chip" href="{% catalog_without 'engine_volume_min' 'engine_volume_max' %}">Объём: {{ selected_engine_volume_min|default:'0' }}–{{ selected_engine_volume_max|default:'∞' }} л ✕</a>{% endif %}
-                {% if selected_power_min or selected_power_max %}<a class="filter-chip" href="{% catalog_without 'power_min' 'power_max' %}">Мощность: {{ selected_power_min|default:'0' }}–{{ selected_power_max|default:'∞' }} л.с. ✕</a>{% endif %}
-                {% if selected_fuel_type %}<a class="filter-chip" href="{% catalog_without 'fuel_type' %}">Топливо: {{ selected_fuel_name|default:selected_fuel_type }} ✕</a>{% endif %}
-            </div>
-
-            <!-- Карточки товаров -->
-            <div id="catalog-products-container"
-                 data-next-page="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{% endif %}"
-                 data-has-next="{% if page_obj.has_next %}true{% else %}false{% endif %}">
-
-                <div class="dress-grid">
-                    {% include "products/_catalog_cards.html" with products=products %}
-                </div>
-
-                <!-- Сентинел для Infinite Scroll -->
-                <div id="catalog-load-sentinel" style="height: 1px;"></div>
-                <div id="catalog-loader" style="display: none; text-align: center; padding: 20px;">
-                    <p>Загрузка...</p>
-                </div>
-
-                <button type="button" id="load-more-btn" class="btn btn-outline" style="display: none; margin: 20px auto;">
-                    Показать ещё
-                </button>
-
-            </div>
-
-            <!-- Пагинация для SEO (скрывается через JS) -->
-            {% if page_obj.has_other_pages %}
-                <nav class="pagination">
-                    {% if page_obj.has_previous %}
-                        <a class="page-link" href="?page=1{% if query_params %}&{{ query_params }}{% endif %}">«</a>
-                        <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if query_params %}&{{ query_params }}{% endif %}">←</a>
-                    {% endif %}
-
-                    {% for num in page_obj.paginator.page_range %}
-                        {% if num == page_obj.number %}
-                            <span class="page-link active">{{ num }}</span>
-                        {% elif num >= page_obj.number|add:"-2" and num <= page_obj.number|add:"2" %}
-                            <a class="page-link" href="?page={{ num }}{% if query_params %}&{{ query_params }}{% endif %}">{{ num }}</a>
-                        {% endif %}
-                    {% endfor %}
-
-                    {% if page_obj.has_next %}
-                        <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if query_params %}&{{ query_params }}{% endif %}">→</a>
-                        <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if query_params %}&{{ query_params }}{% endif %}">»</a>
-                    {% endif %}
-                </nav>
-            {% endif %}
-
-        </main>
+{% load catalog_query price_format %}{% include 'products/_catalog_filter.html' %}
+<section class="fc-results" id="catalog-results" tabindex="-1" aria-labelledby="fc-results-title">
+<div class="fc-toolbar"><div><h2 id="fc-results-title">{% if furniture_category_title %}{{ furniture_category_title }}{% elif selected_category %}Выбранная категория{% else %}Все изделия{% endif %}</h2><p class="catalog-count">Найдено изделий: {{ page_obj.paginator.count }}</p></div>
+<form method="get" action="{% url 'catalog:catalog' %}" data-catalog-sort-form>{% for key, value in furniture_sort_filters %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}<label class="fm-sr-only" for="fc-sort">Сортировка изделий</label><select id="fc-sort" name="sort"><option value="">По умолчанию</option><option value="price_asc" {% if selected_sort == 'price_asc' %}selected{% endif %}>Сначала дешевле</option><option value="price_desc" {% if selected_sort == 'price_desc' %}selected{% endif %}>Сначала дороже</option><option value="title_asc" {% if selected_sort == 'title_asc' %}selected{% endif %}>Название А–Я</option><option value="title_desc" {% if selected_sort == 'title_desc' %}selected{% endif %}>Название Я–А</option>{% if selected_sort == 'year_desc' %}<option value="year_desc" selected>Сохранённый порядок</option>{% endif %}</select><button type="submit" class="catalog-sort-submit">Применить</button></form></div>
+<div class="fc-active-filters">
+{% if search_query %}<a class="filter-chip" href="{% catalog_without 'q' %}">Поиск: {{ search_query }} <span aria-hidden="true">×</span></a>{% endif %}
+{% if selected_category %}<a class="filter-chip" href="{% catalog_without 'category' %}">{{ furniture_category_title|default:'Категория' }} <span aria-hidden="true">×</span></a>{% endif %}
+{% if selected_price_min or selected_price_max %}<a class="filter-chip" href="{% catalog_without 'price_min' 'price_max' %}">Цена: {{ selected_price_min|default:'0'|price_format }}–{{ selected_price_max|default:'∞'|price_format }} ₽ <span aria-hidden="true">×</span></a>{% endif %}
+{% if furniture_extra_filters %}<a class="filter-chip" href="{% catalog_without 'brand' 'model' 'year' 'year_min' 'year_max' 'fuel_type' 'availability' 'transmission' 'drive' 'condition' 'mileage_min' 'mileage_max' 'engine_volume_min' 'engine_volume_max' 'power_min' 'power_max' %}">Дополнительные условия <span aria-hidden="true">×</span></a>{% endif %}
+</div>
+<div id="catalog-products-container" data-next-page="{% if page_obj.has_next %}{{ page_obj.next_page_number }}{% endif %}" data-has-next="{% if page_obj.has_next %}true{% else %}false{% endif %}"><div class="dress-grid fc-product-grid">{% include 'products/_catalog_cards.html' %}</div><div id="catalog-load-sentinel" aria-hidden="true"></div><div id="catalog-loader" style="display:none">Загрузка…</div><button type="button" id="load-more-btn" class="fm-button fc-more" style="display:none">Показать ещё</button></div>
+{% if page_obj.has_other_pages %}<nav class="pagination fc-pagination" aria-label="Страницы каталога">{% if page_obj.has_previous %}<a href="?page={{ page_obj.previous_page_number }}{% if query_params %}&amp;{{ query_params }}{% endif %}" aria-label="Предыдущая страница">←</a>{% endif %}{% for num in page_obj.paginator.page_range %}{% if num == page_obj.number %}<span aria-current="page">{{ num }}</span>{% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}<a href="?page={{ num }}{% if query_params %}&amp;{{ query_params }}{% endif %}">{{ num }}</a>{% endif %}{% endfor %}{% if page_obj.has_next %}<a href="?page={{ page_obj.next_page_number }}{% if query_params %}&amp;{{ query_params }}{% endif %}" aria-label="Следующая страница">→</a>{% endif %}</nav>{% endif %}
+</section>

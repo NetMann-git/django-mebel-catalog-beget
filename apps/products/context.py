@@ -70,6 +70,29 @@ class CatalogContextBuilder:
             ) if request.GET.get(key)
         ]
 
+        # Шаг 05: контекст мебельной вёрстки, прежние GET-фильтры сохраняются.
+        from apps.products.models import Category
+        category_id = filters.category
+        context["furniture_category_title"] = (
+            Category.objects.filter(pk=category_id).values_list("title", flat=True).first()
+            if category_id.isascii() and category_id.isdigit() and len(category_id) < 19 else None
+        )
+        legacy_keys = (
+            "brand", "model", "year", "year_min", "year_max", "fuel_type", "availability",
+            "transmission", "drive", "condition", "mileage_min", "mileage_max",
+            "engine_volume_min", "engine_volume_max", "power_min", "power_max",
+        )
+        context["furniture_extra_filters"] = [
+            (key, request.GET[key]) for key in legacy_keys if request.GET.get(key)
+        ]
+        context["furniture_sort_filters"] = [
+            (key, value) for key, value in request.GET.items() if key not in ("sort", "page") and value
+        ]
+        context["furniture_has_filters"] = any((
+            filters.query, filters.category, filters.price_min, filters.price_max,
+            context["furniture_extra_filters"],
+        ))
+
         # 5. Избранное (wishlist)
         if request.user.is_authenticated:
             wishlist_ids = list(request.user.favorites.values_list("product_id", flat=True))

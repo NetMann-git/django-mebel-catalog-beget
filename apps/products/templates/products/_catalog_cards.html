@@ -1,7 +1,1 @@
-<!-- apps/products/templates/products/_catalog_cards.html -->
-
-{% for product in products %}
-    {% include "products/_product_card.html" with product=product %}
-{% empty %}
-    <p>Автомобили не найдены.</p>
-{% endfor %}
+{% for product in products %}{% include 'products/_furniture_card.html' %}{% empty %}<div class="fc-empty"><div class="fc-empty-icon">{% include 'home/includes/furniture_icon.html' with icon='plan' %}</div><h3>{% if furniture_has_filters %}Подходящих изделий пока нет{% else %}Каталог готовится к наполнению{% endif %}</h3><p>{% if furniture_has_filters %}Попробуйте изменить условия поиска или расскажите нам о вашей задаче.{% else %}Обсудим вашу идею и изготовим мебель по индивидуальным размерам.{% endif %}</p><div><a class="fm-button" href="{% url 'home' %}#callback">Обсудить проект →</a>{% if furniture_has_filters %}<a class="clear-filters fc-reset" href="{% url 'catalog:catalog' %}">Сбросить фильтры</a>{% endif %}</div></div>{% endfor %}

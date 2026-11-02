@@ -1,6 +1,6 @@
 <header class="fm-header"><div class="fm-container fm-header-inner">
 <a class="fm-logo" href="{% url 'home' %}">LUSTRID.RU</a>
 <button class="fm-menu-toggle" type="button" aria-expanded="false" aria-controls="fm-navigation" aria-label="Открыть меню"><span></span><span></span><span></span></button>
-<nav id="fm-navigation" class="fm-navigation" aria-label="Основная навигация"><a href="#categories">Каталог</a><a href="#advantages">Преимущества</a><a href="#portfolio">Портфолио</a><a href="#materials">Материалы</a><a href="#reviews">Отзывы</a><a href="#faq">FAQ</a><a href="#callback">Контакты</a></nav>
-<a class="fm-button fm-button-small" href="#callback">Заказать звонок</a>
+<nav id="fm-navigation" class="fm-navigation" aria-label="Основная навигация"><a href="{{ furniture_home_url }}#categories">Каталог</a><a href="{{ furniture_home_url }}#advantages">Преимущества</a><a href="{{ furniture_home_url }}#portfolio">Портфолио</a><a href="{{ furniture_home_url }}#materials">Материалы</a><a href="{{ furniture_home_url }}#reviews">Отзывы</a><a href="{{ furniture_home_url }}#faq">FAQ</a><a href="{{ furniture_home_url }}#callback">Контакты</a></nav>
+<a class="fm-button fm-button-small" href="{{ furniture_home_url }}#callback">Заказать звонок</a>
 </div></header>

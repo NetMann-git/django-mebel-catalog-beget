@@ -13,10 +13,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let observer = null;
     let retry = null;
 
-    const mobileLayout = window.matchMedia('(max-width: 700px)');
+    const mobileLayout = window.matchMedia('(max-width: 720px)');
     function updatePanel() {
         const panel = workspace.querySelector('#catalog-filter-panel');
-        panel.open = !mobileLayout.matches || !!workspace.querySelector('.catalog-filter-errors');
+        if (panel) panel.open = !mobileLayout.matches || !!workspace.querySelector('.catalog-filter-errors');
     }
     if (mobileLayout.addEventListener) mobileLayout.addEventListener('change', updatePanel);
 
@@ -25,18 +25,21 @@ document.addEventListener('DOMContentLoaded', () => {
         const form = workspace.querySelector('#catalog-filter-form');
         const brand = form.elements.brand;
         const model = form.elements.model;
-        const options = Array.from(model.options, option => option.cloneNode(true));
-        function updateModel() {
-            const selected = model.value;
-            model.replaceChildren(...options.filter(option =>
-                !option.value || option.dataset.brand === brand.value
-            ).map(option => option.cloneNode(true)));
-            model.value = Array.from(model.options).some(option => option.value === selected) ? selected : '';
-            model.disabled = !brand.value;
-            model.options[0].textContent = brand.value ? 'Все модели' : 'Сначала выберите марку';
+        // Мебельный фильтр не содержит селектов марки/модели.
+        if (brand && model && model.options) {
+            const options = Array.from(model.options, option => option.cloneNode(true));
+            function updateModel() {
+                const selected = model.value;
+                model.replaceChildren(...options.filter(option =>
+                    !option.value || option.dataset.brand === brand.value
+                ).map(option => option.cloneNode(true)));
+                model.value = Array.from(model.options).some(option => option.value === selected) ? selected : '';
+                model.disabled = !brand.value;
+                model.options[0].textContent = brand.value ? 'Все модели' : 'Сначала выберите марку';
+            }
+            brand.addEventListener('change', updateModel);
+            updateModel();
         }
-        brand.addEventListener('change', updateModel);
-        updateModel();
         workspace.querySelectorAll('.pagination, .catalog-sort-submit').forEach(node => { node.hidden = true; });
         const container = workspace.querySelector('#catalog-products-container');
         const more = workspace.querySelector('#load-more-btn');
@@ -58,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loading = true;
         error.hidden = true;
         workspace.setAttribute('aria-busy', 'true');
-        status.textContent = append ? 'Загружаем ещё автомобили…' : 'Обновляем подборку…';
+        status.textContent = append ? 'Загружаем ещё изделия…' : 'Обновляем подборку…';
         const intent = {url: url.href, append, historyMode};
         try {
             const response = await fetch(url, {
@@ -75,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 container.dataset.hasNext = String(data.has_next);
                 container.dataset.nextPage = data.next_page || '';
                 workspace.querySelector('#load-more-btn').style.display = data.has_next ? 'block' : 'none';
-                status.textContent = 'Автомобили загружены.';
+                status.textContent = 'Изделия загружены.';
                 if (data.has_next && observer) observer.observe(workspace.querySelector('#catalog-load-sentinel'));
             } else {
                 const fragment = document.createElement('template');
@@ -85,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 appliedURL = new URL(url);
                 if (historyMode === 'push' && location.href !== url.href) history.pushState(null, '', url);
                 initialize();
-                if (window.matchMedia('(max-width: 700px)').matches && !workspace.querySelector('.catalog-filter-errors')) workspace.querySelector('#catalog-filter-panel').open = false;
+                if (window.matchMedia('(max-width: 720px)').matches && !workspace.querySelector('.catalog-filter-errors')) workspace.querySelector('#catalog-filter-panel').open = false;
                 status.textContent = workspace.querySelector('.catalog-count').textContent.trim();
                 workspace.querySelector('#catalog-results').focus({preventScroll: true});
             }
@@ -126,7 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const autoSubmit = '[data-catalog-sort-form] select, ' +
             '#catalog-filter-form select[name="brand"], ' +
             '#catalog-filter-form select[name="model"], ' +
-            '#catalog-filter-form select[name="year"]';
+            '#catalog-filter-form select[name="year"], ' +
+            '#catalog-filter-form select[name="category"]';
         if (event.target.matches(autoSubmit)) event.target.form.requestSubmit();
     });
     workspace.addEventListener('click', event => {

@@ -3,6 +3,7 @@
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.views.decorators.vary import vary_on_headers
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from .constants import MAX_COMPARISON_ITEMS, MAX_RECENTLY_VIEWED
 from .services import ProductService
@@ -95,6 +96,7 @@ def toggle_comparison_ajax(request, product_id):
     })
 
 
+@ensure_csrf_cookie
 @vary_on_headers("X-Requested-With", "X-Catalog-Mode")
 def catalog(request):
     context = CatalogContextBuilder.build(request)
