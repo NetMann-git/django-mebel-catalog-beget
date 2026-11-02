@@ -1,4 +1,5 @@
 """Шаг 03: предварительная проверка, конфликты, повторяемость и снимки."""
+from contextlib import closing
 from io import StringIO
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -108,15 +109,15 @@ class DatabaseBackupTests(SimpleTestCase):
     def test_wal_sqlite_snapshot_is_valid_and_restores_data(self):
         with TemporaryDirectory() as folder:
             source = Path(folder) / 'source.sqlite3'
-            with sqlite3.connect(source) as original:
+            with closing(sqlite3.connect(source)) as original:
                 original.execute('PRAGMA journal_mode=WAL')
                 original.execute('CREATE TABLE example (value TEXT)')
                 original.execute("INSERT INTO example VALUES ('сохранено')")
                 original.commit()
                 backup = backup_sqlite(source, folder, 'step03-test')
-            with sqlite3.connect(backup) as copy:
+            with closing(sqlite3.connect(backup)) as copy:
                 self.assertEqual(copy.execute('PRAGMA integrity_check').fetchall(), [('ok',)])
-                with sqlite3.connect(Path(folder) / 'restored.sqlite3') as restored:
+                with closing(sqlite3.connect(Path(folder) / 'restored.sqlite3')) as restored:
                     copy.backup(restored)
                     self.assertEqual(restored.execute('SELECT value FROM example').fetchone(), ('сохранено',))
 

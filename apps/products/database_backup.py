@@ -1,4 +1,6 @@
 """Проверенные снимки SQLite и MySQL перед обслуживанием данных."""
+import logging
+from contextlib import closing
 import os
 import shutil
 import sqlite3
@@ -17,8 +19,8 @@ def backup_sqlite(source, folder, prefix):
     target = Path(folder) / (prefix + ".sqlite3")
     temporary = target.with_suffix(".sqlite3.partial")
     try:
-        with sqlite3.connect(source.as_uri() + "?mode=ro", uri=True) as original:
-            with sqlite3.connect(temporary) as copy:
+        with closing(sqlite3.connect(source.as_uri() + "?mode=ro", uri=True)) as original:
+            with closing(sqlite3.connect(temporary)) as copy:
                 original.backup(copy)
                 if copy.execute("PRAGMA integrity_check").fetchall() != [("ok",)]:
                     raise CommandError("Резервная SQLite не прошла integrity_check.")
@@ -28,7 +30,13 @@ def backup_sqlite(source, folder, prefix):
     except (OSError, sqlite3.Error) as error:
         raise CommandError("Не удалось создать и проверить SQLite. Изменения отменены.") from error
     finally:
-        temporary.unlink(missing_ok=True)
+        try:
+            temporary.unlink(missing_ok=True)
+        except OSError as cleanup_error:
+            # Сохраняем первичную ошибку, даже если файл занят внешним процессом.
+            logging.getLogger(__name__).warning(
+                "Не удалось удалить незавершённый снимок %s: %s", temporary, cleanup_error
+            )
     return target
 
 
