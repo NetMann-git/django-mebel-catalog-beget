@@ -45,7 +45,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (event.target === modal) close();
     });
     document.addEventListener('keydown', (event) => {
-        if (event.key === 'Escape' && !modal.hidden) close();
+        if (modal.hidden) return;
+        if (event.key === 'Escape') close();
+        if (event.key === 'Tab') {
+            const controls = Array.from(modal.querySelectorAll('button:not([disabled]), a[href], input:not([type="hidden"]):not([name="website"]), textarea, select'));
+            const first = controls[0], last = controls[controls.length - 1];
+            if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus(); }
+            else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
+        }
     });
 
     content.addEventListener('submit', async (event) => {

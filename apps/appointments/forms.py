@@ -70,10 +70,10 @@ class CallbackRequestForm(forms.ModelForm):
 
 
 class CarInquiryForm(CallbackRequestForm):
-    """Контакты для персонального расчёта доставки автомобиля."""
+    """Контакты для обсуждения изготовления выбранного изделия."""
 
     name = forms.CharField(max_length=100, label='Ваше имя')
-    city = forms.CharField(max_length=120, label='Город доставки')
+    city = forms.CharField(max_length=120, label='Город / населённый пункт')
 
     class Meta:
         model = CallbackRequest
@@ -87,7 +87,7 @@ class CarInquiryForm(CallbackRequestForm):
             'email': forms.EmailInput(attrs={'autocomplete': 'email'}),
             'comment': forms.Textarea(attrs={
                 'rows': 3,
-                'placeholder': 'Ваши вопросы об автомобиле (необязательно)',
+                'placeholder': 'Размеры, материалы и пожелания (необязательно)',
             }),
         }
         labels = {

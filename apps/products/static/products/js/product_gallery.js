@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const lightboxPrev = document.querySelector(".lightbox-prev");
     const lightboxNext = document.querySelector(".lightbox-next");
 
+    let returnFocus = null;
     let currentIndex = 0;
     let imageList = [];
 
@@ -130,7 +131,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         updateCounter();
         renderLightboxThumbs();
+        const wasOpen = lightbox.classList.contains("show");
+        if (!wasOpen) returnFocus = document.activeElement;
         lightbox.classList.add("show");
+        if (!wasOpen) lightboxClose?.focus();
         document.body.style.overflow = "hidden";
     }
 
@@ -138,7 +142,9 @@ document.addEventListener("DOMContentLoaded", function () {
     // Закрытие лайтбокса
     // =========================
     function closeLightbox() {
+        showImage(currentIndex);
         lightbox.classList.remove("show");
+        returnFocus?.focus();
         document.body.style.overflow = "";
     }
 
@@ -186,7 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const allThumbs = document.querySelectorAll(".gallery-thumb-vertical");
     if (allThumbs.length > 0) {
         allThumbs.forEach(function(thumb, index) {
-            thumb.addEventListener("click", function (e) {
+            (thumb.closest("button") || thumb).addEventListener("click", function (e) {
                 e.preventDefault();
                 showImage(index);
             });
@@ -212,7 +218,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Клик по главному изображению – открытие лайтбокса
-    mainImage.addEventListener("click", function () {
+    (mainImage.closest("button") || mainImage).addEventListener("click", function () {
         openLightbox(currentIndex);
     });
 
@@ -246,6 +252,13 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Клавиши
     document.addEventListener("keydown", function (e) {
+        if (lightbox.classList.contains("show") && e.key === "Tab") {
+            const controls = Array.from(lightbox.querySelectorAll('button:not([disabled]), a[href]'));
+            const first = controls[0], last = controls[controls.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last?.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first?.focus(); }
+            return;
+        }
         if (lightbox.classList.contains("show")) {
             if (e.key === "Escape") {
                 closeLightbox();
@@ -255,6 +268,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 openLightbox(currentIndex + 1);
             }
         } else {
+            if (e.target.closest('input, textarea, select, [contenteditable="true"]') ||
+                document.querySelector('.car-inquiry__modal:not([hidden]), #review-lightbox.show')) return;
             if (imageList.length > 1) {
                 if (e.key === "ArrowLeft") {
                     showImage(currentIndex - 1);

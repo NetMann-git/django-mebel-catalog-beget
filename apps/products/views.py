@@ -218,6 +218,17 @@ def product_detail(request, slug):
 
     context["review_form"] = ReviewForm(user=request.user)
     context["gallery_images"] = product.gallery.exclude(image=product.image.name or '')
+    # Шаг 06: обложка и галерея без повторов, с сохранением оригинальных файлов.
+    photos = []
+    seen = set()
+    if product.image:
+        photos.append({"image": product.image, "alt": product.title})
+        seen.add(product.image.name)
+    for photo in context["gallery_images"]:
+        if photo.image and photo.image.name not in seen:
+            photos.append({"image": photo.image, "alt": photo.alt or product.title})
+            seen.add(photo.image.name)
+    context["furniture_photos"] = photos
 
     return render(request, "products/product_detail.html", context)
 

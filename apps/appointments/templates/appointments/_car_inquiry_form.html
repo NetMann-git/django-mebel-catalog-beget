@@ -1,10 +1,10 @@
-<h2 id="car-inquiry-title">{% if is_order %}Заказать это авто{% else %}Узнать стоимость под ключ{% endif %}</h2>
+<h2 id="car-inquiry-title">{% if is_order %}Заказать изготовление{% else %}Уточнить стоимость{% endif %}</h2>
 {% if is_order %}
-<p>Оставьте контакты — менеджер уточнит наличие и условия покупки. Заявка не бронирует автомобиль.</p>
+<p>Оставьте контакты — обсудим размеры, материалы и детали проекта. Заявка не запускает изготовление: сначала согласуем проект.</p>
 {% else %}
-<p>Оставьте контакты — менеджер расскажет об автомобиле и вариантах доставки.</p>
+<p>Оставьте контакты — обсудим изделие и подготовку расчёта под ваши задачи.</p>
 {% endif %}
-<p class="car-inquiry__product">Автомобиль: <strong>{{ product.title }}</strong></p>
+<p class="car-inquiry__product">Изделие: <strong>{{ product.title }}</strong></p>
 
 <form action="{% url 'appointments:car_inquiry' product.id %}{% if is_order %}?type=order{% endif %}" method="post" class="car-inquiry__form">
     {% csrf_token %}
@@ -19,6 +19,7 @@
         <label for="car-inquiry-website">Сайт</label>
         <input type="text" name="website" id="car-inquiry-website" autocomplete="off" tabindex="-1">
     </div>
+    <p class="car-inquiry__note">Нажимая кнопку, вы соглашаетесь с <a href="{% url 'personal_data_consent' %}">обработкой персональных данных</a>.</p>
     <p class="car-inquiry__note">Менеджер свяжется с вами по указанному телефону.</p>
     <button type="submit" class="car-inquiry__submit">{% if is_order %}Отправить заявку{% else %}Отправить запрос{% endif %}</button>
 </form>

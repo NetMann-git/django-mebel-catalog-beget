@@ -4,5 +4,5 @@
 {% for group, options in equipment_groups %}<div class="car-equipment__group"><h3>{{ group }}</h3>
 <ul class="car-equipment__list">{% for option in options %}<li><span class="car-equipment__check" aria-hidden="true">✓</span>{{ option.name }}</li>{% endfor %}</ul>
 </div>{% endfor %}
-<p class="car-equipment__note">Оборудование указано по информации об автомобиле. Это не подтверждение заводской комплектации по VIN.</p>
+<p class="car-equipment__note">{% if furniture %}Состав изделия и фурнитуру согласуем при обсуждении проекта.{% else %}Оборудование указано по информации об автомобиле. Это не подтверждение заводской комплектации по VIN.{% endif %}</p>
 </section>{% endif %}
