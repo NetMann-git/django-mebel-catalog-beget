@@ -1,22 +1,4 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block title %}Удаление бренда{% endblock %}
-
-{% block content %}
-<div class="form-container">
-    <h1>Удаление бренда</h1>
-    <p>Удалить бренд <strong>{{ brand.name }}</strong>?</p>
-    <p style="color:#777;">Товары этого бренда не удаляются.</p>
-
-    <form method="post" style="margin-top:20px;">
-        {% csrf_token %}
-        <button type="submit" class="btn-delete" style="padding:10px 20px;">Удалить</button>
-        <a href="{% url 'catalog:brand_list_manage' %}" class="btn-cancel">Отмена</a>
-    </form>
-</div>
-{% endblock %}
+{% extends 'products/brands_base.html' %}
+{% block title %}Удаление бренда — LUSTRID.RU{% endblock %}
+{% block furniture_content %}<section class="fm-container fm-attributes fb-brands" aria-labelledby="brand-delete-title"><a class="fm-attributes__back" href="{% url 'catalog:brand_list_manage' %}">← К брендам</a><div class="fm-attributes__panel"><h1 id="brand-delete-title">Удалить бренд?</h1><p>{{ brand.name }}</p><p class="fm-attributes__notice">Изделия сохранятся, их связь с этим брендом будет снята. Логотип удаляется штатным механизмом очистки, если больше нигде не используется. Если бренд связан со справочником моделей, удаление будет заблокировано.</p>
+<form method="post" class="fm-attributes__form">{% csrf_token %}<div class="fm-attributes__actions"><button type="submit" class="fm-attributes__button">Подтвердить удаление</button><a class="fm-attributes__button" href="{% url 'catalog:brand_list_manage' %}">Отмена</a></div></form></div></section>{% endblock %}

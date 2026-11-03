@@ -1,92 +1,13 @@
-{% extends 'base.html' %}
-{% load static %}
-{% load thumbnail %}
-
-{% block extra_css %}
-<link rel="stylesheet" type="text/css" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block title %}Управление брендами{% endblock %}
-
-{% block content %}
-<div class="manage-container">
-    <div class="manage-header">
-        <h1>🚘 Управление брендами</h1>
-        <a href="{% url 'catalog:brand_create' %}" class="btn-primary">+ Добавить бренд</a>
-    </div>
-
-    <div class="manage-header">
-        <span>Всего: {{ total }} брендов</span>
-        <form method="get" class="search-form">
-            <input type="text" name="search" placeholder="Поиск по названию или стране..." value="{{ search }}">
-            <button type="submit" class="btn-primary">Найти</button>
-        </form>
-    </div>
-
-    {% if brands %}
-    <form method="post">
-        {% csrf_token %}
-
-        <div style="margin-bottom:20px;display:flex;gap:12px;flex-wrap:wrap;">
-            <button type="submit" class="btn-save">💾 Сохранить порядок</button>
-            <a href="{% url 'users:manager_dashboard' %}" class="btn-cancel">← Панель менеджера</a>
-        </div>
-
-        <table class="product-table">
-            <thead>
-                <tr>
-                    <th>Логотип</th>
-                    <th>Название</th>
-                    <th>Страна</th>
-                    <th>Порядок</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for brand in brands %}
-                <tr>
-                    <td>
-                        {% if brand.logo %}
-                            <img src="{% thumbnail brand.logo 80x50 %}"
-                                 alt="{{ brand.name }}"
-                                 style="width:80px;height:50px;object-fit:contain;"
-                                 loading="lazy">
-                        {% else %}
-                            <span style="color:#aaa;">Нет логотипа</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{{ brand.get_absolute_url }}" target="_blank"
-                           style="color:#333;text-decoration:none;font-weight:600;">
-                            {{ brand.name }}
-                        </a>
-                    </td>
-                    <td>{{ brand.country|default:"—" }}</td>
-                    <td style="width:130px;">
-                        <input type="number"
-                               name="sort_order_{{ brand.pk }}"
-                               value="{{ brand.sort_order }}"
-                               min="0"
-                               style="width:90px;padding:7px;">
-                    </td>
-                    <td>
-                        <div class="actions">
-                            <a href="{% url 'catalog:brand_edit' brand.pk %}" class="btn-edit">✏️</a>
-                            <a href="{% url 'catalog:brand_delete' brand.pk %}" class="btn-delete">🗑️</a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <div style="margin-top:20px;display:flex;gap:12px;flex-wrap:wrap;">
-            <button type="submit" class="btn-save">💾 Сохранить порядок</button>
-            <a href="{% url 'users:manager_dashboard' %}" class="btn-cancel">← Панель менеджера</a>
-        </div>
-    </form>
-    {% else %}
-        <div class="empty-message"><p>Брендов не найдено.</p></div>
-    {% endif %}
-</div>
-{% endblock %}
+{% extends 'products/brands_base.html' %}
+{% block title %}Управление брендами — LUSTRID.RU{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-attributes fb-brands" aria-labelledby="brands-title">
+<a class="fm-attributes__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
+<div class="fm-attributes__heading"><div><p class="fm-attributes__eyebrow">Справочник мастерской</p><h1 id="brands-title">Бренды</h1><p>Названия, логотипы и порядок брендов в каталоге.</p></div><a class="fm-attributes__button fm-attributes__button--primary" href="{% url 'catalog:brand_create' %}">Добавить бренд</a></div>
+<form method="get" class="fb-search"><div><label for="brand-search">Поиск по названию или стране</label><input type="search" id="brand-search" name="search" value="{{ search }}"></div><button type="submit" class="fm-attributes__button">Найти</button>{% if search %}<a class="fm-attributes__button" href="{% url 'catalog:brand_list_manage' %}">Сбросить</a>{% endif %}</form>
+<p class="fm-attributes__hint">{% if search %}Найдено{% else %}Всего{% endif %}: {{ total }}. Меньшее число порядка выводится раньше.</p>
+{% if brands %}<form method="post">{% csrf_token %}<table class="fm-attributes__table"><caption class="fm-attributes__sr">Бренды и порядок сортировки</caption><thead><tr><th scope="col">Бренд</th><th scope="col">Страна</th><th scope="col">Порядок</th><th scope="col">Действия</th></tr></thead><tbody>
+{% for brand in brands %}<tr><td><div class="fb-brand">{% if brand.logo %}<img src="{{ brand.logo.url }}" alt="{{ brand.name }}" loading="lazy" decoding="async">{% else %}<span class="fb-no-logo">Без логотипа</span>{% endif %}<div><a class="fb-title" href="{% url 'catalog:brand_edit' brand.pk %}">{{ brand.name }}</a><a class="fb-public" href="{{ brand.get_absolute_url }}" target="_blank" rel="noopener" aria-label="Открыть страницу бренда {{ brand.name }} в новой вкладке">Страница бренда ↗</a></div></div></td><td><span class="fm-attributes__label" aria-hidden="true">Страна</span>{{ brand.country|default:"—" }}</td><td><label class="fb-order-label" for="brand-order-{{ brand.pk }}">Порядок: {{ brand.name }}</label><input type="number" id="brand-order-{{ brand.pk }}" name="sort_order_{{ brand.pk }}" value="{{ brand.sort_order }}" min="0" step="1"></td><td class="fm-attributes__links"><a href="{% url 'catalog:brand_edit' brand.pk %}" aria-label="Изменить бренд: {{ brand.name }}">Изменить</a><a class="fm-attributes__delete" href="{% url 'catalog:brand_delete' brand.pk %}" aria-label="Удаление бренда: {{ brand.name }}">Удаление</a></td></tr>{% endfor %}
+</tbody></table><div class="fm-attributes__actions"><button type="submit" class="fm-attributes__button fm-attributes__button--primary">Сохранить порядок</button></div></form>
+{% else %}<div class="fm-attributes__empty"><h2>{% if search %}Брендов по запросу не найдено{% else %}Брендов пока нет{% endif %}</h2><p>{% if search %}Измените запрос или сбросьте поиск.{% else %}Добавьте бренд, если он нужен для ваших изделий.{% endif %}</p></div>{% endif %}
+</section>{% endblock %}
