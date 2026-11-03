@@ -9,8 +9,10 @@ from django.urls import include, path
 from apps.home.views import home
 from apps.home.legal_views import public_offer, privacy_policy, personal_data_consent
 from apps.products.sitemaps import sitemaps
+from .seo_views import robots_txt
 
 urlpatterns = [
+    path('robots.txt', robots_txt, name='robots_txt'),
     path('sitemap.xml', sitemap_views.index,
          {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemap_section'}, name='sitemap'),
     path('sitemap-<section>.xml', sitemap_views.sitemap,
