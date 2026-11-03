@@ -88,8 +88,8 @@
                     <td>
                         <form method="post" action="{% url 'users:appointment_update_status' appointment.id %}" class="status-form">
                             {% csrf_token %}
-                            <select name="status" aria-label="Статус записи {{ appointment.id }}">
-                                <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Ожидает</option>
+                            <select name="status" aria-label="Статус записи {{ appointment.id }}" required>
+                                {% if appointment.status == 'pending' or appointment.status == 'new' %}<option value="" disabled selected>Выберите статус</option>{% endif %}
                                 <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Подтверждена</option>
                                 <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Завершена</option>
                                 <option value="cancelled" {% if appointment.status == 'cancelled' %}selected{% endif %}>Отменена</option>
