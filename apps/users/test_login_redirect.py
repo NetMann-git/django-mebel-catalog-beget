@@ -9,7 +9,7 @@ from apps.users.test_furniture_login import Inputs
 class LoginRedirectTests(TestCase):
     def test_guest_redirects_reach_login_with_original_path_and_query(self):
         names = ['users:dashboard', 'users:profile_edit', 'users:appointments',
-                 'users:favorites', 'users:reviews', 'users:manager_dashboard',
+                 'users:reviews', 'users:manager_dashboard',
                  'users:consultant_dashboard', 'users:consultant_calendar',
                  'users:consultant_create_appointment']
         for name in names:

@@ -33,7 +33,7 @@ class FurnitureDashboardTests(TestCase):
         self.assertEqual(response.status_code, 200)
         for key in ['appointments_count', 'favorites_count', 'reviews_count']:
             self.assertEqual(response.context[key], 1)
-        for name in ['users:appointments', 'users:favorites', 'users:reviews', 'users:profile_edit', 'catalog:catalog']:
+        for name in ['users:appointments', 'wishlist:list', 'users:reviews', 'users:profile_edit', 'catalog:catalog']:
             self.assertContains(response, f'href="{reverse(name)}"')
         for text in ['furniture-dashboard.css', 'furniture-reference.css', 'noindex, nofollow', 'width=device-width', self.user.username]:
             self.assertContains(response, text)

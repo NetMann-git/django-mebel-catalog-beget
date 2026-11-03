@@ -23,7 +23,7 @@ class FurnitureAccountFavoritesTests(TestCase):
         self.client.force_login(self.user)
 
     def test_account_and_public_wishlist_have_same_published_selection_and_actions(self):
-        account = self.client.get(self.url)
+        account = self.client.get(self.url, follow=True)
         public = self.client.get(reverse('wishlist:list'))
         self.assertEqual(account.status_code, 200)
         self.assertEqual([p.pk for p in account.context['products']], [self.product.pk])
@@ -31,7 +31,7 @@ class FurnitureAccountFavoritesTests(TestCase):
         self.assertEqual(account.context['wishlist_ids'], [self.product.pk])
         for text in ['furniture-wishlist.css', '/media/products/original-account-oak.jpg',
                      'id="wishlist-products"', 'id="clear-wishlist"', 'В избранном',
-                     reverse('catalog:comparison'), reverse('users:dashboard')]:
+                     reverse('catalog:comparison'), reverse('catalog:catalog')]:
             self.assertContains(account, text)
         for product in [self.hidden, self.foreign]:
             self.assertNotContains(account, product.title)
@@ -39,28 +39,40 @@ class FurnitureAccountFavoritesTests(TestCase):
         self.assertEqual(Favorite.objects.count(), 3)
         self.assertEqual(self.client.get(reverse('users:dashboard')).context['favorites_count'], 1)
 
-    def test_guest_still_has_to_login_for_account_url(self):
+    def test_old_address_redirects_guests_and_keeps_session_wishlist(self):
         client = Client()
+        session = client.session
+        session['wishlist'] = [self.product.pk]
+        session.save()
         response = client.get(self.url, follow=True)
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.redirect_chain[0][0], reverse('users:login') + '?next=' + self.url)
-        self.assertNotContains(response, self.product.title)
+        self.assertEqual(response.redirect_chain, [(reverse('wishlist:list'), 302)])
+        self.assertContains(response, self.product.title)
+        self.assertTrue(response.context['is_guest'])
+        self.assertNotIn('_auth_user_id', client.session)
+
+    def test_old_address_redirects_logged_in_user_without_changing_favorites(self):
+        response = self.client.get(self.url, follow=True)
+        self.assertEqual(response.redirect_chain, [(reverse('wishlist:list'), 302)])
+        self.assertEqual(Favorite.objects.count(), 3)
+        dashboard = self.client.get(reverse('users:dashboard'))
+        self.assertContains(dashboard, 'href="' + reverse('wishlist:list') + '"')
+        self.assertNotContains(dashboard, 'href="' + self.url + '"')
 
     def test_unpublishing_keeps_reference_and_republishing_restores_item(self):
         self.product.is_active = False
         self.product.save(update_fields=['is_active'])
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, follow=True)
         self.assertEqual(response.context['products'], [])
         self.assertContains(response, 'Сохраните понравившуюся мебель')
         self.assertEqual(self.client.get(reverse('users:dashboard')).context['favorites_count'], 0)
         self.assertEqual(Favorite.objects.filter(user=self.user).count(), 2)
         self.product.is_active = True
         self.product.save(update_fields=['is_active'])
-        self.assertEqual([p.pk for p in self.client.get(self.url).context['products']], [self.product.pk])
+        self.assertEqual([p.pk for p in self.client.get(self.url, follow=True).context['products']], [self.product.pk])
 
     def test_existing_recommendations_are_retained(self):
         with patch('apps.wishlist.views.RecommendationService.get_similar_products', return_value=[self.foreign]) as recommend:
-            response = self.client.get(self.url)
+            response = self.client.get(self.url, follow=True)
         self.assertEqual(response.context['recommended_products'], [self.foreign])
         self.assertContains(response, 'Возможно, вам понравится')
         self.assertContains(response, self.foreign.title)
@@ -68,7 +80,7 @@ class FurnitureAccountFavoritesTests(TestCase):
 
     def test_toggle_and_clear_use_existing_csrf_endpoints_and_only_own_records(self):
         client = Client(enforce_csrf_checks=True); client.force_login(self.user)
-        response = client.get(self.url)
+        response = client.get(self.url, follow=True)
         self.assertEqual(response.status_code, 200)
         token = client.cookies['csrftoken'].value
         toggle = reverse('wishlist:toggle', args=[self.product.pk])

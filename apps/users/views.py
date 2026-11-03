@@ -12,7 +12,6 @@ from apps.products.models import Product
 from .decorators import role_required
 from .constants import ROLE_MANAGER, ROLE_ADMIN
 from apps.wishlist.services import wishlist_products
-from apps.wishlist.views import WishlistView
 from apps.reviews.models import Review
 from .forms import UserRegistrationForm, ProfileEditForm
 from django.db import transaction
@@ -174,13 +173,9 @@ def appointments_history(request):
     return render(request, 'users/appointments_history.html', {'appointments': appointments})
 
 
-@login_required
 def favorites_list(request):
-    """Список избранных товаров."""
-    return WishlistView.as_view(
-        template_name='users/favorites_list.html',
-        extra_context={'in_account': True},
-    )(request)
+    """Совместимость старого адреса с единственной страницей избранного."""
+    return redirect('wishlist:list')
 
 
 @login_required
