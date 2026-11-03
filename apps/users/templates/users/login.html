@@ -1,48 +1,14 @@
-<!-- apps/users/templates/users/login.html -->
-{% extends 'base.html' %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'users/css/auth.css' %}">
-{% endblock %}
-
-{% block title %}Вход{% endblock %}
-
-{% block content %}
-<div class="auth-container">
-    <h2>Вход в личный кабинет</h2>
-    
-    {% if form.errors %}
-        <div class="alert alert-error">
-            Неверное имя пользователя или пароль. Попробуйте снова.
-        </div>
-    {% endif %}
-    
-    <form method="post" action="{% url 'users:login' %}">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="id_username">Имя пользователя</label>
-            <input type="text" name="username" id="id_username" class="form-control" required autofocus>
-        </div>
-        
-        <div class="form-group">
-            <label for="id_password">Пароль</label>
-            <input type="password" name="password" id="id_password" class="form-control" required>
-        </div>
-        
-        <input type="hidden" name="next" value="{{ next }}">
-        <button type="submit" class="btn-primary">Войти</button>
-    </form>
-    
-    <div class="auth-links" style="text-align: center; margin-top: 15px;">
-        <a href="{% url 'users:password_reset' %}" style="color: #666; font-size: 14px;">
-            Забыли пароль?
-        </a>
-    </div>
-    
-    <div class="auth-link" style="margin-top: 10px;">
-        Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a>
-    </div>
-</div>
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Вход в личный кабинет — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow"><meta name="description" content="Вход в личный кабинет LUSTRID.RU.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-login.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fl-page">
+<nav class="fl-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Личный кабинет</span></nav>
+<section class="fl-panel" aria-labelledby="login-title"><p class="fm-eyebrow">LUSTRID.RU</p><h1 id="login-title">Вход в личный кабинет</h1><p class="fl-intro">Введите имя пользователя и пароль.</p>
+{% if form.errors %}<div class="fl-error" role="alert">Неверное имя пользователя или пароль. Попробуйте снова.</div>{% endif %}
+<form method="post" action="{% url 'users:login' %}">{% csrf_token %}
+<div class="fl-field"><label for="id_username">Имя пользователя</label><input type="text" name="username" id="id_username" value="{{ form.username.value|default_if_none:'' }}" maxlength="{{ form.username.field.max_length }}" autocomplete="username" required autofocus{% if form.errors %} aria-invalid="true"{% endif %}></div>
+<div class="fl-field"><label for="id_password">Пароль</label><input type="password" name="password" id="id_password" autocomplete="current-password" required{% if form.errors %} aria-invalid="true"{% endif %}></div>
+<input type="hidden" name="next" value="{{ next }}"><button type="submit" class="fm-button">Войти <span aria-hidden="true">→</span></button>
+</form><div class="fl-links"><a href="{% url 'users:password_reset' %}">Забыли пароль?</a><p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p><a href="{% url 'catalog:catalog' %}">Вернуться в каталог →</a></div>
+</section></div>{% endblock %}
