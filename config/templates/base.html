@@ -11,7 +11,7 @@
             {% if page %}
                 {% if page.seo_title %}{{ page.seo_title }}{% else %}{{ page.title }}{% endif %}
             {% else %}
-                Подберем АВТО — автомобили из Южной Кореи и Китая
+                LUSTRID.RU — мебель на заказ
             {% endif %}
         {% endblock %}
         {% block title_suffix %}
@@ -23,12 +23,12 @@
     {% if page and page.search_description %}
         <meta name="description" content="{{ page.search_description }}" />
     {% else %}
-        <meta name="description" content="Подбор, выкуп и доставка автомобилей из Южной Кореи и Китая. Полное сопровождение сделки под ключ." />
+        <meta name="description" content="Мебель и столярные изделия на заказ для дома и бизнеса. Индивидуальные размеры, подбор материалов и сборка." />
     {% endif %}
 
     <meta name="robots" content="index, follow">
-    <meta property="og:title" content="{% if page and page.seo_title %}{{ page.seo_title }}{% else %}Подберем АВТО — автомобили из Кореи и Китая{% endif %}">
-    <meta property="og:description" content="{% if page and page.search_description %}{{ page.search_description }}{% else %}Подбор, выкуп и доставка автомобилей из Южной Кореи и Китая под ключ.{% endif %}">
+    <meta property="og:title" content="{% if page and page.seo_title %}{{ page.seo_title }}{% else %}LUSTRID.RU — мебель на заказ{% endif %}">
+    <meta property="og:description" content="{% if page and page.search_description %}{{ page.search_description }}{% else %}Мебель и столярные изделия на заказ для дома и бизнеса. Индивидуальные размеры, подбор материалов и сборка.{% endif %}">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ request.build_absolute_uri }}">
     <meta property="og:locale" content="ru_RU">
