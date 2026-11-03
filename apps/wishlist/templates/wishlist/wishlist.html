@@ -1,65 +1,20 @@
-<!-- apps\wishlist\templates\wishlist\wishlist.html -->
-
-{% extends "base.html" %}
-{% load static %}
-
-{% block extra_css %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'products/css/catalog/catalog.css' %}">
-    <link rel="stylesheet" href="{% static 'products/css/availability.css' %}">
-    <link rel="stylesheet" href="{% static 'wishlist/css/wishlist-page.css' %}">
-{% endblock %}
-
-{% block title %}Избранное{% endblock %}
-
-{% block content %}
-<div class="container wishlist-page">
-    <!-- Хлебные крошки -->
-    <nav class="breadcrumbs" aria-label="Хлебные крошки">
-        <a href="/">Главная</a>
-        <span>/</span>
-        <span>Избранное</span>
-    </nav>
-    <header class="wishlist-page__header">
-        <div>
-            <p class="wishlist-page__eyebrow">Ваш выбор</p>
-            <h1>Избранные автомобили <span class="wishlist-page__count" data-wishlist-count>{{ products|length }}</span></h1>
-            <p class="wishlist-page__intro">Сохраняйте интересные варианты, сравнивайте и выбирайте автомобиль для себя.</p>
-        </div>
-        <a class="wishlist-page__catalog" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a>
-    </header>
-
-    <!-- Блок с карточками товаров (виден, если есть товары) -->
-    <div id="wishlist-products" {% if not products %}style="display:none;"{% endif %}>
-        <div class="product-grid products-grid" id="wishlist-grid">
-            {% for product in products %}
-                {% include "products/_product_card.html" with product=product %}
-            {% endfor %}
-        </div>
-
-        <button type="button"
-                id="clear-wishlist"
-                class="wishlist-page__clear"
-                data-url="{% url 'wishlist:clear' %}">
-            Очистить избранное
-        </button>
-
-        {% if is_guest %}
-            <p class="wishlist-note">
-                Вы сохраняете автомобили как гость. Список связан с текущей сессией браузера.
-                <a href="{% url 'users:login' %}?next={{ request.path }}">Войдите</a> или зарегистрируйтесь, для работы с избранным в личном кабинете.
-            </p>
-        {% endif %}
-    </div>
-
-    <!-- Сообщение, если избранное пусто -->
-    <div class="wishlist-page__empty" id="empty-wishlist" {% if products %}style="display:none;"{% endif %}>
-        <div class="wishlist-page__empty-icon" aria-hidden="true">♡</div>
-        <h2>Здесь будут ваши избранные автомобили</h2>
-        <p>Нажмите «В избранное» на понравившейся карточке — автомобиль появится в этом списке.</p>
-        <a href="{% url 'catalog:catalog' %}" class="wishlist-page__catalog wishlist-page__catalog--primary">Перейти в каталог</a>
-    </div>
-
-    {% include "recommendations/_recommended_block.html" with recommended_products=recommended_products wishlist_ids=wishlist_ids %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Избранная мебель — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'wishlist/css/furniture-wishlist.css' %}">{% endblock %}
+{% block furniture_content %}
+<div class="fm-container fc-page fw-page">
+  <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог мебели</a><span aria-hidden="true">/</span><span aria-current="page">Избранное</span></nav>
+  <header class="fc-heading"><div><p class="fm-eyebrow">Ваш выбор</p><h1>Избранная мебель <span class="fw-count" data-wishlist-count aria-live="polite">{{ products|length }}</span></h1><p>Сохраняйте понравившиеся изделия, чтобы вернуться к ним<br>и обсудить размеры, материалы и детали проекта.</p></div><a class="fm-button" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a></header>
+  <nav class="fc-tools" aria-label="Сохранённые подборки"><a href="{% url 'catalog:comparison' %}">Сравнение <span data-comparison-count>{{ comparison_ids|length }}</span></a><a href="{% url 'catalog:recently_viewed' %}">Недавно смотрели</a></nav>
+  <div id="wishlist-products" {% if not products %}style="display:none;"{% endif %}>
+    <div id="wishlist-grid" class="fc-product-grid products-grid">{% for product in products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div>
+    <button type="button" id="clear-wishlist" class="fw-clear" data-url="{% url 'wishlist:clear' %}">Очистить избранное</button>
+  </div>
+  <div class="fw-empty" id="empty-wishlist" {% if products %}style="display:none;"{% endif %}>
+    <span class="fw-empty__icon" aria-hidden="true">♡</span><h2>Сохраните понравившуюся мебель</h2><p>Нажмите «В избранное» на карточке изделия — оно появится здесь.</p><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a>
+  </div>
+  {% if is_guest %}<p class="fw-note">Ваш список связан с текущей сессией браузера. <a href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Войти в личный кабинет</a></p>{% endif %}
+  {% if recommended_products %}<section class="recommended-section fw-recommendations" aria-labelledby="fw-recommendations-title"><h2 id="fw-recommendations-title">Возможно, вам понравится</h2><div class="fc-product-grid products-grid">{% for product in recommended_products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div></section>{% endif %}
 </div>
 {% endblock %}

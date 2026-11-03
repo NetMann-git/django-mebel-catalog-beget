@@ -4,13 +4,16 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.shortcuts import get_object_or_404
 from django.views.generic import ListView
-from django.contrib.auth import login
+from django.views.decorators.csrf import ensure_csrf_cookie
+from django.utils.decorators import method_decorator
 
 from apps.products.models import Product
 from apps.recommendations.services import RecommendationService
 from .models import Favorite
+from .services import wishlist_products
 
 
+@method_decorator(ensure_csrf_cookie, name="dispatch")
 class WishlistView(ListView):
     model = Favorite
     template_name = "wishlist/wishlist.html"
@@ -19,20 +22,18 @@ class WishlistView(ListView):
 
     def get_queryset(self):
         if self.request.user.is_authenticated:
-            return Favorite.objects.filter(user=self.request.user).select_related("product")
+            return Favorite.objects.filter(
+                user=self.request.user, product__is_active=True,
+            ).select_related("product")
         return Favorite.objects.none()  # для гостей пустой queryset, товары будем брать из сессии
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        if self.request.user.is_authenticated:
-            # Для авторизованных: список товаров уже в favorites
-            products = [f.product for f in context["favorites"]]
-            wishlist_ids = list(self.request.user.favorites.values_list("product_id", flat=True))
-        else:
-            # Для гостей: берём товары из сессии
-            wishlist_ids = self.request.session.get('wishlist', [])
-            products = Product.objects.filter(id__in=wishlist_ids, is_active=True)
+        products = list(wishlist_products(self.request).select_related(
+            "category",
+        ).prefetch_related("badges"))
+        wishlist_ids = [product.pk for product in products]
 
         # Получаем рекомендации для страницы «Избранное»
         recommended_products = RecommendationService.get_similar_products(
@@ -60,7 +61,7 @@ def toggle_wishlist(request, product_id):
             is_favorite = False
         else:
             is_favorite = True
-        count = Favorite.objects.filter(user=request.user).count()
+        count = wishlist_products(request).count()
     else:
         wishlist = request.session.get('wishlist', [])
         if product.id in wishlist:
@@ -70,7 +71,7 @@ def toggle_wishlist(request, product_id):
             wishlist.append(product.id)
             is_favorite = True
         request.session['wishlist'] = wishlist
-        count = len(wishlist)
+        count = wishlist_products(request).count()
 
     return JsonResponse({
         "is_favorite": is_favorite,
