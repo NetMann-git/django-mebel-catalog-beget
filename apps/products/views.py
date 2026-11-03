@@ -319,6 +319,7 @@ def remove_from_comparison(request, product_id):
     return redirect(request.META.get('HTTP_REFERER', 'catalog:catalog'))
 
 
+@ensure_csrf_cookie
 def comparison_list(request):
     products = ComparisonService.get_products(request)
 
@@ -337,6 +338,10 @@ def comparison_list(request):
         'products': products,
         'attributes_rows': attributes_rows,
         'recommended_products': recommended_products,
+        'comparison_limit': MAX_COMPARISON_ITEMS,
+        'wishlist_ids': list(
+            request.user.favorites.values_list('product_id', flat=True)
+        ) if request.user.is_authenticated else request.session.get('wishlist', []),
     }
 
     return render(

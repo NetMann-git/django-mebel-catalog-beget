@@ -1,62 +1,27 @@
-<!-- apps/products/templates/products/comparison.html -->
-
-{% extends "base.html" %}
-{% load price_format l10n %}
-{% load static %}
-{% load thumbnail %}
-{% load comparison_filters %}
-
-{% block extra_css %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'products/css/catalog/catalog.css' %}">
-    <link rel="stylesheet" href="{% static 'products/css/availability.css' %}">
-    <link rel="stylesheet" href="{% static 'wishlist/css/wishlist-page.css' %}">
-    <link rel="stylesheet" href="{% static 'products/css/comparison-page.css' %}">
-{% endblock %}
-
-{% block title %}Сравнение автомобилей{% endblock %}
-
-{% block content %}
-<div class="container wishlist-page comparison-page">
-
-    <!-- Хлебные крошки -->
-    <nav class="breadcrumbs" aria-label="Хлебные крошки">
-        <a href="/">Главная</a>
-        <span>/</span>
-        <a href="/catalog/">Каталог</a>
-        <span>/</span>
-        <span>Сравнение автомобилей</span>
-    </nav>
-
-    <header class="wishlist-page__header">
-        <div>
-            <p class="wishlist-page__eyebrow">Выбирайте по важным деталям</p>
-            <h1>Сравнение автомобилей <span class="wishlist-page__count" data-comparison-count>{{ products|length }}</span></h1>
-            <p class="wishlist-page__intro">Сопоставьте цены и характеристики. Откройте карточку автомобиля, чтобы узнать подробности.</p>
-        </div>
-        <a class="wishlist-page__catalog" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a>
-    </header>
-    <div class="wishlist-page__empty" id="empty-message" {% if products %}style="display:none;"{% endif %}>
-        <div class="wishlist-page__empty-icon" aria-hidden="true">⇄</div>
-        <h2>Какие автомобили сравним?</h2>
-        <p>Нажмите «Сравнить» на карточках интересующих автомобилей — здесь появится таблица их характеристик.</p>
-        <a class="wishlist-page__catalog wishlist-page__catalog--primary" href="{% url 'catalog:catalog' %}">Перейти в каталог</a>
-    </div>
-
+{% extends 'home/furniture_base.html' %}{% load static price_format comparison_filters %}
+{% block title %}Сравнение мебели — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'products/css/furniture-comparison.css' %}">{% endblock %}
+{% block furniture_content %}
+<div class="fm-container fc-page fm-compare">
+  <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог мебели</a><span aria-hidden="true">/</span><span aria-current="page">Сравнение</span></nav>
+  <header class="fc-heading"><div><p class="fm-eyebrow">Выбирайте по важным деталям</p><h1>Сравнение мебели <span class="fm-compare__count" data-comparison-count aria-live="polite">{{ products|length }}</span></h1><p>Сопоставьте цены, материалы и характеристики изделий.<br>Можно сравнить до {{ comparison_limit }} изделий одновременно.</p></div><a class="fm-button" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a></header>
+  <nav class="fc-tools" aria-label="Сохранённые подборки"><a href="{% url 'wishlist:list' %}">Избранное <span data-wishlist-count>{{ wishlist_count }}</span></a><a href="{% url 'catalog:recently_viewed' %}">Недавно смотрели</a></nav>
+  <div class="fm-compare__empty" id="empty-message" {% if products %}style="display:none;"{% endif %}><span class="fm-compare__empty-icon" aria-hidden="true">⇄</span><h2>Какую мебель сравним?</h2><p>Нажмите «Сравнить» на понравившихся карточках — здесь появится таблица характеристик.</p><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a></div>
     <!-- Таблица сравнения -->
     <div id="comparison-table-wrapper" {% if not products %}style="display:none;"{% endif %}>
-        <p class="comparison-page__hint" id="comparison-scroll-hint">Если таблица не помещается на экране, прокрутите её по горизонтали →</p>
-        <div class="comparison-page__scroll" role="region" aria-label="Таблица сравнения автомобилей" aria-describedby="comparison-scroll-hint" tabindex="0">
-        <table class="comparison-table" id="comparison-table">
+        <p class="fm-compare__hint" id="comparison-scroll-hint">Если таблица не помещается на экране, прокрутите её по горизонтали →</p>
+        <div class="fm-compare__scroll" role="region" aria-label="Таблица сравнения мебели" aria-describedby="comparison-scroll-hint" tabindex="0">
+        <table class="fm-compare__table" id="comparison-table" style="--comparison-columns: {{ products|length }}">
             <thead>
                 <tr>
-                    <th scope="col">Автомобиль</th>
+                    <th scope="col">Изделие</th>
                     {% for product in products %}
                         <th scope="col" data-product-id="{{ product.id }}">
-                            <a class="comparison-page__car" href="{{ product.get_absolute_url }}">
+                            <a class="fm-compare__product" href="{{ product.get_absolute_url }}">
                                 {% if product.image %}
-                                <img src="{% thumbnail product.image 400x300 crop %}" alt="{{ product.title }}" width="400" height="300" loading="lazy">
-                                {% else %}<span class="comparison-page__placeholder">Нет фото</span>{% endif %}
+                                <img src="{{ product.image.url }}" alt="{{ product.title }}" decoding="async" loading="lazy">
+                                {% else %}<span class="fm-compare__placeholder">Фото пока нет</span>{% endif %}
                                 <span>{{ product.title }}</span>
                             </a>
                             <button class="compare-btn remove-btn"
@@ -71,14 +36,14 @@
                 <tr>
                     <th scope="row">Цена</th>
                     {% for product in products %}
-                        <td data-product-id="{{ product.id }}"><strong class="comparison-page__price">{{ product.price|price_format }} {% if product.currency == "RUB" %}₽{% else %}{{ product.currency }}{% endif %}</strong></td>
+                        <td data-product-id="{{ product.id }}"><strong class="fm-compare__price">{{ product.price|price_format }} {% if product.currency == "RUB" %}₽{% elif product.currency == "USD" %}${% elif product.currency == "EUR" %}€{% else %}{{ product.currency }}{% endif %}</strong></td>
                     {% endfor %}
                 </tr>
                 <tr>
                     <th scope="row">Наличие</th>
                     {% for product in products %}
                         <td data-product-id="{{ product.id }}">
-                            <span class="availability-status availability-{{ product.availability_status }}">
+                            <span class="fm-compare__availability">
                                 {{ product.get_availability_status_display }}
                             </span>
                         </td>
@@ -108,9 +73,10 @@
             </tbody>
         </table>
         </div>
-        <a href="{% url 'catalog:catalog' %}" class="wishlist-page__catalog comparison-back-link">Вернуться в каталог</a>
+        <a href="{% url 'catalog:catalog' %}" class="fm-compare__back comparison-back-link">Вернуться в каталог</a>
     </div>
 
-    {% include "recommendations/_recommended_block.html" with recommended_products=recommended_products %}
+
+  {% if recommended_products %}<section class="recommended-section fm-compare__recommendations" aria-labelledby="comparison-recommendations-title"><h2 id="comparison-recommendations-title">Возможно, вам понравится</h2><div class="fc-product-grid products-grid">{% for product in recommended_products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div></section>{% endif %}
 </div>
 {% endblock %}
