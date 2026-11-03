@@ -4,6 +4,7 @@
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     {% block favicon %}<link rel="icon" type="image/x-icon" href="{% static 'home/images/favicon.ico' %}">{% endblock %}
     <title>
         {% block title %}
@@ -25,7 +26,6 @@
         <meta name="description" content="Подбор, выкуп и доставка автомобилей из Южной Кореи и Китая. Полное сопровождение сделки под ключ." />
     {% endif %}
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="index, follow">
     <meta property="og:title" content="{% if page and page.seo_title %}{{ page.seo_title }}{% else %}Подберем АВТО — автомобили из Кореи и Китая{% endif %}">
     <meta property="og:description" content="{% if page and page.search_description %}{{ page.search_description }}{% else %}Подбор, выкуп и доставка автомобилей из Южной Кореи и Китая под ключ.{% endif %}">
