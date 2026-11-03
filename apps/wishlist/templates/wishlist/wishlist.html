@@ -4,7 +4,7 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'wishlist/css/furniture-wishlist.css' %}">{% endblock %}
 {% block furniture_content %}
 <div class="fm-container fc-page fw-page">
-  <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог мебели</a><span aria-hidden="true">/</span><span aria-current="page">Избранное</span></nav>
+  <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span>{% if in_account %}<a href="{% url 'users:dashboard' %}">Личный кабинет</a>{% else %}<a href="{% url 'catalog:catalog' %}">Каталог мебели</a>{% endif %}<span aria-hidden="true">/</span><span aria-current="page">Избранное</span></nav>
   <header class="fc-heading"><div><p class="fm-eyebrow">Ваш выбор</p><h1>Избранная мебель <span class="fw-count" data-wishlist-count aria-live="polite">{{ products|length }}</span></h1><p>Сохраняйте понравившиеся изделия, чтобы вернуться к ним<br>и обсудить размеры, материалы и детали проекта.</p></div><a class="fm-button" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a></header>
   <nav class="fc-tools" aria-label="Сохранённые подборки"><a href="{% url 'catalog:comparison' %}">Сравнение <span data-comparison-count>{{ comparison_ids|length }}</span></a><a href="{% url 'catalog:recently_viewed' %}">Недавно смотрели</a></nav>
   <div id="wishlist-products" {% if not products %}style="display:none;"{% endif %}>

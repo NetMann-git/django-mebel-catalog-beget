@@ -5,6 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const wishlistProducts = document.getElementById('wishlist-products');
     const emptyWishlist = document.getElementById('empty-wishlist');
 
+    const isWishlistPage = Boolean(wishlistGrid && wishlistProducts && emptyWishlist);
+
     // Делегирование событий: ловим клики по кнопкам избранного и очистки
     document.addEventListener('click', function(e) {
         const btn = e.target.closest('.wishlist-btn');
@@ -47,7 +49,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Если мы на странице избранного и карточка находится в рекомендациях,
                 // перемещаем её в список избранного (только визуальное перемещение)
-                if (window.location.pathname.includes('/wishlist/') && card) {
+                if (isWishlistPage && card) {
                     if (recommendedGrid && recommendedGrid.contains(card)) {
                         wishlistGrid.prepend(card);
                         wishlistProducts.style.display = 'block';
@@ -61,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Если на странице избранного и карточка в списке,
                 // перемещаем её в рекомендации (или удаляем, если рекомендаций нет)
-                if (window.location.pathname.includes('/wishlist/') && card) {
+                if (isWishlistPage && card) {
                     if (wishlistGrid && wishlistGrid.contains(card)) {
                         if (recommendedGrid) {
                             recommendedGrid.appendChild(card);

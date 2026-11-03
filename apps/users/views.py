@@ -11,7 +11,8 @@ from apps.appointments.models import Appointment, CallbackRequest
 from apps.products.models import Product
 from .decorators import role_required
 from .constants import ROLE_MANAGER, ROLE_ADMIN
-from apps.wishlist.models import Favorite
+from apps.wishlist.services import wishlist_products
+from apps.wishlist.views import WishlistView
 from apps.reviews.models import Review
 from .forms import UserRegistrationForm, ProfileEditForm
 from django.db import transaction
@@ -130,7 +131,7 @@ def dashboard(request):
         'user': user,
         'profile': user.profile,
         'appointments_count': Appointment.objects.filter(user=user).count(),
-        'favorites_count': Favorite.objects.filter(user=user).count(),
+        'favorites_count': wishlist_products(request).count(),
         'reviews_count': Review.objects.filter(user=user).count(),
     }
     return render(request, 'users/dashboard.html', context)
@@ -176,8 +177,10 @@ def appointments_history(request):
 @login_required
 def favorites_list(request):
     """Список избранных товаров."""
-    favorites = Favorite.objects.filter(user=request.user).select_related('product')
-    return render(request, 'users/favorites_list.html', {'favorites': favorites})
+    return WishlistView.as_view(
+        template_name='users/favorites_list.html',
+        extra_context={'in_account': True},
+    )(request)
 
 
 @login_required
