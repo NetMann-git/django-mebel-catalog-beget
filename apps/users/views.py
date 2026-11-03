@@ -288,22 +288,31 @@ def consultant_create_appointment(request):
         phone = request.POST.get('phone')
         email = request.POST.get('email', '')
         comment = request.POST.get('comment', '')
+        calendar_url = reverse('users:consultant_calendar')
+        try:
+            selected_date = datetime.strptime(date_str or '', '%Y-%m-%d').date()
+        except ValueError:
+            selected_date = None
+        if selected_date is not None:
+            calendar_url += '?date=' + selected_date.isoformat()
         
         if not date_str or not time_str or not name or not phone:
             messages.error(request, 'Заполните все обязательные поля.')
-            return redirect('users:consultant_calendar')
+            return redirect(calendar_url)
         
         try:
-            date = datetime.strptime(date_str, '%Y-%m-%d').date()
+            if selected_date is None:
+                raise ValueError('Invalid calendar date')
+            date = selected_date
             time = datetime.strptime(time_str, '%H:%M').time()
         except ValueError:
             messages.error(request, 'Неверный формат даты или времени.')
-            return redirect('users:consultant_calendar')
+            return redirect(calendar_url)
         
         # Проверяем, не занят ли слот
         if Appointment.objects.filter(date=date, time=time, status__in=['pending', 'confirmed']).exists():
             messages.error(request, f'Слот {time_str} на {date_str} уже занят.')
-            return redirect('users:consultant_calendar')
+            return redirect(calendar_url)
         
         # Создаём запись
         appointment = Appointment.objects.create(
@@ -316,7 +325,7 @@ def consultant_create_appointment(request):
             status='pending',
         )
         messages.success(request, f'Запись для {name} на {date} {time} создана.')
-        return redirect('users:consultant_calendar')
+        return redirect(calendar_url)
     
     return redirect('users:consultant_calendar')
 
