@@ -24,7 +24,7 @@
     {% endif %}
 
     <!-- Если пользователь менеджер или админ, показываем ссылку на панель менеджера -->
-    {% if user.profile.role in 'manager,admin' %}
+    {% if user.is_superuser or user.profile.role == 'manager' or user.profile.role == 'admin' %}
         <div style="margin: 20px 0; padding: 15px; background: #e8eaf6; border-radius: 8px; border-left: 4px solid #3f51b5;">
             <a href="{% url 'users:manager_dashboard' %}" 
                style="color: #3f51b5; font-weight: bold; font-size: 18px; text-decoration: none;">

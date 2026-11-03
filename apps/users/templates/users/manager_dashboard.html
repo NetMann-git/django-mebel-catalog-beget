@@ -1,133 +1,37 @@
-<!-- apps/users/templates/users/manager_dashboard.html -->
-{% extends 'base.html' %}
+{% extends 'home/furniture_base.html' %}
 {% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'users/css/consultant.css' %}">
-{% endblock %}
-
-{% block title %}Панель менеджера{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h1>📊 Панель менеджера</h1>
-    <p style="color: #666; margin-bottom: 20px;">Расширенная статистика салона на {{ today|date:"d.m.Y" }}</p>
-    
-    <!-- Ссылка на управление товарами -->
-    <div style="margin: 20px 0; padding: 15px; background: #e3f2fd; border-radius: 8px; border-left: 4px solid #2196F3;">
-        <a href="{% url 'catalog:product_list_manage' %}" 
-           style="color: #1976D2; font-weight: bold; font-size: 18px; text-decoration: none;">
-            📦 Управление товарами
-        </a>
-        <span style="color: #666; margin-left: 15px; font-size: 14px;">
-            (добавление, редактирование, удаление)
-        </span>
-        <a href="{% url 'recommendations:manage' %}" class="btn btn-primary">Управление рекомендациями</a>
-        <a href="{% url 'home:client_list_manage' %}" class="btn btn-primary">Наши клиенты</a>
-        <a href="{% url 'catalog:import_encar' %}" class="btn btn-primary">Импорт из Encar</a>
-        <a href="{% url 'catalog:category_list_manage' %}" class="btn btn-primary">Управление категориями</a>
-        <a href="{% url 'catalog:brand_list_manage' %}" class="btn btn-primary">Бренды</a>
-        <a href="{% url 'catalog:car_model_list' %}" class="btn btn-primary">Модели автомобилей</a>
-        <a href="{% url 'catalog:attribute_type_list_manage' %}" class="btn btn-primary">Типы характеристик</a>
-        <a href="{% url 'appointments:callback_request_list' %}" class="btn btn-primary">Обращения клиентов</a>
-    </div>
-    
-    <!-- Основная статистика -->
-    <div class="stats-grid">
-        <div class="stat-card-primary">
-            <span class="stat-number">{{ stats.total }}</span>
-            <span class="stat-label">Всего записей</span>
-        </div>
-        <div class="stat-card-success">
-            <span class="stat-number">{{ stats.today }}</span>
-            <span class="stat-label">Записей сегодня</span>
-        </div>
-        <div class="stat-card-warning">
-            <span class="stat-number">{{ stats.week }}</span>
-            <span class="stat-label">За неделю</span>
-        </div>
-        <div class="stat-card-info">
-            <span class="stat-number">{{ stats.month }}</span>
-            <span class="stat-label">За месяц</span>
-        </div>
-        <div class="stat-card-danger">
-            <span class="stat-number">{{ stats.pending }}</span>
-            <span class="stat-label">Ожидают</span>
-        </div>
-        <div class="stat-card-primary">
-            <span class="stat-number">{{ stats.confirmed }}</span>
-            <span class="stat-label">Подтверждены</span>
-        </div>
-    </div>
-    
-    <!-- Графики и детали -->
-    <div class="section-grid">
-        <div class="section-card">
-            <h3>📌 Статусы записей</h3>
-            <ul>
-                <li><span>Ожидают</span> <span>{{ stats.pending }}</span></li>
-                <li><span>Подтверждены</span> <span>{{ stats.confirmed }}</span></li>
-                <li><span>Завершены</span> <span>{{ stats.completed }}</span></li>
-                <li><span>Отменены</span> <span>{{ stats.cancelled }}</span></li>
-            </ul>
-        </div>
-        
-        <div class="section-card">
-            <h3>👗 Популярные товары</h3>
-            {% if popular_products %}
-                <ul>
-                    {% for product in popular_products %}
-                        <li>
-                            <span>{{ product.product__title|truncatechars:30 }}</span>
-                            <span>{{ product.count }} записей</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p style="color: #999;">Нет данных</p>
-            {% endif %}
-        </div>
-        
-        <div class="section-card">
-            <h3>⭐ Отзывы</h3>
-            <ul>
-                <li><span>Всего отзывов</span> <span>{{ review_stats.total }}</span></li>
-                <li>
-                    <span>Средний рейтинг</span>
-                    <span class="star-rating">
-                        ★ {{ review_stats.avg_rating|floatformat:1 }}
-                    </span>
-                </li>
-                <li><span>С фото</span> <span>{{ review_stats.with_photo }}</span></li>
-                <li><span>Проверенные</span> <span>{{ review_stats.verified }}</span></li>
-            </ul>
-        </div>
-        
-        <div class="section-card">
-            <h3>👤 Активность продавцов</h3>
-            {% if consultant_activity %}
-                <ul>
-                    {% for consultant in consultant_activity %}
-                        <li>
-                            <span>{{ consultant.user__first_name|default:consultant.user__username }}</span>
-                            <span>{{ consultant.count }} записей</span>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p style="color: #999;">Нет данных</p>
-            {% endif %}
-        </div>
-    </div>
-    
-    <!-- Кнопки навигации -->
-    <div style="margin-top: 30px; display: flex; gap: 15px; flex-wrap: wrap;">
-        <a href="{% url 'users:consultant_dashboard' %}" style="background: #6c757d; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
-            ← Панель продавца
-        </a>
-        <a href="{% url 'users:dashboard' %}" style="background: #c0392b; color: white; padding: 10px 20px; border-radius: 6px; text-decoration: none;">
-            Личный кабинет
-        </a>
-    </div>
-</div>
+{% block title %}Панель мастерской — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-manager.css' %}">{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-workshop" aria-labelledby="workshop-title">
+  <a class="fm-workshop__back" href="{% url 'users:dashboard' %}">← Личный кабинет</a>
+  <div class="fm-workshop__heading"><div><p class="fm-workshop__eyebrow">Управление мастерской</p><h1 id="workshop-title">Панель менеджера</h1><p>Изделия и обращения клиентов · {{ today|date:"d.m.Y" }}</p></div><a class="fm-workshop__button" href="{% url 'catalog:product_create' %}">Добавить изделие</a></div>
+  <div class="fm-workshop__stats" aria-label="Сводка мастерской">
+    <a href="{% url 'catalog:product_list_manage' %}" class="fm-workshop__stat"><strong>{{ catalog_stats.total }}</strong><span>Всего изделий</span></a>
+    <div class="fm-workshop__stat"><strong>{{ catalog_stats.published }}</strong><span>Опубликовано</span></div>
+    <div class="fm-workshop__stat"><strong>{{ catalog_stats.drafts }}</strong><span>Не опубликовано</span></div>
+    <a href="{% url 'appointments:callback_request_list' %}?status=new" class="fm-workshop__stat fm-workshop__stat--accent"><strong>{{ callback_stats.new }}</strong><span>Новые обращения</span></a>
+  </div>
+  <h2>Рабочие разделы</h2>
+  <nav class="fm-workshop__links" aria-label="Управление мастерской">
+    <a href="{% url 'catalog:product_list_manage' %}"><strong>Изделия</strong><span>Название, описание, цена и фотографии</span><b aria-hidden="true">→</b></a>
+    <a href="{% url 'appointments:callback_request_list' %}"><strong>Обращения клиентов</strong><span>Вопросы, заказы и обратные звонки</span><b aria-hidden="true">→</b></a>
+    <a href="{% url 'catalog:category_list_manage' %}"><strong>Категории</strong><span>Направления мебельного каталога</span><b aria-hidden="true">→</b></a>
+    <a href="{% url 'catalog:attribute_type_list_manage' %}"><strong>Характеристики</strong><span>Справочник параметров изделий</span><b aria-hidden="true">→</b></a>
+    <a href="{% url 'catalog:brand_list_manage' %}"><strong>Бренды</strong><span>Управление справочником брендов</span><b aria-hidden="true">→</b></a>
+    <a href="{% url 'recommendations:manage' %}"><strong>Рекомендации</strong><span>Управление рекомендациями изделий</span><b aria-hidden="true">→</b></a>
+  </nav>
+  <div class="fm-workshop__summary">
+    <section aria-labelledby="callback-summary-title"><h2 id="callback-summary-title">Обращения клиентов</h2><dl><div><dt>Всего</dt><dd>{{ callback_stats.total }}</dd></div><div><dt>Новые</dt><dd>{{ callback_stats.new }}</dd></div><div><dt>Обработаны</dt><dd>{{ callback_stats.processed }}</dd></div><div><dt>Отменены</dt><dd>{{ callback_stats.cancelled }}</dd></div></dl><a class="fm-workshop__text-link" href="{% url 'appointments:callback_request_list' %}">Открыть обращения →</a></section>
+    <section aria-labelledby="reviews-summary-title"><h2 id="reviews-summary-title">Отзывы об изделиях</h2><dl><div><dt>Всего</dt><dd>{{ review_stats.total }}</dd></div><div><dt>Средняя оценка</dt><dd>{% if review_stats.total %}{{ review_stats.avg_rating|floatformat:1 }} / 5{% else %}—{% endif %}</dd></div><div><dt>С фотографиями</dt><dd>{{ review_stats.with_photo }}</dd></div><div><dt>Проверенные</dt><dd>{{ review_stats.verified }}</dd></div></dl></section>
+  </div>
+  <details class="fm-workshop__extra"><summary>Статистика записей</summary>
+    <p>Отдельная статистика назначенных записей. Обращения через формы сайта учитываются выше.</p>
+    <dl class="fm-workshop__record-stats"><div><dt>Всего</dt><dd>{{ stats.total }}</dd></div><div><dt>Сегодня</dt><dd>{{ stats.today }}</dd></div><div><dt>За неделю</dt><dd>{{ stats.week }}</dd></div><div><dt>За месяц</dt><dd>{{ stats.month }}</dd></div><div><dt>Ожидают</dt><dd>{{ stats.pending }}</dd></div><div><dt>Подтверждены</dt><dd>{{ stats.confirmed }}</dd></div><div><dt>Завершены</dt><dd>{{ stats.completed }}</dd></div><div><dt>Отменены</dt><dd>{{ stats.cancelled }}</dd></div></dl>
+    <div class="fm-workshop__summary"><section><h3>Изделия в записях</h3><ul>{% for product in popular_products %}<li><span>{{ product.product__title }}</span><span>Записей: {{ product.count }}</span></li>{% empty %}<li>Нет данных</li>{% endfor %}</ul></section><section><h3>Записи по пользователям</h3><ul>{% for consultant in consultant_activity %}<li><span>{{ consultant.user__first_name|default:consultant.user__username|default:"Без пользователя" }}</span><span>Записей: {{ consultant.count }}</span></li>{% empty %}<li>Нет данных</li>{% endfor %}</ul></section></div>
+    <a class="fm-workshop__text-link" href="{% url 'users:consultant_dashboard' %}">Открыть панель записей →</a>
+  </details>
+  <details class="fm-workshop__extra"><summary>Дополнительные инструменты</summary><nav aria-label="Дополнительные инструменты"><a href="{% url 'home:client_list_manage' %}">Наши клиенты</a><a href="{% url 'catalog:import_encar' %}">Импорт из Encar</a><a href="{% url 'catalog:car_model_list' %}">Модели автомобилей</a></nav></details>
+</section>
 {% endblock %}

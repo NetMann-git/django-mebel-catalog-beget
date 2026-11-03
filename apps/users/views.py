@@ -7,7 +7,10 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 
-from apps.appointments.models import Appointment
+from apps.appointments.models import Appointment, CallbackRequest
+from apps.products.models import Product
+from .decorators import role_required
+from .constants import ROLE_MANAGER, ROLE_ADMIN
 from apps.wishlist.models import Favorite
 from apps.reviews.models import Review
 from .forms import UserRegistrationForm
@@ -20,12 +23,21 @@ from django.db.models.functions import TruncDay, TruncWeek, TruncMonth
 
 
 @login_required
+@role_required(ROLE_MANAGER, ROLE_ADMIN)
 def manager_dashboard(request):
-    """Панель менеджера с расширенной статистикой."""
-    if request.user.profile.role not in ['manager', 'admin']:
-        messages.error(request, 'У вас нет доступа к этой странице.')
-        return redirect('users:dashboard')
-    
+    """Workshop overview, retaining existing appointment statistics."""
+    catalog_stats = Product.objects.aggregate(
+        total=Count('pk'),
+        published=Count('pk', filter=Q(is_active=True)),
+        drafts=Count('pk', filter=Q(is_active=False)),
+    )
+    callback_stats = CallbackRequest.objects.aggregate(
+        total=Count('pk'),
+        new=Count('pk', filter=Q(status=CallbackRequest.STATUS_NEW)),
+        processed=Count('pk', filter=Q(status=CallbackRequest.STATUS_PROCESSED)),
+        cancelled=Count('pk', filter=Q(status=CallbackRequest.STATUS_CANCELLED)),
+    )
+
     today = timezone.now().date()
     week_ago = today - timedelta(days=7)
     month_ago = today - timedelta(days=30)
@@ -80,6 +92,8 @@ def manager_dashboard(request):
     )
     
     context = {
+        'catalog_stats': catalog_stats,
+        'callback_stats': callback_stats,
         'stats': stats,
         'popular_products': popular_products,
         'review_stats': review_stats,
