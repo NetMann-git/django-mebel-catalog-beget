@@ -15,8 +15,8 @@
 .fl-links a{text-decoration:underline;text-underline-offset:3px}
 @media(max-width:720px){.fl-page{padding-top:20px;padding-bottom:40px}.fl-breadcrumbs{font-size:11px;margin-bottom:25px}.fl-panel{padding:25px 20px}.fl-panel h1{font-size:28px}}
 /* шаг 27: registration reuses login layout and existing Django widgets. */
-.fl-register .fl-help{font-size:12px;line-height:1.6;color:#78836c}
-.fl-register .fl-help ul{margin:0;padding-left:18px}
-.fl-register .fl-field-errors{font-size:13px;line-height:1.6;color:#804936}
-.fl-register .errorlist{list-style:none;margin:0;padding:0}
-.fl-register input[aria-invalid=true]{border-color:#b4785c}
+.fl-register .fl-help,.fl-reset .fl-help{font-size:12px;line-height:1.6;color:#78836c}
+.fl-register .fl-help ul,.fl-reset .fl-help ul{margin:0;padding-left:18px}
+.fl-register .fl-field-errors,.fl-reset .fl-field-errors{font-size:13px;line-height:1.6;color:#804936}
+.fl-register .errorlist,.fl-reset .errorlist{list-style:none;margin:0;padding:0}
+.fl-register input[aria-invalid=true],.fl-reset input[aria-invalid=true]{border-color:#b4785c}
