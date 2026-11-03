@@ -79,7 +79,7 @@
                     </td>
                     <td>
                         {% if appointment.product %}
-                            {{ appointment.product.name|truncatechars:30 }}
+                            {{ appointment.product.title|truncatechars:30 }}
                         {% else %}
                             —
                         {% endif %}
