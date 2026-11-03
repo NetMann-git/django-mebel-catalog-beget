@@ -1,91 +1,15 @@
-<!-- apps/users/templates/users/dashboard.html -->
-{% extends "base.html" %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'users/css/auth.css' %}">
-    <link rel="stylesheet" type="text/css" href="{% static 'users/css/consultant.css' %}">
-{% endblock %}
-
-{% block title %}Личный кабинет{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h1>Личный кабинет</h1>
-    <p>Добро пожаловать, <strong>{{ user.username }}</strong>!</p>
-
-    <!-- Если пользователь продавец, показываем ссылку -->
-    {% if user.profile.role in 'consultant,manager,admin' %}
-        <div style="margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
-            <a href="{% url 'users:consultant_dashboard' %}" style="color: #c0392b; font-weight: bold; font-size: 18px;">
-                🛍️ Панель продавца
-            </a>
-        </div>
-    {% endif %}
-
-    <!-- Если пользователь менеджер или админ, показываем ссылку на панель менеджера -->
-    {% if user.is_superuser or user.profile.role == 'manager' or user.profile.role == 'admin' %}
-        <div style="margin: 20px 0; padding: 15px; background: #e8eaf6; border-radius: 8px; border-left: 4px solid #3f51b5;">
-            <a href="{% url 'users:manager_dashboard' %}" 
-               style="color: #3f51b5; font-weight: bold; font-size: 18px; text-decoration: none;">
-                📊 Панель менеджера
-            </a>
-            <span style="color: #666; margin-left: 15px; font-size: 14px;">
-                (расширенная статистика)
-            </span>
-        </div>
-    {% endif %}
-
-    <!-- Управление секцией «Наши клиенты» для менеджера, администратора и superuser -->
-    {% if user.is_superuser or user.profile.role == 'manager' or user.profile.role == 'admin' %}
-        <div style="margin: 20px 0; padding: 15px; background: #eef7ee; border-radius: 8px; border-left: 4px solid #2e7d32;">
-            <a href="{% url 'home:client_list_manage' %}"
-               style="color: #2e7d32; font-weight: bold; font-size: 18px; text-decoration: none;">
-                👥 Наши клиенты
-            </a>
-            <span style="color: #666; margin-left: 15px; font-size: 14px;">
-                (создание, редактирование и публикация карточек)
-            </span>
-        </div>
-    {% endif %}
-
-    <!-- Управление секцией «Наша команда» для менеджера, администратора и superuser -->
-    {% if user.is_superuser or user.profile.role == 'manager' or user.profile.role == 'admin' %}
-        <div style="margin: 20px 0; padding: 15px; background: #f7f2e7; border-radius: 8px; border-left: 4px solid #9b762d;">
-            <a href="{% url 'home:team_list_manage' %}" style="color: #79591f; font-weight: bold; font-size: 18px; text-decoration: none;">👤 Наша команда</a>
-            <span style="color: #666; margin-left: 15px; font-size: 14px;">(сотрудники, порядок и публикация)</span>
-        </div>
-    {% endif %}
-
-    <!-- Контактные данные главной страницы -->
-    {% if user.is_superuser or user.profile.role == 'manager' or user.profile.role == 'admin' %}
-        <div style="margin: 20px 0; padding: 15px; background: #eef3f8; border-radius: 8px; border-left: 4px solid #315f8c;">
-            <a href="{% url 'home:contacts_manage' %}" style="color: #315f8c; font-weight: bold; font-size: 18px; text-decoration: none;">☎ Контакты</a>
-            <span style="color: #666; margin-left: 15px; font-size: 14px;">(телефоны, адрес, карта и соцсети)</span>
-        </div>
-    {% endif %}
-
-    <div class="dashboard-stats">
-        <div class="stat-card">
-            <span class="stat-number">{{ appointments_count }}</span>
-            <span class="stat-label">Записей на примерку</span>
-            <a href="{% url 'users:appointments' %}">Посмотреть →</a>
-        </div>
-        <div class="stat-card">
-            <span class="stat-number">{{ favorites_count }}</span>
-            <span class="stat-label">Избранных товаров</span>
-            <a href="{% url 'users:favorites' %}">Посмотреть →</a>
-        </div>
-        <div class="stat-card">
-            <span class="stat-number">{{ reviews_count }}</span>
-            <span class="stat-label">Отзывов</span>
-            <a href="{% url 'users:reviews' %}">Посмотреть →</a>
-        </div>
-    </div>
-
-    <div class="dashboard-menu">
-        <a href="{% url 'users:profile_edit' %}" class="btn">Редактировать профиль</a>
-        <a href="{% url 'catalog:catalog' %}" class="btn-outline">В каталог</a>
-    </div>
-</div>
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Личный кабинет — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow"><meta name="description" content="Личный кабинет LUSTRID.RU.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fd-page">
+<nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Личный кабинет</span></nav>
+<header class="fd-heading"><div><p class="fm-eyebrow">LUSTRID.RU</p><h1>Личный кабинет</h1><p>Добро пожаловать, <strong>{{ user.username }}</strong>!</p></div><form method="post" action="{% url 'users:logout' %}">{% csrf_token %}<button class="fd-logout" type="submit">Выйти</button></form></header>
+{% if user.is_superuser or profile.role == 'consultant' or profile.role == 'manager' or profile.role == 'admin' %}<nav class="fd-workspace" aria-label="Рабочие разделы">
+{% if profile.role == 'consultant' or profile.role == 'manager' or profile.role == 'admin' %}<a href="{% url 'users:consultant_dashboard' %}"><span>Панель консультанта</span><span aria-hidden="true">→</span></a>{% endif %}
+{% if user.is_superuser or profile.role == 'manager' or profile.role == 'admin' %}<a href="{% url 'users:manager_dashboard' %}"><span>Управление мастерской</span><span aria-hidden="true">→</span></a><a href="{% url 'home:client_list_manage' %}"><span>Наши клиенты</span><span aria-hidden="true">→</span></a><a href="{% url 'home:team_list_manage' %}"><span>Наша команда</span><span aria-hidden="true">→</span></a><a href="{% url 'home:contacts_manage' %}"><span>Контакты</span><span aria-hidden="true">→</span></a>{% endif %}
+</nav>{% endif %}
+<form class="fd-search" method="get" action="{% url 'search:search' %}" data-smart-search role="search"><label for="cabinet-search">Поиск по каталогу</label><div><input id="cabinet-search" type="search" name="query" data-smart-search-input aria-controls="cabinet-search-suggestions" aria-expanded="false" autocomplete="off" placeholder="Например, шкаф"><button class="fm-button" type="submit">Найти →</button></div><div id="cabinet-search-suggestions" class="search-results" data-search-results aria-live="polite" style="display:none"></div></form>
+<section class="fd-stats" aria-label="Ваши разделы"><a class="fd-stat" href="{% url 'users:appointments' %}"><span class="fd-count">{{ appointments_count }}</span><h2>Записи</h2><span class="fd-stat-link">Посмотреть →</span></a><a class="fd-stat" href="{% url 'users:favorites' %}"><span class="fd-count">{{ favorites_count }}</span><h2>Избранные изделия</h2><span class="fd-stat-link">Посмотреть →</span></a><a class="fd-stat" href="{% url 'users:reviews' %}"><span class="fd-count">{{ reviews_count }}</span><h2>Отзывы</h2><span class="fd-stat-link">Посмотреть →</span></a></section>
+<nav class="fd-actions" aria-label="Действия в кабинете"><a class="fm-button" href="{% url 'users:profile_edit' %}">Редактировать профиль <span aria-hidden="true">→</span></a><a class="fd-catalog" href="{% url 'catalog:catalog' %}">В каталог →</a></nav>
+</div>{% endblock %}

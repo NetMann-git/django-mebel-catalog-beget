@@ -1,0 +1,29 @@
+/* шаг 29: account home keeps existing role links and personal counters. */
+.fd-page{padding-top:25px;padding-bottom:65px;min-height:70vh;overflow-wrap:anywhere}
+.fd-breadcrumbs{display:flex;flex-wrap:wrap;gap:12px;font-size:12px;color:#83877a;margin-bottom:34px}
+.fd-breadcrumbs a:hover{text-decoration:underline}
+.fd-heading{display:flex;justify-content:space-between;align-items:center;gap:24px;margin-bottom:32px}
+.fd-heading .fm-eyebrow{color:#7c846d;margin-bottom:10px}
+.fd-heading h1{font-size:40px;font-weight:500;line-height:1.2;letter-spacing:-1px}
+.fd-heading p:last-child{font-size:14px;line-height:1.7;color:#78836c;margin-top:15px}
+.fd-logout{font:inherit;font-size:13px;min-height:44px;padding:10px 24px;border:1px solid #c9cbbb;border-radius:3px;background:transparent;color:#58634e;cursor:pointer}
+.fd-workspace{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:32px}
+.fd-workspace a{display:flex;justify-content:space-between;align-items:center;gap:16px;background:#f0ede5;border:1px solid #e7e3d8;border-radius:3px;padding:20px;font-size:14px;min-height:64px}
+.fd-workspace a:hover{background:#e9e5d9}
+.fd-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin-bottom:32px}
+.fd-stat{display:block;padding:30px;border:1px solid #e7e3d8;border-radius:4px;background:#faf9f5}
+.fd-stat:hover{border-color:#9ca38d}
+.fd-count{display:block;font-size:38px;line-height:1.2;color:#65705b;margin-bottom:16px}
+.fd-stat h2{font-size:21px;line-height:1.4;font-weight:500;margin-bottom:22px}
+.fd-stat-link{font-size:13px;color:#78836c}
+.fd-actions{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.fd-actions .fm-button{background:#65705b;font-size:13px}
+.fd-catalog{font-size:13px;text-decoration:underline;text-underline-offset:3px}
+@media(max-width:720px){.fd-page{padding-top:20px;padding-bottom:40px}.fd-breadcrumbs{font-size:11px;margin-bottom:25px}.fd-heading{align-items:flex-start}.fd-heading h1{font-size:30px}.fd-logout{padding:10px 15px}.fd-workspace,.fd-stats{grid-template-columns:1fr;gap:14px}.fd-stat{padding:24px}.fd-count{font-size:32px}.fd-actions{align-items:stretch;flex-direction:column;gap:18px}.fd-actions .fm-button{justify-content:space-between}.fd-catalog{min-height:44px;display:inline-flex;align-items:center}}
+
+.fd-search{max-width:760px;margin-bottom:32px}
+.fd-search label{display:block;font-size:13px;color:#626b59;margin-bottom:10px}
+.fd-search>div:first-of-type{display:flex;gap:12px}
+.fd-search input{flex:1;min-width:0;font:inherit;font-size:16px;width:100%;padding:13px 14px;border:1px solid #dcdccf;border-radius:3px;background:#fafaf7;color:#32382c}
+.fd-search .fm-button{flex-shrink:0;background:#65705b}
+@media(max-width:720px){.fd-search>div:first-of-type{flex-direction:column}.fd-search .fm-button{min-height:44px;justify-content:center}}
