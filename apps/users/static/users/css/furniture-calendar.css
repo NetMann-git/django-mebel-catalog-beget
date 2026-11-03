@@ -1,0 +1,23 @@
+/* шаг 38: scoped calendar/modal overrides; existing slot script retained. */
+.fcal-page .calendar-nav{gap:16px;flex-wrap:wrap;margin:0 0 24px}
+.fcal-page .calendar-nav .btn,.fcal-page .btn-back{background:#65705b;color:#fff;border-radius:3px;min-height:44px;padding:12px 18px;font-size:13px}
+.fcal-page .current-date{font-size:22px;font-weight:500;color:#58634e}
+.fcal-page .calendar-grid{border-color:#e7e3d8;border-radius:4px}
+.fcal-page .calendar-header{background:#f0ede5;color:#626b59;font-size:13px;font-weight:500}
+.fcal-page .calendar-row{border-color:#e7e3d8;font-size:14px;gap:10px;min-height:70px}
+.fcal-page .calendar-row.free{background:#edf0e7}
+.fcal-page .calendar-row.booked{background:#f2e9e3}
+.fcal-page .btn-success,.fcal-modal .btn-success{font:inherit;font-size:14px;min-height:44px;background:#65705b;border-radius:3px;padding:10px 16px}
+.fcal-page .btn-success:hover,.fcal-modal .btn-success:hover{background:#515d47}
+.fcal-page .booked-label,.fcal-page .no-working-hours{color:#727b67}
+.fcal-page .calendar-legend{gap:20px;flex-wrap:wrap;font-size:13px}
+.fcal-page .color-box{border-radius:3px}
+.fcal-page .color-box.free{background:#edf0e7;border-color:#65705b}
+.fcal-page .color-box.booked{background:#f2e9e3;border-color:#997564}
+.fcal-modal{padding:16px}
+.fcal-modal .modal-content{background:#faf9f5;border:1px solid #e7e3d8;border-radius:4px;padding:30px;max-width:500px;margin:0}
+.fcal-modal h2{font-size:24px;font-weight:500;margin:0 40px 24px 0}
+.fcal-modal .modal-close{top:8px;right:8px;width:44px;height:44px;color:#58634e}
+.fcal-modal .form-row label{font-size:13px;font-weight:400;color:#626b59;margin-bottom:8px}
+.fcal-modal .form-row input,.fcal-modal .form-row textarea{font:inherit;font-size:16px;min-height:44px;border-color:#dcdccf;background:#fff;color:#32382c}
+@media(max-width:720px){.fcal-page .calendar-nav{gap:12px}.fcal-page .current-date{width:100%;order:-1;text-align:center}.fcal-page .calendar-nav .btn{flex:1;text-align:center;padding:12px 10px}.fcal-page .calendar-header,.fcal-page .calendar-row{grid-template-columns:60px minmax(0,1fr) 100px;padding:12px 10px;font-size:12px}.fcal-page .btn-success{padding:10px;font-size:13px;width:100%}.fcal-modal .modal-content{padding:24px;max-height:calc(100dvh - 32px)}}

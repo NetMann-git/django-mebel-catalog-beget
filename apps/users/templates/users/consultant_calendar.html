@@ -1,16 +1,20 @@
 <!-- apps/users/templates/users/consultant_calendar.html -->
-{% extends 'base.html' %}
+{% extends 'home/furniture_base.html' %}
 {% load static %}
 
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/consultant.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/furniture-calendar.css' %}">
 {% endblock %}
 
-{% block title %}Шахматка записей{% endblock %}
+{% block title %}Шахматка записей — LUSTRID.RU{% endblock %}
 
-{% block content %}
-<div class="calendar-container">
-    <h1>📅 Шахматка записей</h1>
+{% block furniture_content %}
+<div class="fm-container fd-page fcal-page">
+    <nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><a href="{% url 'users:consultant_dashboard' %}">Панель консультанта</a><span aria-hidden="true">/</span><span aria-current="page">Шахматка записей</span></nav>
+    <header class="fd-heading"><div><p class="fm-eyebrow">Мастерская</p><h1>Шахматка записей</h1><p>Выберите свободное время для записи клиента.</p></div></header>
     
     <div class="calendar-nav">
         <a href="?date={{ prev_date|date:'Y-m-d' }}" class="btn">&larr; {{ prev_date|date:'d.m.Y' }}</a>
@@ -50,7 +54,7 @@
                 </div>
             {% endfor %}
         {% else %}
-            <div class="no-working-hours">В этот день салон не работает.</div>
+            <div class="no-working-hours">В этот день мастерская не работает.</div>
         {% endif %}
     </div>
     
@@ -59,14 +63,14 @@
         <span><span class="color-box booked"></span> Занято</span>
     </div>
     
-    <a href="{% url 'users:consultant_dashboard' %}" class="btn-back">← Назад в панель продавца</a>
+    <a href="{% url 'users:consultant_dashboard' %}" class="btn-back">← Назад в панель консультанта</a>
 </div>
 
 <!-- Модальное окно для создания записи -->
-<div id="slot-form-modal" class="modal" style="display:none;">
+<div id="slot-form-modal" class="modal fcal-modal" role="dialog" aria-modal="true" aria-labelledby="slot-form-title" style="display:none;">
     <div class="modal-content">
-        <span class="modal-close">&times;</span>
-        <h2>Создать запись</h2>
+        <button type="button" class="modal-close" aria-label="Закрыть форму записи">&times;</button>
+        <h2 id="slot-form-title">Создать запись</h2>
         <form method="post" action="{% url 'users:consultant_create_appointment' %}">
             {% csrf_token %}
             <input type="hidden" name="date" id="slot-date">
