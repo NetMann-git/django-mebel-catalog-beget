@@ -1,62 +1,22 @@
-<!-- apps/products/templates/products/recently_viewed.html -->
-
-{% extends "base.html" %}
-{% load static %}
-
-{% block extra_css %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'products/css/catalog/catalog.css' %}">
-    <link rel="stylesheet" href="{% static 'products/css/availability.css' %}">
-    <link rel="stylesheet" href="{% static 'wishlist/css/wishlist-page.css' %}">
-{% endblock %}
-
-{% block title %}История просмотров{% endblock %}
-
-{% block content %}
-<div class="container wishlist-page history-page">
-    <!-- Хлебные крошки -->
-    <nav class="breadcrumbs" aria-label="Хлебные крошки">
-        <a href="/">Главная</a>
-        <span>/</span>
-        <a href="/catalog/">Каталог</a>
-        <span>/</span>
-        <span>История просмотров</span>
-    </nav>
-    <header class="wishlist-page__header">
-        <div>
-            <p class="wishlist-page__eyebrow">Недавно просмотренные</p>
-            <h1>История просмотров <span class="wishlist-page__count" data-recently-viewed-count>{{ products|length }}</span></h1>
-            <p class="wishlist-page__intro">Вернитесь к автомобилям, которые вас заинтересовали. Сохраните понравившиеся варианты в избранное, чтобы не потерять их.</p>
-        </div>
-        <a class="wishlist-page__catalog" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a>
-    </header>
-    <div id="recently-viewed-container">
-        <!-- Блок с товарами -->
-        <div id="recently-viewed-products" {% if not products %}style="display:none;"{% endif %}>
-            <div id="recently-viewed-grid" class="product-grid products-grid">
-                {% for product in products %}
-                    <div class="product-item" data-product-id="{{ product.id }}">
-                        {% include "products/_product_card.html" with product=product %}
-                    </div>
-                {% endfor %}
-            </div>
-            <button type="button"
-                    id="clear-recently-viewed-history"
-                    class="wishlist-page__clear"
-                    data-url="{% url 'catalog:clear_recently_viewed_ajax' %}">
-                Очистить историю
-            </button>
-        </div>
-
-        <!-- Блок с сообщением о пустой истории -->
-        <div class="wishlist-page__empty" id="empty-history-message" {% if products %}style="display:none;"{% endif %}>
-            <div class="wishlist-page__empty-icon" aria-hidden="true">↶</div>
-            <h2>Здесь появятся просмотренные автомобили</h2>
-            <p>Откройте карточку автомобиля в каталоге — мы добавим его в историю, чтобы вы могли быстро вернуться к нему.</p>
-            <a href="{% url 'catalog:catalog' %}" class="wishlist-page__catalog wishlist-page__catalog--primary">Перейти в каталог</a>
-        </div>
-    </div>
-
-    {% include "recommendations/_recommended_block.html" with recommended_products=recommended_products %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Недавно смотрели — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'wishlist/css/furniture-wishlist.css' %}">{% endblock %}
+{% block furniture_content %}
+<div class="fm-container fc-page fw-page">
+  <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог мебели</a><span aria-hidden="true">/</span><span aria-current="page">Недавно смотрели</span></nav>
+  <header class="fc-heading"><div><p class="fm-eyebrow">История просмотров</p><h1>Недавно смотрели <span class="fw-count" data-recently-viewed-count aria-live="polite">{{ products|length }}</span></h1><p>Вернитесь к изделиям, которые вас заинтересовали.<br>Здесь сохраняются последние {{ history_limit }} просмотренных изделий.</p></div><a class="fm-button" href="{% url 'catalog:catalog' %}">Продолжить выбор →</a></header>
+  <nav class="fc-tools" aria-label="Сохранённые подборки"><a href="{% url 'wishlist:list' %}">Избранное <span data-wishlist-count>{{ wishlist_count }}</span></a><a href="{% url 'catalog:comparison' %}">Сравнение <span data-comparison-count>{{ comparison_ids|length }}</span></a></nav>
+  <div id="recently-viewed-products" {% if not products %}style="display:none;"{% endif %}>
+    <div id="recently-viewed-grid" class="fc-product-grid products-grid">{% for product in products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div>
+    <button type="button" id="clear-recently-viewed-history" class="fw-clear" data-url="{% url 'catalog:clear_recently_viewed_ajax' %}">Очистить историю</button>
+  </div>
+  <div class="fw-empty" id="empty-history-message" {% if products %}style="display:none;"{% endif %}>
+    <span class="fw-empty__icon" aria-hidden="true">↶</span><h2>Здесь появятся просмотренные изделия</h2><p>Откройте изделие в каталоге — мы добавим его в историю, чтобы вы могли вернуться к нему.</p><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a>
+  </div>
+  <p class="fw-note">История связана с текущей сессией браузера. Очистка истории не меняет избранное и сравнение.</p>
+  {% if recommended_products %}<section class="recommended-section fw-recommendations" aria-labelledby="history-recommendations-title"><h2 id="history-recommendations-title">Возможно, вам понравится</h2><div class="fc-product-grid products-grid">{% for product in recommended_products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div></section>{% endif %}
 </div>
 {% endblock %}
+
+{% block extra_js %}{{ block.super }}<script src="{% static 'products/js/recently_viewed.js' %}" defer></script>{% endblock %}

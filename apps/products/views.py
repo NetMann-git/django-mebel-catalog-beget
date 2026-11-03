@@ -122,14 +122,13 @@ def catalog(request):
 
     return render(request, "products/catalog.html", context)
 
+@ensure_csrf_cookie
 def recently_viewed_list(request):
     """
     Страница со списком всех просмотренных товаров + блок рекомендаций.
     """
     recently_ids = request.session.get('recently_viewed', [])
-    products = Product.objects.filter(
-        id__in=recently_ids, is_active=True
-    ) if recently_ids else Product.objects.none()
+    products = ProductService.get_recently_viewed_products(request)
 
     # Получаем рекомендации на основе просмотренных товаров
     recommended_products = RecommendationService.get_similar_products(
@@ -140,6 +139,10 @@ def recently_viewed_list(request):
         'products': products,
         'recently_viewed_ids': recently_ids,
         'recommended_products': recommended_products,
+        'history_limit': MAX_RECENTLY_VIEWED,
+        'wishlist_ids': list(
+            request.user.favorites.values_list('product_id', flat=True)
+        ) if request.user.is_authenticated else request.session.get('wishlist', []),
     }
     return render(request, 'products/recently_viewed.html', context)
 
