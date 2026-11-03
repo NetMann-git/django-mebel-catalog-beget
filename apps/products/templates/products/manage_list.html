@@ -1,95 +1,50 @@
-<!-- apps/products/templates/products/manage_list.html -->
-{% extends 'base.html' %}
-{% load price_format l10n %}
-{% load static %}
-{% load thumbnail %}
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block title %}Управление товарами{% endblock %}
-
-{% block content %}
-<div class="manage-container">
-    <a href="{% url 'users:manager_dashboard' %}" class="manage-back-link">← Вернуться в панель менеджера</a>
-    <div class="manage-header">
-        <h1>📦 Управление товарами</h1>
-        <a href="{% url 'catalog:product_create' %}" class="btn-primary">+ Добавить товар</a>
-    </div>
-    
-    <div class="manage-header">
-        <span>Всего: {{ total }} товаров</span>
-        <form method="get" class="search-form">
-            <input type="text" name="search" placeholder="Поиск по названию, артикулу..." value="{{ search }}">
-            <button type="submit" class="btn-primary">Найти</button>
-        </form>
-    </div>
-    
-    {% if products %}
-        <table class="product-table">
-            <thead>
-                <tr>
-                    <th>Изображение</th>
-                    <th>Название</th>
-                    <th>Артикул</th>
-                    <th>Цена</th>
-                    <th>Категория</th>
-                    <th>Статус</th>
-                    <th>Действия</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for product in products %}
-                <tr>
-                    <td>
-                        {% if product.image %}
-                            <img src="{% thumbnail product.image 120x90 crop %}" alt="{{ product.title }}" class="product-thumb" loading="lazy">
-                        {% else %}
-                            <span style="color: #ccc;">Нет фото</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        <a href="{% url 'catalog:product_detail' slug=product.slug %}" target="_blank" style="color: #333; text-decoration: none;">
-                            {{ product.title|truncatechars:40 }}
-                        </a>
-                    </td>
-                    <td>{{ product.article|default:"—" }}</td>
-                    <td>{{ product.price|price_format }} {{ product.currency }}</td>
-                    <td>{{ product.category.title|default:"—" }}</td>
-                    <td>
-                        <span class="status-badge status-{% if product.is_active %}active{% else %}inactive{% endif %}">
-                            {% if product.is_active %}Активен{% else %}Неактивен{% endif %}
-                        </span>
-                    </td>
-                    <td>
-                        <div class="actions">
-                            <a href="{% url 'catalog:product_edit' product.id %}" class="btn-edit">✏️</a>
-                            <a href="{% url 'catalog:product_delete' product.id %}" class="btn-delete">🗑️</a>
-                        </div>
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        
-        <!-- Пагинация -->
-        <div class="pagination">
-            {% if products.has_previous %}
-                <a href="?page=1{% if search %}&search={{ search }}{% endif %}">&laquo;</a>
-                <a href="?page={{ products.previous_page_number }}{% if search %}&search={{ search }}{% endif %}">‹</a>
-            {% endif %}
-            
-            <span class="current">{{ products.number }}</span>
-            
-            {% if products.has_next %}
-                <a href="?page={{ products.next_page_number }}{% if search %}&search={{ search }}{% endif %}">›</a>
-                <a href="?page={{ products.paginator.num_pages }}{% if search %}&search={{ search }}{% endif %}">&raquo;</a>
-            {% endif %}
-        </div>
-    {% else %}
-        <div class="empty-message">
-            <p>Товаров не найдено.</p>
-        </div>
-    {% endif %}
-</div>
+{% extends 'home/furniture_base.html' %}
+{% load price_format static %}
+{% block title %}Управление изделиями — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-manage-list.css' %}">{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-manage" aria-labelledby="manage-title">
+  <a class="fm-manage__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
+  <div class="fm-manage__heading">
+    <div><p class="fm-manage__eyebrow">Мебельная мастерская</p><h1 id="manage-title">Управление изделиями</h1></div>
+    <a class="fm-manage__button fm-manage__button--primary" href="{% url 'catalog:product_create' %}">Добавить изделие</a>
+  </div>
+  <form method="get" class="fm-manage__search" role="search" aria-label="Поиск изделий для управления">
+    <div><label for="manage-search">Название, артикул или категория</label><input type="search" id="manage-search" name="search" value="{{ search }}" placeholder="Например, шкаф"></div>
+    <button class="fm-manage__button fm-manage__button--primary" type="submit">Найти</button>
+    {% if search %}<a class="fm-manage__button" href="{% url 'catalog:product_list_manage' %}">Сбросить поиск</a>{% endif %}
+  </form>
+  <p class="fm-manage__count">{% if search %}Найдено{% else %}Всего изделий{% endif %}: <strong>{{ total }}</strong></p>
+  {% if products %}
+  <table class="fm-manage__table">
+    <caption class="fm-manage__sr">Изделия мастерской, страница {{ products.number }}</caption>
+    <thead><tr><th scope="col">Фото</th><th scope="col">Изделие</th><th scope="col">Артикул</th><th scope="col">Цена</th><th scope="col">Категория</th><th scope="col">Видимость</th><th scope="col">Действия</th></tr></thead>
+    <tbody>{% for product in products %}
+      <tr>
+        <td class="fm-manage__photo">{% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.title }}" width="112" height="84" loading="lazy">{% else %}<span class="fm-manage__no-photo">Нет фото</span>{% endif %}</td>
+        <td class="fm-manage__name"><a href="{% url 'catalog:product_edit' product.pk %}">{{ product.title }}</a></td>
+        <td><span class="fm-manage__label" aria-hidden="true">Артикул</span>{{ product.article|default:"—" }}</td>
+        <td class="fm-manage__price"><span class="fm-manage__label" aria-hidden="true">Цена</span><span>{{ product.price|price_format }} {{ product.currency }}</span></td>
+        <td><span class="fm-manage__label" aria-hidden="true">Категория</span>{{ product.category.title|default:"—" }}</td>
+        <td><span class="fm-manage__label" aria-hidden="true">Видимость</span><span class="fm-manage__status{% if not product.is_active %} fm-manage__status--draft{% endif %}">{% if product.is_active %}Опубликовано{% else %}Не опубликовано{% endif %}</span></td>
+        <td class="fm-manage__actions">
+          <a href="{% url 'catalog:product_edit' product.pk %}" aria-label="Редактировать: {{ product.title }}">Редактировать</a>
+          {% if product.is_active %}<a href="{{ product.get_absolute_url }}" target="_blank" rel="noopener" aria-label="Посмотреть на сайте: {{ product.title }}">На сайте ↗</a>{% endif %}
+          <a class="fm-manage__delete" href="{% url 'catalog:product_delete' product.pk %}" aria-label="Удалить: {{ product.title }}">Удалить</a>
+        </td>
+      </tr>
+    {% endfor %}</tbody>
+  </table>
+  {% if products.paginator.num_pages > 1 %}
+  <nav class="fm-manage__pagination" aria-label="Страницы списка изделий">
+    {% if products.has_previous %}<a href="?page=1{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Первая страница">«</a><a href="?page={{ products.previous_page_number }}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Предыдущая страница">Назад</a>{% endif %}
+    <span aria-current="page">{{ products.number }} из {{ products.paginator.num_pages }}</span>
+    {% if products.has_next %}<a href="?page={{ products.next_page_number }}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Следующая страница">Далее</a><a href="?page={{ products.paginator.num_pages }}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Последняя страница">»</a>{% endif %}
+  </nav>
+  {% endif %}
+  {% else %}
+  <div class="fm-manage__empty"><h2>{% if search %}Изделия не найдены{% else %}В каталоге пока нет изделий{% endif %}</h2><p>{% if search %}Измените запрос или сбросьте поиск.{% else %}Добавьте первое изделие, затем загрузите его фотографии в редакторе.{% endif %}</p></div>
+  {% endif %}
+</section>
 {% endblock %}
