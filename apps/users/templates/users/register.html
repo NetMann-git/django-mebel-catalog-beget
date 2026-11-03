@@ -1,43 +1,14 @@
-<!-- apps/users/templates/users/register.html -->
-{% extends 'base.html' %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'users/css/auth.css' %}">
-{% endblock %}
-
-{% block title %}Регистрация{% endblock %}
-
-{% block content %}
-<div class="auth-container">
-    <h2>Регистрация</h2>
-    
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-    <form method="post">
-        {% csrf_token %}
-        
-        {% for field in form %}
-            <div class="form-group">
-                <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-                {{ field }}
-                {% if field.errors %}
-                    <div class="error">{{ field.errors }}</div>
-                {% endif %}
-            </div>
-        {% endfor %}
-        
-        <button type="submit" class="btn-primary">Зарегистрироваться</button>
-    </form>
-    
-    <div class="auth-link">
-        Уже есть аккаунт? <a href="{% url 'users:login' %}">Войти</a>
-    </div>
-</div>
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Регистрация — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow"><meta name="description" content="Регистрация в личном кабинете LUSTRID.RU.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-login.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fl-page">
+<nav class="fl-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'users:login' %}">Личный кабинет</a><span aria-hidden="true">/</span><span aria-current="page">Регистрация</span></nav>
+<section class="fl-panel fl-register" aria-labelledby="register-title"><p class="fm-eyebrow">LUSTRID.RU</p><h1 id="register-title">Регистрация</h1><p class="fl-intro">Создайте личный кабинет. Все поля обязательны.</p>
+{% if form.errors %}<div class="fl-error" role="alert">Не удалось зарегистрироваться. Проверьте отмеченные поля.</div>{% endif %}
+{% if form.non_field_errors %}<div class="fl-error">{{ form.non_field_errors }}</div>{% endif %}
+<form method="post" action="{% url 'users:register' %}">{% csrf_token %}
+{% for field in form %}<div class="fl-field"><label for="{{ field.id_for_label }}">{% if field.name == 'email' %}Электронная почта{% elif field.name == 'first_name' %}Имя{% elif field.name == 'last_name' %}Фамилия{% else %}{{ field.label }}{% endif %}</label>{{ field }}{% if field.help_text %}<div class="fl-help" id="{{ field.auto_id }}_helptext">{{ field.help_text|safe }}</div>{% endif %}{% if field.errors %}<div class="fl-field-errors">{{ field.errors }}</div>{% endif %}</div>{% endfor %}
+<button type="submit" class="fm-button">Зарегистрироваться <span aria-hidden="true">→</span></button></form>
+<div class="fl-links"><p>Уже есть аккаунт? <a href="{% url 'users:login' %}">Войти</a></p><a href="{% url 'catalog:catalog' %}">Вернуться в каталог →</a></div>
+</section></div>{% endblock %}
