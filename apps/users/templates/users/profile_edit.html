@@ -1,57 +1,11 @@
-<!-- apps/users/templates/users/profile_edit.html -->
-{% extends 'base.html' %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'users/css/auth.css' %}">
-{% endblock %}
-
-{% block title %}Редактирование профиля{% endblock %}
-
-{% block content %}
-<div class="auth-container">
-    <h2>Редактирование профиля</h2>
-    
-    {% if messages %}
-        <div class="messages">
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-            {% endfor %}
-        </div>
-    {% endif %}
-    
-    <form method="post">
-        {% csrf_token %}
-        
-        <div class="form-group">
-            <label for="first_name">Имя</label>
-            <input type="text" name="first_name" id="first_name" 
-                   value="{{ user.first_name }}" class="form-control">
-        </div>
-        
-        <div class="form-group">
-            <label for="last_name">Фамилия</label>
-            <input type="text" name="last_name" id="last_name" 
-                   value="{{ user.last_name }}" class="form-control">
-        </div>
-        
-        <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" 
-                   value="{{ user.email }}" class="form-control">
-        </div>
-        
-        <div class="form-group">
-            <label for="phone">Телефон</label>
-            <input type="text" name="phone" id="phone" 
-                   value="{{ profile.phone|default:'' }}" class="form-control">
-        </div>
-        
-        <button type="submit" class="btn-primary">Сохранить изменения</button>
-    </form>
-    
-    <div class="auth-link">
-        <a href="{% url 'users:dashboard' %}">← Вернуться в личный кабинет</a>
-    </div>
-</div>
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Редактирование профиля — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow"><meta name="description" content="Редактирование профиля LUSTRID.RU.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-login.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fl-page">
+<nav class="fl-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><span aria-current="page">Профиль</span></nav>
+<section class="fl-panel fl-register" aria-labelledby="profile-title"><p class="fm-eyebrow">LUSTRID.RU</p><h1 id="profile-title">Редактирование профиля</h1><p class="fl-intro">Обновите имя и контактные данные. Все поля необязательны.</p>
+{% if form.errors %}<div class="fl-error" role="alert">Не удалось сохранить профиль. Проверьте отмеченные поля.</div>{% endif %}
+{% if form.non_field_errors %}<div class="fl-error">{{ form.non_field_errors }}</div>{% endif %}
+<form method="post" action="{% url 'users:profile_edit' %}">{% csrf_token %}{% for field in form %}<div class="fl-field"><label for="{{ field.id_for_label }}">{{ field.label }}</label>{{ field }}{% if field.errors %}<div class="fl-field-errors">{{ field.errors }}</div>{% endif %}</div>{% endfor %}<button class="fm-button" type="submit">Сохранить изменения <span aria-hidden="true">→</span></button></form>
+<div class="fl-links"><a href="{% url 'users:dashboard' %}">Вернуться в личный кабинет →</a></div></section></div>{% endblock %}

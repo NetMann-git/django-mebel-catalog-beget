@@ -13,7 +13,8 @@ from .decorators import role_required
 from .constants import ROLE_MANAGER, ROLE_ADMIN
 from apps.wishlist.models import Favorite
 from apps.reviews.models import Review
-from .forms import UserRegistrationForm
+from .forms import UserRegistrationForm, ProfileEditForm
+from django.db import transaction
 
 # apps/users/views.py
 
@@ -140,22 +141,28 @@ def profile_edit(request):
     """Редактирование профиля."""
     user = request.user
     profile = user.profile
+    initial = {name: getattr(user, name) for name in ('first_name', 'last_name', 'email')}
+    initial['phone'] = profile.phone
     
     if request.method == 'POST':
-        user.first_name = request.POST.get('first_name', user.first_name)
-        user.last_name = request.POST.get('last_name', user.last_name)
-        user.email = request.POST.get('email', user.email)
-        user.save()
-        
-        profile.phone = request.POST.get('phone', profile.phone)
-        profile.save()
-        
-        messages.success(request, 'Профиль успешно обновлён!')
-        return redirect('users:dashboard')
+        # Keep the previous partial-POST behavior: missing fields stay unchanged.
+        form = ProfileEditForm({name: request.POST.get(name, value) for name, value in initial.items()})
+        if form.is_valid():
+            with transaction.atomic():
+                for name in ('first_name', 'last_name', 'email'):
+                    setattr(user, name, form.cleaned_data[name])
+                user.save(update_fields=['first_name', 'last_name', 'email'])
+                profile.phone = form.cleaned_data['phone']
+                profile.save(update_fields=['phone'])
+            messages.success(request, 'Профиль успешно обновлён!')
+            return redirect('users:dashboard')
+    else:
+        form = ProfileEditForm(initial=initial)
     
     return render(request, 'users/profile_edit.html', {
         'user': user,
-        'profile': profile
+        'profile': profile,
+        'form': form,
     })
 
 
