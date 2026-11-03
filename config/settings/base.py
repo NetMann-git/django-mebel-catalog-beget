@@ -282,7 +282,7 @@ LOGGING = {
 # -----------------------------------------------------------------------------
 
 LOGIN_REDIRECT_URL = '/account/dashboard/'
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = 'users:login'
 LOGOUT_REDIRECT_URL = '/'
 
 # -----------------------------------------------------------------------------
