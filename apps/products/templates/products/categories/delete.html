@@ -1,9 +1,19 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}Управление категориями{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">{% endblock %}
-{% block content %}<div class="manage-container">
-<h1>Удаление категории «{{ category.title }}»</h1>
-{% if product_count %}<p>В категории автомобилей: {{ product_count }}. Сначала перенесите их в другую категорию. Удаление недоступно.</p>
-{% else %}<p>Удалить эту пустую категорию?</p><form method="post">{% csrf_token %}<button type="submit" class="btn-delete">Удалить категорию</button></form>{% endif %}
-<p><a href="{% url 'catalog:category_list_manage' %}">← К категориям</a></p></div>{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Удаление категории — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-categories.css' %}">{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-categories" aria-labelledby="category-delete-title">
+  <a class="fm-categories__back" href="{% url 'catalog:category_list_manage' %}">← К категориям</a>
+  <div class="fm-categories__form-panel"><p class="fm-categories__eyebrow">Справочник мастерской</p><h1 id="category-delete-title">Удаление категории</h1><p class="fm-categories__category-title">«{{ category.title }}»</p>
+    {% if is_home_category %}<div class="fm-categories__notice"><strong>Категория связана с карточкой на главной.</strong><p>После удаления переход из этой карточки в каталог станет недоступен.</p></div>{% endif %}
+    {% if product_count %}
+      <div class="fm-categories__notice"><h2>Удаление недоступно</h2><p>В категории изделий: <strong>{{ product_count }}</strong>, включая неопубликованные. Сначала перенесите изделия в другую категорию.</p></div>
+      <div class="fm-categories__form-actions"><a class="fm-categories__button fm-categories__button--primary" href="{% url 'catalog:product_list_manage' %}">Управление изделиями</a><a class="fm-categories__button" href="{% url 'catalog:category_list_manage' %}">К категориям</a></div>
+    {% else %}
+      <p class="fm-categories__hint">Категория пустая. После подтверждения она будет удалена.</p>
+      <form method="post" class="fm-categories__form">{% csrf_token %}<div class="fm-categories__form-actions"><button type="submit" class="fm-categories__button fm-categories__button--danger">Удалить пустую категорию</button><a class="fm-categories__button" href="{% url 'catalog:category_list_manage' %}">Отмена</a></div></form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

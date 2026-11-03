@@ -1,11 +1,21 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}Управление категориями{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">{% endblock %}
-{% block content %}<div class="manage-container">
-<a class="manage-back-link" href="{% url 'users:manager_dashboard' %}">← В панель менеджера</a>
-<div class="manage-header"><h1>Категории товаров</h1><a class="btn-primary" href="{% url 'catalog:category_create' %}">Добавить категорию</a></div>
-<div style="overflow-x:auto"><table class="product-table"><thead><tr><th>Название</th><th>Код</th><th>Автомобилей</th><th>Действия</th></tr></thead><tbody>
-{% for item in categories %}<tr><td><a href="{% url 'catalog:category_edit' item.pk %}">{{ item.title }}</a></td><td>{{ item.slug }}</td><td>{{ item.product_count }}</td><td><a href="{% url 'catalog:category_edit' item.pk %}">Изменить</a> · <a href="{% url 'catalog:category_delete' item.pk %}">Удалить</a></td></tr>
-{% empty %}<tr><td colspan="4">Категорий пока нет.</td></tr>{% endfor %}</tbody></table></div>
-</div>{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Категории мебели — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-categories.css' %}">{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-categories" aria-labelledby="category-list-title">
+  <a class="fm-categories__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
+  <div class="fm-categories__heading"><div><p class="fm-categories__eyebrow">Справочник мастерской</p><h1 id="category-list-title">Категории мебели</h1><p>Изделия в каталоге по направлениям.</p></div><a class="fm-categories__button fm-categories__button--primary" href="{% url 'catalog:category_create' %}">Добавить категорию</a></div>
+  {% if categories %}
+  <p class="fm-categories__hint">В количестве изделий учитываются опубликованные и неопубликованные записи.</p>
+  <table class="fm-categories__table"><caption class="fm-categories__sr">Категории мебельного каталога</caption><thead><tr><th scope="col">Название</th><th scope="col">Код категории</th><th scope="col">Изделий</th><th scope="col">Действия</th></tr></thead><tbody>
+  {% for item in categories %}<tr>
+    <td class="fm-categories__name"><a href="{% url 'catalog:category_edit' item.pk %}">{{ item.title }}</a></td>
+    <td><span class="fm-categories__label" aria-hidden="true">Код</span><code>{{ item.slug }}</code></td>
+    <td><span class="fm-categories__label" aria-hidden="true">Изделий</span>{{ item.product_count }}</td>
+    <td class="fm-categories__actions"><a href="{% url 'catalog:category_edit' item.pk %}" aria-label="Редактировать категорию: {{ item.title }}">Редактировать</a><a href="{% url 'catalog:catalog' %}?category={{ item.pk }}" target="_blank" rel="noopener" aria-label="Посмотреть категорию на сайте: {{ item.title }}">На сайте ↗</a><a class="fm-categories__delete-link" href="{% url 'catalog:category_delete' item.pk %}" aria-label="Удаление категории: {{ item.title }}">Удаление</a></td>
+  </tr>{% endfor %}
+  </tbody></table>
+  {% else %}<div class="fm-categories__empty"><h2>Категорий пока нет</h2><p>Добавьте категорию, затем выберите её при редактировании изделия.</p></div>{% endif %}
+</section>
+{% endblock %}

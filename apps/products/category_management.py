@@ -15,6 +15,12 @@ from apps.users.decorators import role_required
 from .cache import CatalogCache
 from .manager_slugs import AutoSlugMixin
 from .models import Category
+from .furniture_categories import FURNITURE_CATEGORIES
+
+
+def _is_home_category(category):
+    """The current homepage resolves these exact title/code pairs."""
+    return bool(category and (category.slug, category.title) in FURNITURE_CATEGORIES)
 
 
 class CategoryForm(AutoSlugMixin, forms.ModelForm):
@@ -54,6 +60,7 @@ def category_edit(
 ) -> HttpResponse:
     """Create or edit a category through a validated form."""
     category = get_object_or_404(Category, pk=category_id) if category_id else None
+    is_home_category = _is_home_category(category)
     form = CategoryForm(
         request.POST if request.method == 'POST' else None, instance=category,
     )
@@ -63,7 +70,7 @@ def category_edit(
         messages.success(request, 'Категория сохранена.')
         return redirect('catalog:category_list_manage')
     return render(request, 'products/categories/form.html', {
-        'form': form, 'category': category,
+        'form': form, 'category': category, 'is_home_category': is_home_category,
     })
 
 
@@ -78,7 +85,7 @@ def category_delete(request: HttpRequest, category_id: int) -> HttpResponse:
             )
             if category.product_items.exists():
                 messages.error(
-                    request, 'Сначала перенесите автомобили в другую категорию.',
+                    request, 'Сначала перенесите изделия в другую категорию.',
                 )
             else:
                 category.delete()
@@ -88,4 +95,5 @@ def category_delete(request: HttpRequest, category_id: int) -> HttpResponse:
     category = get_object_or_404(Category, pk=category_id)
     return render(request, 'products/categories/delete.html', {
         'category': category, 'product_count': category.product_items.count(),
+        'is_home_category': _is_home_category(category),
     })

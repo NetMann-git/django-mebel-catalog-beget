@@ -1,10 +1,18 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}Управление категориями{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">{% endblock %}
-{% block content %}<div class="manage-container">
-<h1>{% if category %}Редактирование категории{% else %}Новая категория{% endif %}</h1>
-<p><a href="{% url 'catalog:category_list_manage' %}">← К категориям</a></p>
-<form method="post">{% csrf_token %}{{ form.non_field_errors }}
-{% for field in form %}<div class="form-group">{{ field.label_tag }}{{ field }}{{ field.errors }}<div class="help-text">{{ field.help_text }}</div></div>{% endfor %}
-<button class="btn-save" type="submit">Сохранить</button></form></div>{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}{% if category %}Редактирование категории{% else %}Новая категория{% endif %} — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-categories.css' %}">{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-categories" aria-labelledby="category-form-title">
+  <a class="fm-categories__back" href="{% url 'catalog:category_list_manage' %}">← К категориям</a>
+  <div class="fm-categories__form-panel">
+    <p class="fm-categories__eyebrow">Справочник мастерской</p><h1 id="category-form-title">{% if category %}Редактирование категории{% else %}Новая категория{% endif %}</h1>
+    {% if is_home_category %}<div class="fm-categories__notice"><strong>Категория связана с карточкой на главной.</strong><p>Изменение её названия или кода отключит этот переход. Сохраните текущие значения, если не планируете менять карточку главной.</p></div>{% endif %}
+    <form method="post" class="fm-categories__form">{% csrf_token %}{{ form.non_field_errors }}
+      {% for field in form %}<div class="fm-categories__field">{{ field.label_tag }}{{ field }}{{ field.errors }}{% if field.help_text %}<div class="fm-categories__help" id="{{ field.auto_id }}_helptext">{{ field.help_text }}</div>{% endif %}</div>{% endfor %}
+      {% if category %}<p class="fm-categories__hint">Текущий код сохранится, если вы не измените его вручную.</p>{% endif %}
+      <div class="fm-categories__form-actions"><button class="fm-categories__button fm-categories__button--primary" type="submit">Сохранить категорию</button><a class="fm-categories__button" href="{% url 'catalog:category_list_manage' %}">Отмена</a></div>
+    </form>
+  </div>
+</section>
+{% endblock %}
