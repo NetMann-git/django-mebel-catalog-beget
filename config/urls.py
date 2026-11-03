@@ -3,12 +3,18 @@
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.sitemaps import views as sitemap_views
 from django.urls import include, path
 
 from apps.home.views import home
 from apps.home.legal_views import public_offer, privacy_policy, personal_data_consent
+from apps.products.sitemaps import sitemaps
 
 urlpatterns = [
+    path('sitemap.xml', sitemap_views.index,
+         {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemap_section'}, name='sitemap'),
+    path('sitemap-<section>.xml', sitemap_views.sitemap,
+         {'sitemaps': sitemaps}, name='sitemap_section'),
     path('admin/', admin.site.urls),
     path('smart_selects/', include('smart_selects.urls')),  # ДОБАВИТЬ ЭТУ СТРОКУ
     path('', home, name='home'),
