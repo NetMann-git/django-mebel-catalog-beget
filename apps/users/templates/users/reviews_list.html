@@ -1,30 +1,13 @@
-<!-- apps/users/templates/users/reviews_list.html -->
-{% extends "base.html" %}
-{% load static %}
-
-{% block title %}Мои отзывы{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h1>Мои отзывы</h1>
-
-    {% if reviews %}
-        <div class="reviews-list">
-            {% for review in reviews %}
-                <div class="review-item">
-                    <div class="review-header">
-                        <span class="review-rating">★ {{ review.rating }}</span>
-                        <span class="review-date">{{ review.created_at|date:"d.m.Y" }}</span>
-                    </div>
-                    <div class="review-title">{{ review.title }}</div>
-                    <div class="review-text">{{ review.text|truncatewords:30 }}</div>
-                    <a href="{{ review.product.get_absolute_url }}" class="btn-outline">К товару</a>
-                </div>
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>Вы ещё не оставляли отзывы.</p>
-        <a href="{% url 'catalog:catalog' %}" class="btn">Перейти в каталог</a>
-    {% endif %}
-</div>
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Мои отзывы — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}"><link rel="stylesheet" href="{% static 'users/css/furniture-reviews.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fd-page">
+<nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><span aria-current="page">Мои отзывы</span></nav>
+<header class="fd-heading"><div><p class="fm-eyebrow">Личный кабинет</p><h1>Мои отзывы</h1><p>Ваши отзывы об изделиях мастерской.</p></div><a class="fm-button" href="{% url 'users:dashboard' %}">В личный кабинет →</a></header>
+{% if reviews %}<div class="fr-list">{% for review in reviews %}<article class="fr-review">
+<div class="fr-meta"><span aria-label="Оценка {{ review.rating }} из 5">★ {{ review.rating }} / 5</span><time datetime="{{ review.created_at|date:'c' }}">{{ review.created_at|date:'d.m.Y' }}</time></div>
+{% if review.title %}<h2>{{ review.title }}</h2>{% endif %}<p class="fr-text">{{ review.text|truncatewords:30 }}</p>
+<a class="fr-product" href="{{ review.product.get_absolute_url }}">К изделию: {{ review.product.title }} →</a>
+</article>{% endfor %}</div>{% else %}<section class="fr-empty"><h2>Вы ещё не оставляли отзывы.</h2><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a></section>{% endif %}
+</div>{% endblock %}

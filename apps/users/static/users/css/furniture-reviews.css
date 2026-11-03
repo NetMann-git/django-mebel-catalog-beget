@@ -1,0 +1,9 @@
+/* шаг 34: personal reviews use the existing furniture account layout. */
+.fr-list{display:grid;gap:20px;max-width:900px}
+.fr-review,.fr-empty{padding:28px;border:1px solid #e7e3d8;border-radius:4px;background:#faf9f5;min-width:0}
+.fr-meta{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;color:#65705b;font-size:13px;margin-bottom:18px}
+.fr-review h2,.fr-empty h2{font-size:21px;line-height:1.4;font-weight:500;margin-bottom:14px}
+.fr-text{font-size:15px;line-height:1.8;margin-bottom:20px;white-space:pre-line}
+.fr-product{font-size:13px;color:#58634e;text-decoration:underline;text-underline-offset:4px;display:inline-block;padding:10px 0}
+.fr-empty .fm-button{margin-top:12px;background:#65705b}
+@media(max-width:720px){.fr-review,.fr-empty{padding:22px}.fr-review h2,.fr-empty h2{font-size:19px}.fd-page .fd-heading{flex-wrap:wrap}}
