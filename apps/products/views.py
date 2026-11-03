@@ -44,13 +44,17 @@ from .context import ProductContextBuilder
 from apps.recommendations.services import RecommendationService
 
 
+@ensure_csrf_cookie
 def brand_detail(request, slug):
     brand = get_object_or_404(Brand, slug=slug)
     products = CatalogRepository.by_brand(brand)
     context = {
         'brand': brand,
         'products': products,
-        'page': brand,  # для SEO (чтобы работал base.html)
+        'page': brand,  # Existing SEO context retained.
+        'wishlist_ids': list(
+            request.user.favorites.values_list('product_id', flat=True)
+        ) if request.user.is_authenticated else request.session.get('wishlist', []),
     }
     return render(request, 'products/brand_detail.html', context)
 

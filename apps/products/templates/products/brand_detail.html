@@ -1,32 +1,13 @@
-<!-- apps/products/templates/products/brand_detail.html -->
-
-{% extends "base.html" %}
-{% load static %}
-
+{% extends 'home/furniture_base.html' %}{% load static %}
 {% block title %}{{ brand.seo_title }}{% endblock %}
-
-{% block content %}
-<div class="container">
-    <h1>{{ brand.name }}</h1>
-    {% if brand.logo %}
-        <img src="{{ brand.logo.url }}" alt="{{ brand.name }}" class="brand-logo">
-    {% endif %}
-    {% if brand.description %}
-        <div class="brand-description">{{ brand.description|linebreaks }}</div>
-    {% endif %}
-    {% if brand.country %}
-        <p><strong>Страна:</strong> {{ brand.country }}</p>
-    {% endif %}
-
-    <h2>Товары бренда</h2>
-    {% if products %}
-        <div class="product-grid">
-            {% for product in products %}
-                {% include "products/_product_card.html" with product=product %}
-            {% endfor %}
-        </div>
-    {% else %}
-        <p>Нет товаров этого бренда.</p>
-    {% endif %}
-</div>
-{% endblock %}
+{% block seo_meta %}<meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="index, follow"><meta name="description" content="{% if brand.meta_description %}{{ brand.meta_description }}{% else %}{{ brand.description|striptags|truncatechars:160 }}{% endif %}"><meta property="og:title" content="{{ brand.seo_title }}"><meta property="og:description" content="{% if brand.meta_description %}{{ brand.meta_description }}{% else %}{{ brand.description|striptags|truncatechars:160 }}{% endif %}"><meta property="og:type" content="website"><meta property="og:url" content="{{ request.build_absolute_uri }}"><meta property="og:locale" content="ru_RU">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'wishlist/css/furniture-wishlist.css' %}"><link rel="stylesheet" href="{% static 'products/css/furniture-brand-page.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fc-page fw-page fbp-page">
+<nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог мебели</a><span aria-hidden="true">/</span><span aria-current="page">{{ brand.name }}</span></nav>
+<header class="fc-heading"><div><p class="fm-eyebrow">Бренд</p><div class="fbp-identity">{% if brand.logo %}<img class="fbp-logo" src="{{ brand.logo.url }}" alt="Логотип {{ brand.name }}" decoding="async">{% endif %}<h1>{{ brand.name }}</h1></div>{% if brand.country %}<p class="fbp-country">Страна: {{ brand.country }}</p>{% endif %}</div><a class="fm-button" href="{% url 'catalog:catalog' %}">Весь каталог →</a></header>
+{% if brand.description %}<section class="fbp-description" aria-label="Описание бренда">{{ brand.description|linebreaks }}</section>{% endif %}
+<nav class="fc-tools" aria-label="Сохранённые подборки"><a href="{% url 'wishlist:list' %}">Избранное <span data-wishlist-count>{{ wishlist_count }}</span></a><a href="{% url 'catalog:comparison' %}">Сравнение <span data-comparison-count>{{ comparison_ids|length }}</span></a><a href="{% url 'catalog:recently_viewed' %}">Недавно смотрели</a></nav>
+<section aria-labelledby="brand-products-title"><div class="fbp-results-heading"><h2 id="brand-products-title">Изделия бренда</h2><p>Найдено: {{ products|length }}</p></div>
+{% if products %}<div class="fc-product-grid products-grid">{% for product in products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div>
+{% else %}<div class="fw-empty"><h2>Опубликованных изделий этого бренда пока нет</h2><p>Посмотрите другие изделия или расскажите нам о вашей задаче.</p><div class="fbp-empty-actions"><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a><a class="fbp-contact" href="{% url 'home' %}#callback">Обсудить проект</a></div></div>{% endif %}
+</section></div>{% endblock %}
