@@ -136,12 +136,12 @@ class CarModelTests(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertTrue(Brand.objects.filter(pk=self.audi.pk).exists())
 
-    def test_admin_product_form_contains_dependent_selector(self):
+    def test_furniture_admin_does_not_expose_vehicle_selector(self):
         user = get_user_model().objects.create_superuser(
             'admin', 'admin@example.com', 'test',
         )
         self.client.force_login(user)
         response = self.client.get(reverse('admin:products_product_add'))
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'data-car-model-select')
-        self.assertContains(response, 'car-model-select.js')
+        self.assertNotContains(response, 'data-car-model-select')
+        self.assertNotContains(response, 'car-model-select.js')

@@ -21,7 +21,8 @@ from django.db.models.deletion import ProtectedError
 from django.db.models import Q
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import ProductForm, BrandForm
+from .forms import BrandForm
+from .furniture_forms import FurnitureProductForm as ProductForm
 from .attribute_formsets import ManagerAttributeFormSet
 
 from .models import Product, AttributeType, AttributeValue, ProductAttribute
@@ -488,14 +489,14 @@ def product_create(request):
 
             CatalogCache.clear_catalog()
 
-            messages.success(request, f'Товар "{product.title}" успешно создан!')
+            messages.success(request, f'Изделие "{product.title}" создано.')
             return redirect('catalog:product_edit', product_id=product.id)
     else:
         form = ProductForm()
 
     context = {
         'form': form,
-        'title': 'Создание товара',
+        'title': 'Новое изделие',
     }
     return render(request, 'products/product_form.html', context)
 
@@ -514,7 +515,7 @@ def product_edit(request, product_id):
 
             CatalogCache.clear_catalog()
 
-            messages.success(request, f'Товар "{product.title}" успешно обновлён!')
+            messages.success(request, f'Изделие "{product.title}" обновлено.')
             return redirect('catalog:product_edit', product_id=product.id)
     else:
         form = ProductForm(instance=product)
@@ -522,7 +523,7 @@ def product_edit(request, product_id):
     context = {
         'form': form,
         'product': product,
-        'title': 'Редактирование товара',
+        'title': 'Редактирование изделия',
     }
     return render(request, 'products/product_form.html', context)
 

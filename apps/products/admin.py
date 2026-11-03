@@ -1,6 +1,7 @@
 from .models import VehicleImportSource
 from .models import EquipmentGroup, EquipmentOption
-from .car_model_forms import CarModelForm, ProductModelForm
+from .car_model_forms import CarModelForm
+from .furniture_forms import FurnitureAdminForm
 from .models import CarModel
 # apps/products/admin.py
 
@@ -97,7 +98,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    form = ProductModelForm
+    form = FurnitureAdminForm
     save_on_top = True
     change_form_template = 'admin/products/product/change_form.html'
 
@@ -195,7 +196,6 @@ class ProductAdmin(admin.ModelAdmin):
                     "article",
                     "category",
                     "brand",
-                    "car_model",
                     "image",
                 )
             },

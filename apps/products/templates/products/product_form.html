@@ -1,5 +1,5 @@
 <!-- apps/products/templates/products/product_form.html -->
-{% extends 'base.html' %}
+{% extends 'home/furniture_base.html' %}
 {% load static %}
 
 {% block extra_css %}
@@ -9,20 +9,20 @@
 
 {% block title %}{{ title }}{% endblock %}
 
-{% block content %}
+{% block furniture_content %}
 <div class="form-container">
     <h1>{{ title }}</h1>
     {% if product %}<p><a href="#product-gallery">Добавить фотографии ↓</a></p>{% endif %}
     
-    <p><a href="{% url 'catalog:car_model_list' %}" target="_blank" rel="noopener">Справочник моделей автомобилей ↗</a></p>
     <!-- Кнопка Сохранить вверху -->
     <div style="margin-bottom: 20px;">
-        <button type="submit" form="product-form" class="btn-save">💾 Сохранить товар</button>
+        <button type="submit" form="product-form" class="btn-save">💾 Сохранить изделие</button>
         <a href="{% url 'catalog:product_list_manage' %}" class="btn-cancel">Отмена</a>
     </div>
     
     <form id="product-form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
+        {{ form.non_field_errors }}
         
         {% for field in form %}
             {% if field.name != 'equipment' %}
@@ -52,7 +52,7 @@
     <!-- ========== ХАРАКТЕРИСТИКИ ========== -->
     {% if product %}
         <div style="margin: 20px 0; padding: 15px; background: #f0f8ff; border-radius: 8px; border: 1px solid #cce5ff;">
-            <h3>🏷️ Характеристики товара</h3>
+            <h3>🏷️ Характеристики изделия</h3>
             
             <div style="margin: 10px 0;">
                 <a href="{% url 'catalog:product_attributes' product.id %}" class="btn-save" style="padding: 8px 20px; font-size: 14px; text-decoration: none; display: inline-block;">
@@ -94,7 +94,7 @@
 
     <!-- Кнопка Сохранить внизу -->
     <div style="margin-top: 20px; display: flex; gap: 15px;">
-        <button type="submit" form="product-form" class="btn-save">💾 Сохранить товар</button>
+        <button type="submit" form="product-form" class="btn-save">💾 Сохранить изделие</button>
         <a href="{% url 'catalog:product_list_manage' %}" class="btn-cancel">Отмена</a>
     </div>
 </div>
@@ -103,5 +103,4 @@
 {% block extra_js %}
     {{ form.media }}
     <script src="{% static 'products/js/gallery-manager.js' %}" defer></script>
-    <script src="{% static 'products/js/manager_slug.js' %}"></script>
 {% endblock %}
