@@ -2,10 +2,10 @@
     <td>
         {% for hidden in form.hidden_fields %}{{ hidden }}{{ hidden.errors }}{% endfor %}
         {{ form.non_field_errors }}
-        {{ form.attribute_type }}{{ form.attribute_type.errors }}
+        <label class="fm-attributes__editor-label" for="{{ form.attribute_type.id_for_label }}">Тип характеристики</label>{{ form.attribute_type }}{{ form.attribute_type.errors }}
     </td>
-    <td>{{ form.attribute_value }}{{ form.attribute_value.errors }}</td>
-    <td>{{ form.free_value }}{{ form.free_value.errors }}</td>
-    <td>{{ form.sort_order }}{{ form.sort_order.errors }}</td>
-    <td><label>{{ form.DELETE }} Удалить</label></td>
+    <td><label class="fm-attributes__editor-label" for="{{ form.attribute_value.id_for_label }}">Значение из списка</label>{{ form.attribute_value }}{{ form.attribute_value.errors }}</td>
+    <td><label class="fm-attributes__editor-label" for="{{ form.free_value.id_for_label }}">Число или текст</label>{{ form.free_value }}{{ form.free_value.errors }}</td>
+    <td><label class="fm-attributes__editor-label" for="{{ form.sort_order.id_for_label }}">Порядок</label>{{ form.sort_order }}{{ form.sort_order.errors }}</td>
+    <td><label class="fm-attributes__check">{{ form.DELETE }} Удалить</label></td>
 </tr>

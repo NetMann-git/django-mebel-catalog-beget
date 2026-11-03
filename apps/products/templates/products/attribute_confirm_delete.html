@@ -1,20 +1,7 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}{{ title }}{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block content %}
-<main class="form-container">
-    <h1>{{ title }}</h1>
-    <p><strong>{{ name }}</strong></p>
-    <p>Если характеристика используется в карточках автомобилей, удалить её не получится.</p>
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn-save">Подтвердить удаление</button>
-        <a href="{% url return_url return_id %}" class="btn-cancel">Отмена</a>
-    </form>
-</main>
-{% endblock %}
+{% extends 'products/attributes_base.html' %}
+{% block title %}{{ title }} — LUSTRID.RU{% endblock %}
+{% block furniture_content %}<section class="fm-container fm-attributes" aria-labelledby="attribute-delete-title">
+<a class="fm-attributes__back" href="{% url return_url return_id %}">← К типу характеристики</a>
+<div class="fm-attributes__panel"><h1 id="attribute-delete-title">{{ title }}</h1><p class="fm-attributes__subject">{{ name }}</p><p class="fm-attributes__notice">Если характеристика или значение используется в изделиях, удалить их не получится.</p>
+<form method="post" class="fm-attributes__form">{% csrf_token %}<div class="fm-attributes__actions"><button type="submit" class="fm-attributes__button fm-attributes__button--danger">Подтвердить удаление</button><a class="fm-attributes__button" href="{% url return_url return_id %}">Отмена</a></div></form>
+</div></section>{% endblock %}

@@ -1,71 +1,19 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}{% if attribute_type %}Редактирование типа{% else %}Новый тип характеристики{% endif %}{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">
+{% extends 'products/attributes_base.html' %}{% load static %}
+{% block title %}{% if attribute_type %}Редактирование характеристики{% else %}Новый тип характеристики{% endif %} — LUSTRID.RU{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-attributes" aria-labelledby="attribute-type-title">
+<a class="fm-attributes__back" href="{% url 'catalog:attribute_type_list_manage' %}">← К типам характеристик</a>
+<div class="fm-attributes__panel"><p class="fm-attributes__eyebrow">Справочник мастерской</p><h1 id="attribute-type-title">{% if attribute_type %}{{ attribute_type.name }}{% else %}Новый тип характеристики{% endif %}</h1>
+<form method="post" class="fm-attributes__form">{% csrf_token %}{% include 'products/includes/furniture_attribute_fields.html' with fields_form=form %}<div class="fm-attributes__actions"><button type="submit" class="fm-attributes__button fm-attributes__button--primary">Сохранить тип</button><a class="fm-attributes__button" href="{% url 'catalog:attribute_type_list_manage' %}">Отмена</a></div></form>
+{% if attribute_type %}<p class="fm-attributes__notice">Код: <strong>{{ attribute_type.slug }}</strong>. Он используется в фильтрах и после создания не меняется. Тип данных определяет способ ввода этой характеристики в изделиях.</p>{% endif %}
+</div>
+{% if attribute_type %}<div class="fm-attributes__panel">
+{% if attribute_type.data_type == 'choice' %}
+<h2>Значения характеристики</h2><p class="fm-attributes__hint">Изменение значения обновит его у всех изделий, где оно выбрано.</p>
+{% if values %}<table class="fm-attributes__table"><thead><tr><th scope="col">Значение</th><th scope="col">Порядок</th><th scope="col">Действия</th></tr></thead><tbody>{% for item in values %}<tr><td class="fm-attributes__name">{{ item.value }}</td><td><span class="fm-attributes__label" aria-hidden="true">Порядок</span>{{ item.sort_order }}</td><td class="fm-attributes__links"><a href="{% url 'catalog:attribute_value_edit' attribute_type.pk item.pk %}" aria-label="Изменить значение: {{ item.value }}">Изменить</a><a class="fm-attributes__delete" href="{% url 'catalog:attribute_value_delete' attribute_type.pk item.pk %}" aria-label="Удаление значения: {{ item.value }}">Удаление</a></td></tr>{% endfor %}</tbody></table>{% else %}<p class="fm-attributes__hint">Значений пока нет.</p>{% endif %}
+<h3>Добавить значение</h3><form method="post" action="{% url 'catalog:attribute_value_create' attribute_type.pk %}" class="fm-attributes__form">{% csrf_token %}{% include 'products/includes/furniture_attribute_fields.html' with fields_form=value_form %}<button type="submit" class="fm-attributes__button fm-attributes__button--primary">Добавить значение</button></form>
+{% else %}<h2>Как вводить значение</h2><p class="fm-attributes__hint">Для этого типа список значений создавать не нужно. Откройте характеристики изделия и введите {% if attribute_type.data_type == 'number' %}число{% else %}текст{% endif %} в поле «Число или текст».</p>{% endif %}
+</div>{% endif %}
+</section>
 {% endblock %}
-
-{% block extra_js %}
-{{ block.super }}
-{% if not attribute_type %}<script src="{% static 'products/js/manager_slug.js' %}"></script>{% endif %}
-{% endblock %}
-
-{% block content %}
-<main class="form-container">
-    <h1>{% if attribute_type %}{{ attribute_type.name }}{% else %}Новый тип характеристики{% endif %}</h1>
-    <p><a href="{% url 'catalog:attribute_type_list_manage' %}">← К типам характеристик</a></p>
-    <form method="post">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}
-            {% if field.help_text %}<div class="help-text">{{ field.help_text }}</div>{% endif %}
-            {{ field.errors }}
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn-save">Сохранить тип</button>
-    </form>
-
-    {% if attribute_type %}
-    <p>Код: <strong>{{ attribute_type.slug }}</strong>. Код используется в фильтрах и после создания не меняется.</p>
-    {% if attribute_type.data_type == "choice" %}
-    <h2>Значения</h2>
-    <p>Изменение значения обновит его у всех автомобилей, где оно выбрано.</p>
-    {% if values %}
-    <table class="product-table">
-        <thead><tr><th>Значение</th><th>Порядок</th><th>Действия</th></tr></thead>
-        <tbody>
-            {% for item in values %}
-            <tr>
-                <td>{{ item.value }}</td>
-                <td>{{ item.sort_order }}</td>
-                <td>
-                    <a href="{% url 'catalog:attribute_value_edit' attribute_type.pk item.pk %}">Изменить</a>
-                    <a href="{% url 'catalog:attribute_value_delete' attribute_type.pk item.pk %}">Удалить</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}<p>Значений пока нет.</p>{% endif %}
-
-    <h3>Добавить значение</h3>
-    <form method="post" action="{% url 'catalog:attribute_value_create' attribute_type.pk %}">
-        {% csrf_token %}
-        {% for field in value_form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}{{ field.errors }}
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn-save">Добавить значение</button>
-    </form>
-    {% else %}
-    <p>Для этого типа не нужно создавать список значений.
-    Откройте характеристики автомобиля и введите {% if attribute_type.data_type == "number" %}число (например, пробег 45000){% else %}текст{% endif %} непосредственно в поле значения.</p>
-    {% endif %}
-    {% endif %}
-</main>
-{% endblock %}
+{% block extra_js %}{{ block.super }}{% if not attribute_type %}<script src="{% static 'products/js/manager_slug.js' %}"></script>{% endif %}{% endblock %}

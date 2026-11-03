@@ -1,45 +1,11 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Типы характеристик автомобилей{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block content %}
-<main class="manage-container">
-    <div class="manage-header">
-        <h1>Типы характеристик</h1>
-        <a href="{% url 'catalog:attribute_type_create' %}" class="btn-primary">+ Добавить тип</a>
-    </div>
-    <p><a href="{% url 'users:manager_dashboard' %}">← Вернуться в панель менеджера</a></p>
-    <p>Здесь можно управлять типами и их значениями для карточек автомобилей.</p>
-    {% if types %}
-    <table class="product-table">
-        <thead>
-            <tr>
-                <th>Название</th><th>Код (slug)</th><th>Тип данных</th>
-                <th>Значений</th><th>Автомобилей</th><th>Действия</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in types %}
-            <tr>
-                <td>{{ item.name }}</td>
-                <td>{{ item.slug }}</td>
-                <td>{{ item.get_data_type_display }}</td>
-                <td>{{ item.values_count }}</td>
-                <td>{{ item.products_count }}</td>
-                <td>
-                    <a href="{% url 'catalog:attribute_type_edit' item.pk %}">Изменить / значения</a>
-                    <a href="{% url 'catalog:attribute_type_delete' item.pk %}">Удалить</a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% else %}
-    <p>Типы характеристик пока не добавлены.</p>
-    {% endif %}
-</main>
+{% extends 'products/attributes_base.html' %}
+{% block title %}Характеристики мебели — LUSTRID.RU{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-attributes" aria-labelledby="attribute-list-title">
+<a class="fm-attributes__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
+<div class="fm-attributes__heading"><div><p class="fm-attributes__eyebrow">Справочник мастерской</p><h1 id="attribute-list-title">Типы характеристик</h1><p>Параметры, которые можно назначать изделиям.</p></div><a class="fm-attributes__button fm-attributes__button--primary" href="{% url 'catalog:attribute_type_create' %}">Добавить тип</a></div>
+{% if types %}<table class="fm-attributes__table"><caption class="fm-attributes__sr">Характеристики мебельного каталога</caption><thead><tr><th scope="col">Название</th><th scope="col">Код</th><th scope="col">Тип данных</th><th scope="col">Значений</th><th scope="col">Изделий</th><th scope="col">Действия</th></tr></thead><tbody>
+{% for item in types %}<tr><td class="fm-attributes__name"><a href="{% url 'catalog:attribute_type_edit' item.pk %}">{{ item.name }}</a></td><td><span class="fm-attributes__label" aria-hidden="true">Код</span><code>{{ item.slug }}</code></td><td><span class="fm-attributes__label" aria-hidden="true">Ввод</span>{{ item.get_data_type_display }}</td><td><span class="fm-attributes__label" aria-hidden="true">Значений</span>{{ item.values_count }}</td><td><span class="fm-attributes__label" aria-hidden="true">Изделий</span>{{ item.products_count }}</td><td class="fm-attributes__links"><a href="{% url 'catalog:attribute_type_edit' item.pk %}" aria-label="Редактировать характеристику: {{ item.name }}">Изменить / значения</a><a class="fm-attributes__delete" href="{% url 'catalog:attribute_type_delete' item.pk %}" aria-label="Удаление характеристики: {{ item.name }}">Удаление</a></td></tr>{% endfor %}
+</tbody></table>{% else %}<div class="fm-attributes__empty"><h2>Характеристик пока нет</h2><p>Добавьте тип характеристики, затем назначьте её изделию в редакторе.</p></div>{% endif %}
+</section>
 {% endblock %}

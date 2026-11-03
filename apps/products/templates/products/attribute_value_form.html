@@ -1,24 +1,7 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Редактирование значения характеристики{% endblock %}
-{% block extra_css %}
-<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block content %}
-<main class="form-container">
-    <h1>Значение: {{ attribute_type.name }}</h1>
-    <p><a href="{% url 'catalog:attribute_type_edit' attribute_type.pk %}">← К типу характеристики</a></p>
-    <form method="post">
-        {% csrf_token %}
-        {% for field in form %}
-        <div class="form-group">
-            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
-            {{ field }}{{ field.errors }}
-        </div>
-        {% endfor %}
-        <button type="submit" class="btn-save">Сохранить значение</button>
-    </form>
-</main>
-{% endblock %}
+{% extends 'products/attributes_base.html' %}
+{% block title %}Значение характеристики — LUSTRID.RU{% endblock %}
+{% block furniture_content %}<section class="fm-container fm-attributes" aria-labelledby="attribute-value-title">
+<a class="fm-attributes__back" href="{% url 'catalog:attribute_type_edit' attribute_type.pk %}">← К типу характеристики</a>
+<div class="fm-attributes__panel"><p class="fm-attributes__eyebrow">{{ attribute_type.name }}</p><h1 id="attribute-value-title">Редактирование значения</h1><p class="fm-attributes__notice">Изменение отразится во всех изделиях, где выбрано это значение.</p>
+<form method="post" class="fm-attributes__form">{% csrf_token %}{% include 'products/includes/furniture_attribute_fields.html' with fields_form=form %}<div class="fm-attributes__actions"><button type="submit" class="fm-attributes__button fm-attributes__button--primary">Сохранить значение</button><a class="fm-attributes__button" href="{% url 'catalog:attribute_type_edit' attribute_type.pk %}">Отмена</a></div></form>
+</div></section>{% endblock %}

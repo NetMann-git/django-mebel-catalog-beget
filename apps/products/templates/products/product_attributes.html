@@ -1,49 +1,13 @@
-{% extends 'base.html' %}
-{% load static %}
-{% block title %}Характеристики товара{% endblock %}
-{% block extra_css %}
-{{ block.super }}
-<link rel="stylesheet" href="{% static 'products/css/attributes.css' %}">
-<link rel="stylesheet" href="{% static 'products/css/manage.css' %}">
-<link rel="stylesheet" href="{% static 'products/css/attribute-editor.css' %}">
-{% endblock %}
-{% block content %}
-<div class="attributes-container attribute-editor">
-    <h1>Характеристики товара</h1>
-    <p class="subtitle">Автомобиль: <strong>{{ product.title }}</strong></p>
-    <p>Редактируйте существующие строки или добавляйте новые. Меньшее число в поле «Порядок» выводится раньше.
-        Каждый тип можно указать только один раз: для изменения значения редактируйте существующую строку.
-        Чтобы удалить характеристику, отметьте «Удалить» и сохраните изменения.</p>
-    <form method="post" id="attribute-editor-form">
-        {% csrf_token %}
-        {{ formset.management_form }}
-        {{ formset.non_form_errors }}
-        <div class="attribute-editor__scroll">
-            <table class="attributes-table">
-                <thead><tr><th>Тип характеристики</th><th>Значение из списка</th><th>Число или текст</th><th>Порядок</th><th>Удалить</th></tr></thead>
-                <tbody id="attribute-editor-rows">
-                    {% for form in formset %}
-                        {% include 'products/includes/attribute_editor_row.html' %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <template id="attribute-editor-empty">
-            {% include 'products/includes/attribute_editor_row.html' with form=formset.empty_form %}
-        </template>
-        <div class="nav-buttons">
-            <button type="button" class="btn-list" id="attribute-editor-add">+ Добавить характеристику</button>
-            <button type="submit" class="btn-add">Сохранить изменения</button>
-        </div>
-    </form>
-    <div class="nav-buttons">
-        <a href="{% url 'catalog:product_edit' product.id %}" class="btn-back">← Назад к товару</a>
-        <a href="{% url 'catalog:product_list_manage' %}" class="btn-list">К списку товаров</a>
-    </div>
-</div>
-{% endblock %}
-{% block extra_js %}
-{{ block.super }}
-{{ formset.media }}
-<script src="{% static 'products/js/attribute-editor.js' %}"></script>
-{% endblock %}
+{% extends 'products/attributes_base.html' %}{% load static %}
+{% block title %}Характеристики изделия — LUSTRID.RU{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-attributes attribute-editor" aria-labelledby="product-attributes-title">
+<a class="fm-attributes__back" href="{% url 'catalog:product_edit' product.pk %}">← К изделию</a><p class="fm-attributes__eyebrow">{{ product.title }}</p><h1 id="product-attributes-title">Характеристики изделия</h1>
+<p class="fm-attributes__hint">Редактируйте существующие строки или добавляйте новые. Каждый тип можно указать один раз. Меньшее число в поле «Порядок» выводится раньше. Для удаления отметьте строку и сохраните изменения.</p>
+<form method="post" id="attribute-editor-form" class="fm-attributes__form">{% csrf_token %}{{ formset.management_form }}{{ formset.non_form_errors }}
+<div class="attribute-editor__scroll"><table class="fm-attributes__table fm-attributes__editor"><caption class="fm-attributes__sr">Параметры изделия</caption><thead><tr><th scope="col">Тип характеристики</th><th scope="col">Значение из списка</th><th scope="col">Число или текст</th><th scope="col">Порядок</th><th scope="col">Удалить</th></tr></thead><tbody id="attribute-editor-rows">{% for form in formset %}{% include 'products/includes/attribute_editor_row.html' %}{% endfor %}</tbody></table></div>
+<template id="attribute-editor-empty">{% include 'products/includes/attribute_editor_row.html' with form=formset.empty_form %}</template>
+<div class="fm-attributes__actions"><button type="button" class="fm-attributes__button" id="attribute-editor-add">Добавить характеристику</button><button type="submit" class="fm-attributes__button fm-attributes__button--primary">Сохранить изменения</button></div>
+</form><div class="fm-attributes__actions"><a class="fm-attributes__button" href="{% url 'catalog:product_edit' product.pk %}">Назад к изделию</a><a class="fm-attributes__button" href="{% url 'catalog:product_list_manage' %}">К списку изделий</a></div>
+</section>{% endblock %}
+{% block extra_js %}{{ block.super }}{{ formset.media }}<script src="{% static 'products/js/attribute-editor.js' %}"></script>{% endblock %}

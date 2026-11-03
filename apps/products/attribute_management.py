@@ -58,13 +58,13 @@ def attribute_type_edit(request, type_id):
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def attribute_type_delete(request, type_id):
-    """Удалить только тип, который не используется автомобилями."""
+    """Удалить только тип, который не используется изделиями."""
     attribute_type = get_object_or_404(AttributeType, pk=type_id)
     if request.method == "POST":
         try:
             attribute_type.delete()
         except ProtectedError:
-            messages.error(request, "Тип используется автомобилями. Сначала удалите связи с товарами.")
+            messages.error(request, "Тип используется изделиями. Сначала удалите связи с изделиями.")
             return redirect("catalog:attribute_type_edit", type_id=type_id)
         CatalogCache.clear_catalog()
         messages.success(request, "Тип характеристики удалён.")
@@ -122,7 +122,7 @@ def attribute_value_edit(request, type_id, value_id):
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def attribute_value_delete(request, type_id, value_id):
-    """Не удалять значение, назначенное хотя бы одному автомобилю."""
+    """Не удалять значение, назначенное хотя бы одному изделию."""
     value = get_object_or_404(
         AttributeValue, pk=value_id, attribute_type_id=type_id,
     )
@@ -130,7 +130,7 @@ def attribute_value_delete(request, type_id, value_id):
         try:
             value.delete()
         except ProtectedError:
-            messages.error(request, "Значение используется автомобилями и не может быть удалено.")
+            messages.error(request, "Значение используется изделиями и не может быть удалено.")
             return redirect("catalog:attribute_type_edit", type_id=type_id)
         CatalogCache.clear_catalog()
         messages.success(request, "Значение удалено.")

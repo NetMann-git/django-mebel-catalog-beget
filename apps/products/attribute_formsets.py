@@ -16,7 +16,7 @@ class ProductAttributeFormSet(BaseInlineFormSet):
             record = form.cleaned_data.get('id')
             if record and record.product_id != self.instance.pk:
                 raise forms.ValidationError(
-                    'Характеристика принадлежит другому автомобилю.',
+                    'Характеристика принадлежит другому изделию.',
                 )
 
 
