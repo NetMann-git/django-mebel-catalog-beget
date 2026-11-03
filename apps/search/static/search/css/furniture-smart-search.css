@@ -1,0 +1,16 @@
+/* шаг 25: original AJAX suggestions in the furniture search fields. */
+[data-smart-search]{position:relative;min-width:0}
+[data-smart-search] .search-results{position:absolute;top:100%;left:0;right:0;background:#fffdf8;border:1px solid #ddd8ca;border-radius:4px;box-shadow:0 8px 24px #242c2426;max-height:400px;overflow:auto;z-index:50;font-size:13px}
+[data-smart-search] .search-dropdown{list-style:none;margin:0;padding:0}
+[data-smart-search] .search-item{display:flex;align-items:center;gap:12px;padding:12px;cursor:pointer;border-bottom:1px solid #ece8dd;overflow-wrap:anywhere}
+[data-smart-search] .search-item:hover,[data-smart-search] .search-item.active{background:#eeeade}
+[data-smart-search] .search-item-image{flex-shrink:0}
+[data-smart-search] .search-item-image img{display:block;width:50px;height:50px;object-fit:cover;border-radius:3px}
+[data-smart-search] .search-item-content{min-width:0;flex:1}
+[data-smart-search] .search-item-title{font-weight:500}
+[data-smart-search] mark{background:#e7ddba;color:inherit}
+[data-smart-search] .search-item-meta,[data-smart-search] .search-item-badges{display:flex;gap:8px;flex-wrap:wrap;font-size:11px;color:#6f7966;margin-top:5px}
+[data-smart-search] .search-item-type{font-size:10px;color:#7b826f;margin-left:auto}
+[data-smart-search] .search-empty{padding:18px;text-align:center;color:#78836c}
+.fc-sidebar [data-smart-search] .search-results{right:auto;width:min(380px,calc(100vw - 80px))}
+@media(max-width:720px){[data-smart-search] .search-results{max-height:320px}.fc-sidebar [data-smart-search] .search-results{right:0;width:auto}}

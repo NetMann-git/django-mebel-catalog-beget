@@ -21,6 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileLayout.addEventListener) mobileLayout.addEventListener('change', updatePanel);
 
     function initialize() {
+        document.dispatchEvent(new Event('catalog:updated'));
         updatePanel();
         const form = workspace.querySelector('#catalog-filter-form');
         const brand = form.elements.brand;
