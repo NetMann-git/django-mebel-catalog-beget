@@ -1,28 +1,20 @@
 <!-- apps/users/templates/users/consultant_dashboard.html -->
-{% extends 'base.html' %}
+{% extends 'home/furniture_base.html' %}
 {% load static %}
 
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block extra_css %}
     <link rel="stylesheet" type="text/css" href="{% static 'users/css/consultant.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'users/css/furniture-consultant.css' %}">
 {% endblock %}
 
-{% block title %}Панель продавца{% endblock %}
+{% block title %}Панель консультанта — LUSTRID.RU{% endblock %}
 
-{% block content %}
-<div class="container">
-    <h1>📊 Панель продавца</h1>
-    
-    <!-- Ссылка на шахматку -->
-    <div style="margin: 20px 0; padding: 15px; background: #e8f5e9; border-radius: 8px; border-left: 4px solid #4CAF50;">
-        <a href="{% url 'users:consultant_calendar' %}" 
-        style="color: #2e7d32; font-weight: bold; font-size: 18px; text-decoration: none;">
-            📅 Шахматка записей
-        </a>
-        <span style="color: #666; margin-left: 15px; font-size: 14px;">
-            (перейти к календарю слотов)
-        </span>
-    </div>
-    
+{% block furniture_content %}
+<div class="fm-container fd-page fco-page">
+    <nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><span aria-current="page">Панель консультанта</span></nav>
+    <header class="fd-heading"><div><p class="fm-eyebrow">Мастерская</p><h1>Панель консультанта</h1><p>Записи клиентов и их текущие статусы.</p></div><a class="fm-button" href="{% url 'users:consultant_calendar' %}">Шахматка записей →</a></header>
     <!-- Статистика -->
     <div class="dashboard-stats">
         <div class="stat-card">
@@ -55,11 +47,12 @@
     <h2>Все записи</h2>
     
     {% if appointments %}
+        <div class="fco-table-scroll" role="region" aria-label="Все записи клиентов — таблица с горизонтальной прокруткой" tabindex="0">
         <table class="appointments-table">
             <thead>
                 <tr>
                     <th>Клиент</th>
-                    <th>Товар</th>
+                    <th>Изделие</th>
                     <th>Дата</th>
                     <th>Время</th>
                     <th>Телефон</th>
@@ -95,7 +88,7 @@
                     <td>
                         <form method="post" action="{% url 'users:appointment_update_status' appointment.id %}" class="status-form">
                             {% csrf_token %}
-                            <select name="status">
+                            <select name="status" aria-label="Статус записи {{ appointment.id }}">
                                 <option value="pending" {% if appointment.status == 'pending' %}selected{% endif %}>Ожидает</option>
                                 <option value="confirmed" {% if appointment.status == 'confirmed' %}selected{% endif %}>Подтверждена</option>
                                 <option value="completed" {% if appointment.status == 'completed' %}selected{% endif %}>Завершена</option>
@@ -108,6 +101,7 @@
                 {% endfor %}
             </tbody>
         </table>
+        </div>
     {% else %}
         <p class="empty-message">Записей пока нет</p>
     {% endif %}

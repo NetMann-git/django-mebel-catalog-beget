@@ -1,0 +1,21 @@
+/* шаг 37: scoped overrides; shared calendar/manager styles stay intact. */
+.fco-page .dashboard-stats{grid-template-columns:repeat(6,minmax(0,1fr));gap:14px;margin:0 0 34px}
+.fco-page .stat-card{background:#faf9f5;border:1px solid #e7e3d8;border-radius:4px;padding:22px 12px}
+.fco-page .stat-number{color:#65705b;font-size:30px;font-weight:500;margin-bottom:8px}
+.fco-page .stat-label{color:#727b67;font-size:12px}
+.fco-page h2{font-size:23px;font-weight:500;margin-bottom:20px}
+.fco-table-scroll{max-width:100%;overflow-x:auto;border:1px solid #e7e3d8;border-radius:4px;margin-bottom:24px}
+.fco-table-scroll:focus-visible{outline:2px solid #65705b;outline-offset:3px}
+.fco-page .appointments-table{min-width:1000px;margin:0;font-size:13px;background:#faf9f5}
+.fco-page .appointments-table th,.fco-page .appointments-table td{border:0;border-bottom:1px solid #e7e3d8;padding:16px;overflow-wrap:anywhere;max-width:220px}
+.fco-page .appointments-table th{background:#f0ede5;color:#626b59;font-weight:500}
+.fco-page .appointments-table tbody tr:last-child td{border-bottom:0}
+.fco-page .appointments-table tr:hover{background:#f3f1ea}
+.fco-page .status-badge{border-radius:3px;padding:4px 8px;font-size:12px}
+.fco-page .status-form{display:flex;flex-direction:column;gap:8px}
+.fco-page .status-form select{font:inherit;font-size:14px;min-height:44px;max-width:100%;background:#fff;border-color:#dcdccf;color:#32382c}
+.fco-page .btn-update,.fco-page .btn-back{font:inherit;font-size:13px;min-height:44px;border-radius:3px;background:#65705b;color:#fff;padding:12px 18px}
+.fco-page .btn-update:hover,.fco-page .btn-back:hover{background:#515d47}
+.fco-page .empty-message{background:#faf9f5;border:1px solid #e7e3d8;border-radius:4px;color:#727b67}
+@media(max-width:1000px){.fco-page .dashboard-stats{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:720px){.fco-page .dashboard-stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.fco-page .fd-heading{flex-wrap:wrap}.fco-page .stat-card{padding:18px 12px}.fco-page h2{font-size:21px}}
