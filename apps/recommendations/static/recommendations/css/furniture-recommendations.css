@@ -1,0 +1,14 @@
+/* шаг 17: use the shared furniture manager forms and responsive tables. */
+.fr-promotions .fr-product{display:flex;align-items:flex-start;gap:12px}
+.fr-product img,.fr-no-photo{width:80px;height:64px;object-fit:cover;flex-shrink:0;border-radius:3px}
+.fr-no-photo{display:grid;place-items:center;background:#efede4;color:#787f6b;font-size:11px;text-align:center}
+.fr-product-title{font-weight:600}
+.fr-promotions .fr-draft{font-size:12px;color:#88513a;margin-top:8px}
+.fr-promotions .fr-dates{font-size:12px;color:#69705f;line-height:1.7;margin-top:8px}
+.fr-state{display:block;font-size:13px;margin-bottom:4px}
+.fr-toggle{min-height:44px;padding:8px 10px;background:transparent;border:1px solid #abb09c;border-radius:4px;color:#535d43;font:inherit;font-size:12px;cursor:pointer}
+.fr-promotions .fm-attributes__table th:first-child{width:30%}
+.fr-promotions .fm-attributes__table th:nth-child(3){width:100px}
+.fr-pagination{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:16px;margin-top:28px;font-size:13px}
+.fr-pagination a{display:inline-flex;align-items:center;min-height:44px;padding:10px;border:1px solid #d9d9ca;border-radius:4px}
+@media(max-width:760px){.fr-promotions .fr-product{gap:16px}.fr-product img,.fr-no-photo{width:90px;height:72px}.fr-promotions .fr-dates{margin-top:12px}.fr-promotions .fm-attributes__field input[type=datetime-local]{font-size:14px}.fr-promotions .fr-state{display:inline-block;margin-right:12px}}

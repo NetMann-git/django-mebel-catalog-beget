@@ -1,0 +1,7 @@
+{% extends 'recommendations/base.html' %}{% load tz %}
+{% block title %}{% if promotion %}Изменить рекомендацию{% else %}Добавить рекомендацию{% endif %} — LUSTRID.RU{% endblock %}
+{% block furniture_content %}<section class="fm-container fm-attributes fr-promotions" aria-labelledby="promotion-form-title"><a class="fm-attributes__back" href="{% url 'recommendations:manage' %}">← К рекомендациям</a><div class="fm-attributes__panel"><p class="fm-attributes__eyebrow">Подборки мастерской</p><h1 id="promotion-form-title">{% if promotion %}Изменить рекомендацию{% else %}Добавить рекомендацию{% endif %}</h1>
+<p class="fm-attributes__hint">Выберите изделие и страницу показа. Неопубликованное изделие не выводится в публичных рекомендациях. Пустые даты не ограничивают срок показа. {% get_current_timezone as current_zone %}Время вводится в часовом поясе {{ current_zone }}.</p>
+<form method="post" class="fm-attributes__form">{% csrf_token %}{% include 'products/includes/furniture_attribute_fields.html' with fields_form=form %}<div class="fm-attributes__actions"><button class="fm-attributes__button fm-attributes__button--primary" type="submit">Сохранить рекомендацию</button><a class="fm-attributes__button" href="{% url 'recommendations:manage' %}">Отмена</a></div></form>
+<p class="fm-attributes__notice">Пункт «Главная страница» сохранён для совместимости. На текущей мебельной главной отдельный блок ручных рекомендаций не выводится.</p>
+</div></section>{% endblock %}
