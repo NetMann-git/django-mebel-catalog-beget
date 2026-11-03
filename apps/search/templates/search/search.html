@@ -1,40 +1,15 @@
-<!-- apps\search\templates\search\search.html -->
-
-{% extends "base.html" %}
-{% load static wagtailcore_tags %}
-
-{% block body_class %}template-searchresults{% endblock %}
-
-{% block title %}Search{% endblock %}
-
-{% block content %}
-<h1>Search</h1>
-
-<form action="{% url 'search' %}" method="get">
-    <input type="text" name="query"{% if search_query %} value="{{ search_query }}"{% endif %}>
-    <input type="submit" value="Search" class="button">
-</form>
-
-{% if search_results %}
-<ul>
-    {% for result in search_results %}
-    <li>
-        <h4><a href="{% pageurl result %}">{{ result }}</a></h4>
-        {% if result.search_description %}
-        {{ result.search_description }}
-        {% endif %}
-    </li>
-    {% endfor %}
-</ul>
-
-{% if search_results.has_previous %}
-<a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Previous</a>
-{% endif %}
-
-{% if search_results.has_next %}
-<a href="{% url 'search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Next</a>
-{% endif %}
-{% elif search_query %}
-No results found
-{% endif %}
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Поиск мебели — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, follow"><meta name="description" content="Поиск мебели в каталоге LUSTRID.RU.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'search/css/furniture-search.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fc-page fs-page">
+<nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог мебели</a><span aria-hidden="true">/</span><span aria-current="page">Поиск</span></nav>
+<header class="fc-heading"><div><p class="fm-eyebrow">Для дома и бизнеса</p><h1>Поиск мебели</h1><p>Найдите изделие по названию, артикулу или описанию.</p></div></header>
+<form class="fs-form" action="{% url 'search:search' %}" method="get" role="search">
+<label for="furniture-search-query">Что вы ищете?</label><div><input id="furniture-search-query" type="search" name="query" value="{{ search_query }}" placeholder="Например, шкаф" autocomplete="off"><button class="fm-button" type="submit">Найти <span aria-hidden="true">→</span></button></div></form>
+{% if search_query %}<section aria-labelledby="search-results-heading"><h2 id="search-results-heading" class="fs-results-title">Результаты поиска</h2><p class="fs-count">По запросу «{{ search_query }}» найдено: {{ search_results.paginator.count }}</p>
+{% if search_results %}<div class="fc-product-grid products-grid">{% for product in search_results %}{% include 'products/_furniture_card.html' %}{% endfor %}</div>
+{% if search_results.paginator.num_pages > 1 %}<nav class="fc-pagination" aria-label="Страницы результатов поиска">{% if search_results.has_previous %}<a rel="prev" href="{% url 'search:search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.previous_page_number }}">Назад</a>{% endif %}<span aria-current="page">{{ search_results.number }} из {{ search_results.paginator.num_pages }}</span>{% if search_results.has_next %}<a rel="next" href="{% url 'search:search' %}?query={{ search_query|urlencode }}&amp;page={{ search_results.next_page_number }}">Далее</a>{% endif %}</nav>{% endif %}
+{% else %}<div class="fc-empty"><h3>Ничего не найдено</h3><p>Попробуйте другое название или артикул. Можно посмотреть каталог или обсудить изготовление мебели.</p><div><a class="fm-button" href="{% url 'catalog:catalog' %}">Весь каталог →</a><a href="{% url 'home' %}#callback">Обсудить проект</a></div></div>{% endif %}</section>
+{% else %}<div class="fc-empty"><h3>Расскажите, какую мебель ищете</h3><p>Введите название, артикул или слово из описания изделия.</p><div><a class="fm-button" href="{% url 'catalog:catalog' %}">Посмотреть каталог →</a></div></div>{% endif %}
+</div>{% endblock %}

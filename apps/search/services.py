@@ -1,6 +1,7 @@
 # apps/search/services.py
 
 from django.core.cache import cache
+from django.db import connections
 from django.db.models import Q
 from easy_thumbnails.files import get_thumbnailer
 from apps.products.models import Product, Category, Badge, ProductAttribute
@@ -9,6 +10,11 @@ from .models import SearchQuery
 
 class SearchService:
     LIMIT = 8
+
+    @staticmethod
+    def _matches_product(product, folded_query):
+        return any(folded_query in (getattr(product, field) or '').casefold()
+                   for field in ('title', 'article', 'short_description', 'description'))
 
     @staticmethod
     def _thumbnail_url(image, size=(80, 120)):
@@ -31,6 +37,16 @@ class SearchService:
         """
         if not query:
             return []
+
+        products = Product.objects.filter(is_active=True)
+        if connections[products.db].vendor == 'sqlite':
+            # SQLite LIKE is not case-insensitive for Cyrillic. Reuse the
+            # suggestion matcher locally; MySQL retains the existing SQL path.
+            folded_query = query.casefold()
+            candidates = products.only('pk', 'title', 'article', 'short_description', 'description')
+            ids = [product.pk for product in candidates.iterator(chunk_size=200)
+                   if SearchService._matches_product(product, folded_query)]
+            return products.filter(pk__in=ids)
         
         q = Q()
         q |= Q(title__icontains=query)
@@ -54,10 +70,7 @@ class SearchService:
         products = Product.objects.filter(is_active=True).select_related('category', 'brand').prefetch_related('badges')
         matched_products = []
         for product in products:
-            if (q in (product.title or "").casefold() or
-                q in (product.article or "").casefold() or
-                q in (product.short_description or "").casefold() or
-                q in (product.description or "").casefold()):
+            if SearchService._matches_product(product, q):
                 matched_products.append(product)
             if len(matched_products) >= SearchService.LIMIT:
                 break
