@@ -37,8 +37,13 @@ class CallbackRequestForm(forms.ModelForm):
 
     class Meta:
         model = CallbackRequest
-        fields = ('name', 'phone')
+        fields = ('name', 'phone', 'comment')
         widgets = {
+            'comment': forms.Textarea(attrs={
+                'id': 'callback-comment',
+                'rows': 3,
+                'placeholder': 'Например: шкаф в прихожую, ширина 180 см, светлые фасады',
+            }),
             'name': forms.TextInput(attrs={
                 'class': 'home-callback__input',
                 'id': 'callback-name',
