@@ -13,3 +13,7 @@ def home(request):
 def services(request):
     from .services_content import SERVICE_GROUPS
     return render(request, "home/services.html", {"service_groups": SERVICE_GROUPS})
+
+
+def materials(request):
+    return render(request, "home/materials.html")

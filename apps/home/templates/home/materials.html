@@ -1,0 +1,19 @@
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Материалы и фурнитура для мебели на заказ — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="description" content="Подбор дерева, современных мебельных материалов и фурнитуры с учётом назначения мебели, условий эксплуатации, дизайна и бюджета проекта.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}"><link rel="stylesheet" href="{% static 'home/css/furniture-services.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fs-page">
+<nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Материалы</span></nav>
+<header class="fs-heading"><p class="fm-eyebrow">Материалы и фурнитура</p><h1>Правильный материал — основа хорошей мебели</h1><p>Материал напрямую влияет на внешний вид, долговечность и стоимость мебели. Подбираем решение с учётом назначения, условий эксплуатации, дизайна и бюджета вашего проекта.</p><div class="fs-actions"><a class="fm-button" href="{% url 'home' %}#callback">Подобрать материалы →</a><a class="fs-catalog-link" href="{% url 'furniture_services' %}">Что мы изготавливаем →</a></div></header>
+<section class="fs-group" aria-labelledby="materials-selection"><h2 id="materials-selection">Подбираем материалы под проект</h2><div class="fs-grid">
+<article class="fs-service"><h3>ЛДСП и МДФ</h3><p>Изготавливаем корпуса и фасады кухонь из ЛДСП, МДФ и массива дерева. Основные решения по материалам согласовываем с заказчиком перед изготовлением.</p></article>
+<article class="fs-service"><h3>Натуральный массив дерева</h3><p>Изготавливаем мебель, фасады, лестницы, межкомнатные двери и декоративные деревянные элементы по индивидуальным размерам и эскизам.</p></article>
+<article class="fs-service"><h3>Фурнитура</h3><p>Подбираем фурнитуру под конкретный проект: учитываем конструкцию мебели, нагрузку и условия эксплуатации.</p></article>
+<article class="fs-service"><h3>Внешний вид и бюджет</h3><p>Не предлагаем одно решение для всех заказов. Учитываем стиль интерьера, назначение мебели и бюджет, согласовываем материалы и конструктивные решения.</p></article>
+</div></section>
+<section class="fs-group" aria-labelledby="materials-brief"><h2 id="materials-brief">С чего начать подбор</h2><div class="fs-grid">
+<article class="fs-service"><h3>Расскажите о задаче</h3><p>Какая мебель нужна, где она будет установлена и какие размеры нужно учесть. Работаем по чертежам, эскизам, фотографиям и образцам.</p></article>
+<article class="fs-service"><h3>Обсудим основные решения</h3><p>Подберём материалы и фурнитуру с учётом ваших пожеланий и бюджета. Перед изготовлением согласуем основные решения.</p></article>
+</div></section>
+<section class="fs-project"><h2>Обсудим материалы для вашей мебели</h2><p>Расскажите о будущем изделии и пожеланиях в форме заявки. Поможем подобрать решение для дома или бизнеса.</p><a class="fm-button" href="{% url 'home' %}#callback">Обсудить проект →</a></section>
+</div>{% endblock %}

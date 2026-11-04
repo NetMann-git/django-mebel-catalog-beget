@@ -6,7 +6,7 @@ from django.contrib import admin
 from django.contrib.sitemaps import views as sitemap_views
 from django.urls import include, path
 
-from apps.home.views import home, services
+from apps.home.views import home, services, materials
 from apps.home.legal_views import public_offer, privacy_policy, personal_data_consent
 from apps.products.sitemaps import sitemaps
 from .seo_views import robots_txt
@@ -21,6 +21,7 @@ urlpatterns = [
     path('smart_selects/', include('smart_selects.urls')),  # ДОБАВИТЬ ЭТУ СТРОКУ
     path('', home, name='home'),
     path('services/', services, name='furniture_services'),
+    path('materials/', materials, name='furniture_materials'),
     path('terms/', public_offer, name='public_offer'),
     path('privacy/', privacy_policy, name='privacy_policy'),
     path('consent/', personal_data_consent, name='personal_data_consent'),

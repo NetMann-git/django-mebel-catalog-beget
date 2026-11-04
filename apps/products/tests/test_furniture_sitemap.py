@@ -33,7 +33,7 @@ class FurnitureSitemapTests(TestCase):
         urls = []
         for section in sections:
             urls.extend(self.locations(urlsplit(section).path))
-        expected = ['/', reverse('catalog:catalog'), reverse('furniture_services'), self.product.get_absolute_url(),
+        expected = ['/', reverse('catalog:catalog'), reverse('furniture_services'), reverse('furniture_materials'), self.product.get_absolute_url(),
                     self.brand.get_absolute_url(), self.empty_brand.get_absolute_url()]
         self.assertEqual(set(urls), {'http://testserver' + path for path in expected})
         self.assertEqual(len(urls), len(expected))
