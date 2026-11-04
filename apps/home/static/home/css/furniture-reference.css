@@ -12,3 +12,36 @@
 .furniture-home section[id],.furniture-home #fm-main{scroll-margin-top:calc(var(--fm-header-height) + 20px)}
 @media(max-width:1080px){.furniture-home .fm-navigation{max-height:calc(100vh - var(--fm-header-height));max-height:calc(100dvh - var(--fm-header-height));overflow-y:auto;overscroll-behavior:contain}}
 @media(max-width:720px){.furniture-home{--fm-header-height:110px}}
+
+/* Шаг 59: читаемое общее меню на всех мебельных страницах. */
+.furniture-home .fm-navigation,
+.furniture-home .fm-navigation a { font-size:16px; line-height:1.5; }
+.furniture-home .fm-navigation a { display:flex; align-items:center; min-height:44px; padding:8px 0; }
+.furniture-home .fm-header .fm-button-small,
+.furniture-home .fm-footer-button { font-size:14px; min-height:44px; display:inline-flex; align-items:center; justify-content:center; }
+.furniture-home .fm-header-phone { font-size:15px; }
+.furniture-home .fm-footer-top { flex-wrap:wrap; }
+.furniture-home .fm-footer nav { font-size:16px; line-height:1.5; gap:8px 26px; order:3; flex-basis:100%; margin:0; }
+.furniture-home .fm-footer nav a { display:inline-flex; align-items:center; min-height:44px; }
+.furniture-home .fm-footer-top .fm-footer-button { margin-left:auto; }
+.furniture-home .fm-footer-top p { font-size:14px; }
+.furniture-home .fm-footer-bottom { font-size:14px; line-height:1.6; flex-wrap:wrap; }
+.furniture-home .fm-footer-bottom a,
+.furniture-home .fm-footer-bottom button { display:inline-flex; align-items:center; min-height:44px; }
+@media(min-width:1081px) {
+    .furniture-home .fm-header-inner { flex-wrap:wrap; gap:0 26px; padding-top:12px; }
+    .furniture-home .fm-header .fm-logo { margin-right:auto; }
+    .furniture-home .fm-navigation { order:4; flex-basis:100%; justify-content:center; gap:26px; margin:8px 0 0; border-top:1px solid #e4e1d8; }
+}
+@media(max-width:1080px) {
+    .furniture-home .fm-navigation { gap:8px 24px; }
+}
+@media(max-width:720px) {
+    .furniture-home .fm-header-inner { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:8px 16px; padding-top:8px; padding-bottom:8px; }
+    .furniture-home .fm-header .fm-logo { grid-column:1; grid-row:1; }
+    .furniture-home .fm-menu-toggle { grid-column:2; grid-row:1; justify-self:end; min-width:44px; min-height:44px; }
+    .furniture-home .fm-header-phone { grid-column:1; grid-row:2; text-align:left; padding:0; font-size:14px; white-space:normal; overflow-wrap:anywhere; }
+    .furniture-home .fm-header .fm-button-small { grid-column:2; grid-row:2; padding:10px 12px; }
+    .furniture-home .fm-footer nav { gap:6px 24px; }
+    .furniture-home .fm-footer-bottom { gap:8px 20px; }
+}
