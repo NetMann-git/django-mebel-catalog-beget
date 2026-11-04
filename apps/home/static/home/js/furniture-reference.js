@@ -1,6 +1,19 @@
 /* шаг 02: доступное мобильное меню; FAQ работает без JavaScript. */
 (function () {
   'use strict';
+  // шаг 54: телефон и переносы строк могут менять высоту шапки.
+  var header = document.querySelector('.furniture-home .fm-header');
+  if (header) {
+    var updateHeaderHeight = function () {
+      document.body.style.setProperty('--fm-header-height', Math.ceil(header.getBoundingClientRect().height) + 'px');
+    };
+    updateHeaderHeight();
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(updateHeaderHeight).observe(header);
+    } else {
+      window.addEventListener('resize', updateHeaderHeight);
+    }
+  }
   var button = document.querySelector('.fm-menu-toggle');
   var navigation = document.getElementById('fm-navigation');
   if (!button || !navigation) return;
