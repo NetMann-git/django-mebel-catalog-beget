@@ -1,7 +1,7 @@
 {% extends 'home/furniture_base.html' %}{% load static %}
 {% block title %}Каталог мебели — LUSTRID.RU{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}">{% endblock %}
-{% block furniture_content %}<div class="fm-container fc-page">
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'products/css/furniture-catalog-showroom.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fc-page fc-catalog">
 <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Каталог мебели</span></nav>
 <div class="fc-heading"><div><p class="fm-eyebrow">Для дома и бизнеса</p><h1>Каталог мебели</h1><p>Подберите решение под ваше пространство.<br>Размеры, материалы и детали обсудим индивидуально.</p></div><a class="fm-button" href="{% url 'home' %}#callback">Обсудить проект <span aria-hidden="true">→</span></a></div>
 <nav class="fc-tools" aria-label="Сохранённые подборки"><a href="{% url 'wishlist:list' %}">Избранное <span data-wishlist-count>{{ wishlist_count|default:0 }}</span></a><a href="{% url 'catalog:comparison' %}">Сравнение <span data-comparison-count>{{ comparison_ids|length }}</span></a><a href="{% url 'catalog:recently_viewed' %}">Недавно смотрели</a></nav>

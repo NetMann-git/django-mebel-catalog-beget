@@ -1,0 +1,93 @@
+/* Шаг 57. Витрина каталога; общие карточки других страниц не меняются. */
+.fc-catalog {
+    --fc-line: #e4e1d8;
+    --fc-muted: #71766b;
+    padding-top: 28px;
+    padding-bottom: 80px;
+}
+.fc-catalog .fc-breadcrumbs { margin-bottom: 24px; color: var(--fc-muted); }
+.fc-catalog .fc-heading {
+    background: #f0ede5;
+    padding: 38px 40px;
+    margin-bottom: 0;
+    gap: 32px;
+}
+.fc-catalog .fc-heading .fm-eyebrow { font-size: 10px; letter-spacing: 1.8px; }
+.fc-catalog .fc-heading h1 { font-size: clamp(32px, 3.5vw, 46px); letter-spacing: -1.3px; }
+.fc-catalog .fc-heading p:last-child { color: #666d60; margin-top: 16px; }
+.fc-catalog .fc-heading > .fm-button { padding: 15px 24px; border-radius: 2px; }
+.fc-catalog .fc-tools { border-top: 0; padding: 20px 0; gap: 28px; font-size: 12px; }
+.fc-catalog .fc-tools a { min-height: 28px; }
+.fc-catalog .fc-tools span { background: #ebe7dc; color: #434e39; }
+.fc-catalog .fc-status { margin: 12px 0 !important; }
+.fc-catalog .fc-layout { grid-template-columns: 224px minmax(0, 1fr); gap: 32px; }
+.fc-catalog .fc-sidebar details { border: 0; border-radius: 0; background: #f0ede5; }
+.fc-catalog .fc-sidebar summary { padding: 22px 20px; font-size: 15px; }
+.fc-catalog .fc-field label, .fc-catalog .fc-price legend { color: #515b49; }
+.fc-catalog .fc-field input, .fc-catalog .fc-field select,
+.fc-catalog .fc-price input, .fc-catalog .fc-toolbar select {
+    min-height: 44px;
+    border-color: #d8d7cc;
+    border-radius: 2px;
+    background: #fffefa;
+}
+.fc-catalog .fc-sidebar .fm-button { min-height: 44px; background: #65705b; border-radius: 2px; }
+.fc-catalog .fc-reset { min-height: 32px; display: inline-flex; align-items: center; justify-content: center; }
+.fc-catalog .fc-sidebar-note { padding: 26px 20px; border-bottom: 1px solid var(--fc-line); }
+.fc-catalog .fc-sidebar-note p { color: #666f5f; }
+.fc-catalog .fc-sidebar-note a { display: inline-flex; align-items: center; min-height: 36px; }
+.fc-catalog .fc-toolbar { min-height: 60px; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--fc-line); }
+.fc-catalog .fc-toolbar h2 { font-size: 23px; }
+.fc-catalog .catalog-count { color: var(--fc-muted); }
+.fc-catalog .fc-toolbar select { font-size: 12px; }
+.fc-catalog .fc-product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 32px 22px; }
+.fc-catalog .fc-card { border: 0; border-radius: 0; background: transparent; overflow: visible; display: flex; flex-direction: column; }
+.fc-catalog .fc-card-image { aspect-ratio: 4 / 3; border-radius: 3px; }
+.fc-catalog .fc-card-image img { transition: transform .25s ease; }
+.fc-catalog .fc-card-image:hover img { transform: scale(1.025); }
+.fc-catalog .fc-no-photo { background: #eeebe3; color: #737b68; }
+.fc-catalog .fc-card-body { padding: 17px 0 0; display: flex; flex: 1; flex-direction: column; }
+.fc-catalog .fc-card-category { color: var(--fc-muted); font-size: 11px; margin-bottom: 7px !important; }
+.fc-catalog .fc-card h3 { font-size: 18px; line-height: 1.4; font-weight: 500; }
+.fc-catalog .fc-card-meta { margin-top: 14px; align-items: flex-start; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+.fc-catalog .fc-card-price { font-size: 21px; line-height: 1.35; white-space: normal; overflow-wrap: anywhere; }
+.fc-catalog .fc-availability { text-align: left; color: #626e56; font-size: 11px; }
+.fc-catalog .fc-badges { margin: 0 0 14px; }
+.fc-catalog .fc-badges span { border: 0; background: #eceee5; border-radius: 2px; color: #536048; }
+.fc-catalog .fc-card-actions { margin-top: auto; padding-top: 8px; border-color: var(--fc-line); gap: 4px 14px; }
+.fc-catalog .fc-card-actions button { font-size: 12px; min-height: 44px; color: #56604d; }
+.fc-catalog .fc-card-actions button.active { color: #243f22; font-weight: 600; }
+.fc-catalog .fc-card-actions > a { display: flex; align-items: center; min-height: 44px; margin-left: 0; font-size: 12px; }
+.fc-catalog .fc-empty { background: #f0ede5; border: 0; border-radius: 0; }
+.fc-catalog .fc-more { background: transparent; border-color: #949b88; color: #384131 !important; min-height: 44px; border-radius: 2px; }
+.fc-catalog .fc-more:hover { background: #eceee5; }
+.fc-catalog select:focus-visible { outline: 2px solid #88724d; outline-offset: 3px; }
+@media (max-width: 1150px) {
+    .fc-catalog .fc-layout { grid-template-columns: 216px minmax(0, 1fr); gap: 26px; }
+    .fc-catalog .fc-product-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .fc-catalog .fc-heading { padding: 32px; }
+}
+@media (max-width: 720px) {
+    .fc-catalog { padding-top: 20px; padding-bottom: 48px; }
+    .fc-catalog .fc-breadcrumbs { margin-bottom: 20px; }
+    .fc-catalog .fc-heading { padding: 26px 22px; }
+    .fc-catalog .fc-heading h1 { font-size: 32px; letter-spacing: -.8px; }
+    .fc-catalog .fc-heading p:last-child { font-size: 13px; }
+    .fc-catalog .fc-heading > .fm-button { margin-top: 22px; }
+    .fc-catalog .fc-tools { gap: 4px 22px; padding: 12px 0; }
+    .fc-catalog .fc-tools a { min-height: 36px; }
+    .fc-catalog .fc-layout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+    .fc-catalog .fc-sidebar summary { padding: 16px 20px; }
+    .fc-catalog .fc-toolbar { align-items: flex-start; gap: 12px; margin-bottom: 22px; }
+    .fc-catalog .fc-toolbar h2 { font-size: 21px; overflow-wrap: anywhere; }
+    .fc-catalog .fc-toolbar form { flex-shrink: 0; max-width: 145px; }
+    .fc-catalog .fc-toolbar select { padding: 10px 6px; font-size: 11px; }
+    .fc-catalog .fc-product-grid { grid-template-columns: minmax(0, 1fr); gap: 30px; }
+    .fc-catalog .fc-card h3 { font-size: 20px; }
+    .fc-catalog .fc-card-actions { gap: 4px 18px; }
+    .fc-catalog .fc-card-actions > a { margin-left: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .fc-catalog .fc-card-image img { transition: none; }
+    .fc-catalog .fc-card-image:hover img { transform: none; }
+}
