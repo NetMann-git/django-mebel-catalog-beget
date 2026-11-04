@@ -7,35 +7,54 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeButton = modal.querySelector('.car-inquiry__close');
     const headers = { 'X-Requested-With': 'XMLHttpRequest' };
     let activeTrigger = null;
+    let requestVersion = 0;
+    let loadController = null;
+    let previousOverflow = '';
+
+    function isCurrent(version, form = null) {
+        return !modal.hidden && version === requestVersion && (!form || content.contains(form));
+    }
 
     function close() {
+        requestVersion += 1;
+        loadController?.abort();
+        loadController = null;
         modal.hidden = true;
-        document.body.style.overflow = '';
-        activeTrigger?.focus();
+        document.body.style.overflow = previousOverflow;
+        const returnFocus = activeTrigger;
+        activeTrigger = null;
+        returnFocus?.focus();
     }
 
     triggers.forEach((trigger) => {
         trigger.addEventListener('click', async (event) => {
             event.preventDefault();
+            const version = ++requestVersion;
+            loadController?.abort();
+            const controller = typeof AbortController === 'function' ? new AbortController() : null;
+            loadController = controller;
             activeTrigger = trigger;
+            if (modal.hidden) previousOverflow = document.body.style.overflow;
             modal.hidden = false;
             document.body.style.overflow = 'hidden';
             content.textContent = 'Загружаем форму…';
             closeButton.focus();
             try {
-                const response = await fetch(trigger.href, { headers });
+                const response = await fetch(trigger.href, { headers, ...(controller ? { signal: controller.signal } : {}) });
                 if (!response.ok) throw new Error('Не удалось загрузить форму');
                 const html = await response.text();
-                if (activeTrigger !== trigger) return;
+                if (!isCurrent(version)) return;
                 content.innerHTML = html;
                 content.querySelector('input:not([type="hidden"])')?.focus();
             } catch (error) {
-                if (activeTrigger !== trigger) return;
+                if (!isCurrent(version)) return;
                 content.textContent = 'Форма временно недоступна. Попробуйте открыть её отдельно.';
                 const link = document.createElement('a');
                 link.href = trigger.href;
                 link.textContent = 'Открыть форму';
                 content.append(link);
+            } finally {
+                if (loadController === controller) loadController = null;
             }
         });
     });
@@ -59,6 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!event.target.matches('.car-inquiry__form')) return;
         event.preventDefault();
         const form = event.target;
+        const version = requestVersion;
         const button = form.querySelector('[type="submit"]');
         button.disabled = true;
         try {
@@ -71,12 +91,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 body: data,
             });
             if (response.status === 400) {
-                content.innerHTML = await response.text();
+                const html = await response.text();
+                if (!isCurrent(version, form)) return;
+                content.innerHTML = html;
                 return;
             }
             if (!response.ok) throw new Error('Не удалось отправить запрос');
             const result = await response.json();
             if (!result.success) throw new Error('Не удалось отправить запрос');
+            // POST не отменяется при закрытии: заявка уже могла сохраниться.
+            if (!isCurrent(version, form)) return;
             content.innerHTML = '';
             const title = document.createElement('h2');
             title.id = 'car-inquiry-title';
@@ -86,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
             content.append(title, message);
             closeButton.focus();
         } catch (error) {
+            if (!isCurrent(version, form)) return;
             button.disabled = false;
             let errorText = form.querySelector('.car-inquiry__error--submit');
             if (!errorText) {
