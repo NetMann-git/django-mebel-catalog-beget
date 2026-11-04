@@ -1,0 +1,9 @@
+/* шаг 50: reuse the shared contacts markup on a light public page. */
+.furniture-home .fc-public{margin-bottom:38px;background:#f5f2eb;border:1px solid #e7e3d8;border-radius:4px;padding:24px}
+.furniture-home .fc-public .fm-workshop-contacts{padding:0;border-bottom:0}
+.furniture-home .fc-public .fm-workshop-address{color:#59634f;font-size:15px}
+.furniture-home .fc-public .fm-workshop-phones a{font-size:20px}
+.furniture-home .fc-public .fm-workshop-map{font-size:14px}
+.furniture-home .fc-public .fm-workshop-socials{font-size:14px}
+.fc-empty{font-size:15px;line-height:1.8;margin-bottom:32px;color:#727b67}
+@media(max-width:720px){.furniture-home .fc-public{padding:22px}.furniture-home .fc-public .fm-workshop-phones{flex-direction:column;align-items:flex-start}}

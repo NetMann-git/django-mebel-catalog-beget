@@ -32,3 +32,7 @@ def reviews(request):
 
 def about(request):
     return render(request, "home/about_workshop.html")
+
+
+def contacts(request):
+    return render(request, "home/contacts.html")

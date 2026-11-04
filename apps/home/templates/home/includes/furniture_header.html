@@ -2,7 +2,7 @@
 <header class="fm-header"><div class="fm-container fm-header-inner">
 <a class="fm-logo" href="{% url 'home' %}">LUSTRID.RU</a>
 <button class="fm-menu-toggle" type="button" aria-expanded="false" aria-controls="fm-navigation" aria-label="Открыть меню"><span></span><span></span><span></span></button>
-<nav id="fm-navigation" class="fm-navigation" aria-label="Основная навигация"><a href="{{ furniture_home_url }}#categories">Каталог</a><a href="{% url 'furniture_services' %}">Услуги</a><a href="{{ furniture_home_url }}#advantages">Преимущества</a><a href="{{ furniture_home_url }}#portfolio">Портфолио</a><a href="{% url 'furniture_materials' %}">Материалы</a><a href="{% url 'furniture_reviews' %}">Отзывы</a><a href="{{ furniture_home_url }}#faq">FAQ</a><a href="{{ furniture_home_url }}#callback">Контакты</a></nav>
+<nav id="fm-navigation" class="fm-navigation" aria-label="Основная навигация"><a href="{{ furniture_home_url }}#categories">Каталог</a><a href="{% url 'furniture_services' %}">Услуги</a><a href="{{ furniture_home_url }}#advantages">Преимущества</a><a href="{{ furniture_home_url }}#portfolio">Портфолио</a><a href="{% url 'furniture_materials' %}">Материалы</a><a href="{% url 'furniture_reviews' %}">Отзывы</a><a href="{{ furniture_home_url }}#faq">FAQ</a><a href="{% url 'furniture_contacts' %}">Контакты</a></nav>
 {% if workshop_contacts.primary %}<a class="fm-header-phone" href="{{ workshop_contacts.primary.url }}">{{ workshop_contacts.primary.text }}</a>{% endif %}
 <a class="fm-button fm-button-small" href="{{ furniture_home_url }}#callback">Заказать звонок</a>
 </div></header>
