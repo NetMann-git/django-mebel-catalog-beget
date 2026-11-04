@@ -1,8 +1,8 @@
-"""шаг 43: shared published contacts, no legacy defaults or private values."""
+"""шаг 43: shared published contacts, no hidden content rules or private values."""
 from django.test import TestCase, RequestFactory
 from django.urls import reverse
 from apps.home.models import ContactSettings
-from apps.home.templatetags.furniture_contacts import furniture_contacts, LEGACY_TEXT
+from apps.home.templatetags.furniture_contacts import furniture_contacts
 
 
 class FurnitureContactTests(TestCase):
@@ -32,19 +32,28 @@ class FurnitureContactTests(TestCase):
         self.record.delete()
         self.assertEqual(self.client.get(reverse('home')).status_code,200)
 
-    def test_known_legacy_defaults_are_suppressed_without_editing_database(self):
-        ContactSettings.objects.filter(pk=1).update(phone_primary='+7(988)580-88-99',phone_secondary='8 (928) 959-54-59',**LEGACY_TEXT)
+    def test_published_settings_are_shown_even_if_they_match_initial_values(self):
+        # Publication in the existing editor is authoritative; no content blacklist.
+        from importlib import import_module
+        module = import_module('apps.home.migrations.0008_seed_contacts')
+        class HistoricalApps:
+            def get_model(self, app_label, model_name):
+                return ContactSettings
+        module.seed_contacts(HistoricalApps(), None)
+        self.record.refresh_from_db()
         response=self.client.get(reverse('home'))
-        for text in ['580-88-99','959-54-59','Максима Горького','auto_korea_pod_zakaz','podberemauto','channel_podberem_auto','11795644110']:
-            self.assertNotContains(response,text)
-        self.record.refresh_from_db();self.assertEqual(self.record.address,LEGACY_TEXT['address'])
-        self.assertNotContains(response,'Контакты мастерской')
+        for text in [self.record.phone_primary,self.record.phone_secondary,self.record.address,
+                     self.record.telegram_url,self.record.vk_url,self.record.max_url,self.record.map_url]:
+            from django.utils.html import escape
+            self.assertContains(response,escape(text))
+        self.assertContains(response,'Контакты мастерской')
+        self.assertContains(response,'tel:+79885808899')
 
-    def test_new_phone_can_be_shown_while_unchanged_legacy_socials_are_hidden(self):
-        ContactSettings.objects.filter(pk=1).update(**LEGACY_TEXT)
+    def test_map_only_published_record_is_not_suppressed(self):
+        ContactSettings.objects.filter(pk=1).update(phone_primary='',phone_secondary='',address='',telegram_url='',vk_url='',max_url='')
         response=self.client.get(reverse('home'))
-        self.assertContains(response,'tel:+79001112233')
-        self.assertNotContains(response,'auto_korea_pod_zakaz')
+        self.assertContains(response,self.record.map_url)
+        self.assertContains(response,'Контакты мастерской')
 
     def test_unsafe_links_are_not_rendered(self):
         ContactSettings.objects.filter(pk=1).update(telegram_url='javascript:alert(1)',vk_url='data:text/html,test',max_url='https://user:secret@example.test/',map_url='//example.test/map')
