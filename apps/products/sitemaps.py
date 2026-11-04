@@ -12,7 +12,7 @@ class PublicSitemap(Sitemap):
 
 class StaticSitemap(PublicSitemap):
     def items(self):
-        return ['home', 'catalog:catalog', 'furniture_services', 'furniture_materials', 'furniture_reviews', 'furniture_about', 'furniture_contacts', 'furniture_portfolio']
+        return ['home', 'catalog:catalog', 'furniture_services', 'furniture_materials', 'furniture_reviews', 'furniture_about', 'furniture_contacts']
 
     def location(self, item):
         return reverse(item)

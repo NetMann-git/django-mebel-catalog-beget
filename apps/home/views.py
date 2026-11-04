@@ -39,9 +39,7 @@ def contacts(request):
 
 
 def portfolio(request):
-    from django.core.paginator import Paginator
-    from apps.products.repository import CatalogRepository
+    from django.shortcuts import redirect
+    from django.urls import reverse
 
-    products = CatalogRepository.featured(limit=None).order_by("-pk")
-    page = Paginator(products, 12).get_page(request.GET.get("page"))
-    return render(request, "home/portfolio.html", {"page_obj": page})
+    return redirect(reverse("home") + "#portfolio")
