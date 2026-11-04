@@ -1,0 +1,11 @@
+/* шаг 43: phone and published workshop contacts in the existing site shell. */
+.furniture-home .fm-header-phone{font-size:12px;white-space:nowrap;color:#58634e}
+.furniture-home .fm-header-phone:hover{text-decoration:underline}
+.furniture-home .fm-workshop-contacts{display:flex;justify-content:space-between;gap:24px;padding:22px 0;border-bottom:1px solid #343c36;overflow-wrap:anywhere}
+.furniture-home .fm-workshop-phones,.furniture-home .fm-workshop-socials{display:flex;gap:12px 22px;flex-wrap:wrap;align-items:center}
+.furniture-home .fm-workshop-phones a{font-size:15px;min-height:44px;display:inline-flex;align-items:center}
+.furniture-home .fm-workshop-address{font-size:12px;line-height:1.7;color:#c8cdc2;margin-top:4px}
+.furniture-home .fm-workshop-map{display:inline-block;font-size:12px;text-decoration:underline;text-underline-offset:4px;padding:12px 0}
+.furniture-home .fm-workshop-socials{margin:0;font-size:12px;justify-content:flex-end;align-content:flex-start}
+.furniture-home .fm-workshop-socials a{display:inline-flex;align-items:center;min-height:44px;border:1px solid #677060;border-radius:3px;padding:10px 14px}
+@media(max-width:720px){.furniture-home .fm-header-inner{flex-wrap:wrap}.furniture-home .fm-header-phone{order:4;flex-basis:100%;text-align:center;padding-bottom:10px;font-size:13px}.furniture-home .fm-workshop-contacts{flex-direction:column;gap:12px}.furniture-home .fm-workshop-socials{justify-content:flex-start}.furniture-home .fm-workshop-phones{gap:4px 20px}}
