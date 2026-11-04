@@ -28,3 +28,7 @@ def reviews(request):
                  .prefetch_related("images").order_by("-created_at", "-pk"))
     page = Paginator(published, 12).get_page(request.GET.get("page"))
     return render(request, "home/reviews.html", {"page_obj": page})
+
+
+def about(request):
+    return render(request, "home/about_workshop.html")
