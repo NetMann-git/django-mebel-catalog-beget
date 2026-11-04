@@ -1,11 +1,9 @@
-{% extends "base.html" %}
-
-{% block title %}Page not found{% endblock %}
-
-{% block body_class %}template-404{% endblock %}
-
-{% block content %}
-<h1>Page not found</h1>
-
-<h2>Sorry, this page could not be found.</h2>
-{% endblock %}
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Страница не найдена — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, follow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-services.css' %}">{% endblock %}
+{% block furniture_content %}<section class="fm-container fs-page" aria-labelledby="not-found-title"><div class="fs-heading">
+<p class="fm-eyebrow">Ошибка 404</p><h1 id="not-found-title">Страница не найдена</h1>
+<p>Возможно, ссылка устарела или в адресе есть опечатка. Посмотрите мебель в каталоге или вернитесь на главную.</p>
+<div class="fs-actions"><a class="fm-button" href="{% url 'catalog:catalog' %}">В каталог →</a><a class="fs-catalog-link" href="{% url 'home' %}">На главную →</a></div>
+</div></section>{% endblock %}
