@@ -1,0 +1,20 @@
+/* шаг 45: the owner's service list in the existing furniture design. */
+.fs-page{padding-top:25px;padding-bottom:60px;overflow-wrap:anywhere}
+.fs-heading{max-width:800px;margin-bottom:40px}
+.fs-heading .fm-eyebrow{color:#7c846d}
+.fs-heading h1{font-size:clamp(30px,3.4vw,46px);font-weight:500;letter-spacing:-1px;line-height:1.15;margin-bottom:22px}
+.fs-heading>p:last-of-type,.fs-project p{color:#727b67;font-size:15px;line-height:1.8}
+.fs-actions{display:flex;align-items:center;flex-wrap:wrap;gap:24px;margin-top:26px}
+.fs-catalog-link{font-size:13px;text-decoration:underline!important;text-underline-offset:4px;min-height:44px;display:inline-flex;align-items:center}
+.fs-directions{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:48px}
+.fs-directions a{display:inline-flex;align-items:center;gap:14px;min-height:44px;padding:12px 16px;border:1px solid #deded2;border-radius:4px;font-size:13px}
+.fs-directions a:hover{background:#f0ede5}
+.fs-group{margin-bottom:42px;scroll-margin-top:24px}
+.fs-group h2,.fs-project h2{font-size:26px;line-height:1.3;font-weight:500;margin-bottom:22px}
+.fs-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+.fs-service{background:#f5f2eb;border:1px solid #e7e3d8;border-radius:4px;padding:26px}
+.fs-service h3{font-size:18px;font-weight:500;line-height:1.4;margin-bottom:12px}
+.fs-service p{font-size:14px;color:#727b67;line-height:1.8}
+.fs-project{background:#f0ede5;border-radius:4px;padding:32px;max-width:900px}
+.fs-project .fm-button{margin-top:24px;background:#65705b}
+@media(max-width:720px){.fs-page{padding-top:20px;padding-bottom:40px}.fs-grid{grid-template-columns:1fr}.fs-heading{margin-bottom:28px}.fs-directions{flex-direction:column;margin-bottom:32px}.fs-directions a{justify-content:space-between}.fs-service,.fs-project{padding:22px}.fs-group h2,.fs-project h2{font-size:23px}.fs-group{margin-bottom:32px}.fs-actions{gap:15px}}

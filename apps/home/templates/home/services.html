@@ -1,0 +1,11 @@
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Мебель и столярные работы на заказ — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="description" content="Кухни, встроенные шкафы, мебель из массива, лестницы, двери, прилавки и мебель для бизнеса. Изготовление по размерам, чертежам и эскизам.">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}"><link rel="stylesheet" href="{% static 'home/css/furniture-services.css' %}">{% endblock %}
+{% block furniture_content %}<div class="fm-container fs-page">
+<nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><span aria-current="page">Услуги</span></nav>
+<header class="fs-heading"><p class="fm-eyebrow">Для дома и бизнеса</p><h1>Мебель и столярные работы на заказ</h1><p>Изготавливаем под размеры помещения и ваши задачи. Подбираем материалы и фурнитуру, выполняем сборку и подгонку на объекте.</p><div class="fs-actions"><a class="fm-button" href="{% url 'home' %}#callback">Обсудить проект →</a><a class="fs-catalog-link" href="{% url 'catalog:catalog' %}">Посмотреть каталог →</a></div></header>
+<nav class="fs-directions" aria-label="Направления работ">{% for group in service_groups %}<a href="#{{ group.id }}">{{ group.title }} <span aria-hidden="true">↓</span></a>{% endfor %}</nav>
+{% for group in service_groups %}<section class="fs-group" id="{{ group.id }}" aria-labelledby="{{ group.id }}-title"><h2 id="{{ group.id }}-title">{{ group.title }}</h2><div class="fs-grid">{% for title, description in group.items %}<article class="fs-service"><h3>{{ title }}</h3><p>{{ description }}</p></article>{% endfor %}</div></section>{% endfor %}
+<section class="fs-project"><h2>Расскажите о своей задаче</h2><p>Работаем с частными клиентами, дизайнерами интерьера, строительными организациями, магазинами, гостиницами и другими коммерческими заказчиками.</p><a class="fm-button" href="{% url 'home' %}#callback">Оставить заявку →</a></section>
+</div>{% endblock %}
