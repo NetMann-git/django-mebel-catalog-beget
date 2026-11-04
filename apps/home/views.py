@@ -36,3 +36,12 @@ def about(request):
 
 def contacts(request):
     return render(request, "home/contacts.html")
+
+
+def portfolio(request):
+    from django.core.paginator import Paginator
+    from apps.products.repository import CatalogRepository
+
+    products = CatalogRepository.featured(limit=None).order_by("-pk")
+    page = Paginator(products, 12).get_page(request.GET.get("page"))
+    return render(request, "home/portfolio.html", {"page_obj": page})
