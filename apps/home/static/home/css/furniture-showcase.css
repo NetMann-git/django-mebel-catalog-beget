@@ -1,0 +1,13 @@
+/* шаг 41: original catalog photos in the existing reference grids. Home only. */
+.furniture-home .fm-category-image{display:block;width:100%;aspect-ratio:1.1;object-fit:cover;border-radius:4px}
+.furniture-home .fm-showcase-image,.furniture-home .fm-showcase-missing{display:block;width:100%;aspect-ratio:1.5;object-fit:cover;border-radius:4px;background:#eeeade}
+.furniture-home .fm-showcase-missing{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;color:#929781;font-size:12px}
+.furniture-home .fm-project-link{display:block;height:100%}
+.furniture-home .fm-project-link:hover h3,.furniture-home .fm-review-product:hover{text-decoration:underline;text-underline-offset:4px}
+.furniture-home .fm-showcase-details{display:inline-flex;gap:14px;margin-top:12px;font-size:12px;color:#65705b}
+.furniture-home .fm-project h3,.furniture-home .fm-review{overflow-wrap:anywhere}
+.furniture-home .fm-review-image{width:31%;min-width:0;flex-shrink:0;object-fit:cover;align-self:stretch;border-radius:2px}
+.furniture-home .fm-review>div{min-width:0}
+.furniture-home .fm-review-product{display:block;font-size:11px;color:#65705b;margin-top:8px}
+.furniture-home .fm-reviews-empty{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px;border:1px solid #e1e2dc;border-radius:3px;font-size:13px;color:#777d70}
+@media(max-width:720px){.furniture-home .fm-showcase-image,.furniture-home .fm-showcase-missing{aspect-ratio:1.15}.furniture-home .fm-review-image{width:27%;max-width:110px}.furniture-home .fm-reviews-empty{align-items:flex-start;flex-direction:column}}

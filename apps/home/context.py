@@ -1,4 +1,4 @@
-"""Контекст главной страницы автомобильного каталога."""
+"""Контекст главной страницы мебельной мастерской."""
 
 from apps.products.models import Brand
 from apps.products.furniture_categories import furniture_category_urls
@@ -9,6 +9,7 @@ from django.db.models import Count, Q
 from apps.reviews.models import Review
 
 from .models import ClientShowcase, ContactSettings, TeamMember
+from .furniture_showcase import category_images
 
 
 class HomeContextBuilder:
@@ -42,7 +43,7 @@ class HomeContextBuilder:
             .filter(is_published=True)
             .select_related("product", "user")
             .prefetch_related("images")
-            .order_by("-created_at")[:4]
+            .order_by("-created_at", "-pk")
         )
 
         if request.user.is_authenticated:
@@ -52,15 +53,18 @@ class HomeContextBuilder:
         else:
             wishlist_ids = request.session.get("wishlist", [])
 
+        category_urls = furniture_category_urls()
         return {
             "featured_products": featured_products,
             "featured_brands": featured_brands,
-            "reviews": reviews,
+            "reviews": reviews[:4],
             "clients": clients,
             "video_clients": video_clients,
             "team_members": team_members,
             "contact_settings": contact_settings,
             "wishlist_ids": wishlist_ids,
             "callback_form": CallbackRequestForm(),
-            "furniture_category_urls": furniture_category_urls(),
+            "furniture_category_urls": category_urls,
+            "furniture_category_images": category_images(category_urls),
+            "furniture_reviews": reviews.filter(product__is_active=True)[:3],
         }
