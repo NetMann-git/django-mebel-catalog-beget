@@ -1,5 +1,7 @@
 # apps/appointments/views.py
 
+import logging
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.urls import reverse
@@ -24,9 +26,29 @@ from datetime import datetime, timedelta
 from .models import Appointment, CallbackRequest, WorkingHours
 
 
+logger = logging.getLogger(__name__)
+
+
+def _notify_saved_inquiry(inquiry):
+    """Notification failures must not turn an already saved request into a form error."""
+    for channel, notify in (
+        ('email', send_email_notification),
+        ('telegram', send_telegram_notification),
+        ('max', send_max_notification),
+    ):
+        try:
+            notify(inquiry)
+        except Exception as error:
+            # Avoid putting client contacts or exception messages into this boundary log.
+            logger.error(
+                'Notification %s failed for saved inquiry #%s (%s)',
+                channel, inquiry.pk, type(error).__name__,
+            )
+
+
 @require_http_methods(['GET', 'POST'])
 def car_inquiry(request, product_id):
-    """Принимает запрос цены или заявку на покупку выбранного автомобиля."""
+    """Принимает вопрос о стоимости или заявку на изготовление выбранного изделия."""
     product = get_object_or_404(Product, pk=product_id, is_active=True)
     is_order = request.GET.get('type') == 'order'
     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
@@ -44,9 +66,7 @@ def car_inquiry(request, product_id):
             inquiry.product = product
             inquiry.source = 'product_order' if is_order else 'product_detail'
             inquiry.save()
-            send_email_notification(inquiry)
-            send_telegram_notification(inquiry)
-            send_max_notification(inquiry)
+            _notify_saved_inquiry(inquiry)
 
             message = 'Заявка получена. Менеджер свяжется с вами.'
             if is_ajax:
@@ -220,9 +240,7 @@ def callback_submit(request):
         callback.save()
 
         # Заявка уже сохранена в БД. Ошибка SMTP не влияет на результат формы.
-        send_email_notification(callback)
-        send_telegram_notification(callback)
-        send_max_notification(callback)
+        _notify_saved_inquiry(callback)
 
         message = 'Спасибо! Заявка принята. Мы свяжемся с вами в ближайшее время.'
         if is_ajax:
