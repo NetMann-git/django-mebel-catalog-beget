@@ -11,6 +11,13 @@ class ClientShowcase(models.Model):
         blank=True,
         verbose_name="Фотография",
     )
+    # Kept in sync with historical migrations; public images use the image field.
+    legacy_image = models.CharField(
+        max_length=255,
+        blank=True,
+        editable=False,
+        verbose_name="Старое статическое изображение",
+    )
     rutube_url = models.URLField(
         max_length=500,
         blank=True,
