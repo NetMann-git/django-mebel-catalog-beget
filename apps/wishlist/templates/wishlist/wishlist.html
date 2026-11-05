@@ -12,7 +12,7 @@
     <button type="button" id="clear-wishlist" class="fw-clear" data-url="{% url 'wishlist:clear' %}">Очистить избранное</button>
   </div>
   <div class="fw-empty" id="empty-wishlist" {% if products %}style="display:none;"{% endif %}>
-    <span class="fw-empty__icon" aria-hidden="true">♡</span><h2>Сохраните понравившуюся мебель</h2><p>Нажмите «В избранное» на карточке изделия — оно появится здесь.</p><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a>
+    <span class="fw-empty__icon" aria-hidden="true">{% include 'home/includes/furniture_icon.html' with icon='heart' %}</span><h2>Сохраните понравившуюся мебель</h2><p>Нажмите «В избранное» на карточке изделия — оно появится здесь.</p><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a>
   </div>
   {% if is_guest %}<p class="fw-note">Ваш список связан с текущей сессией браузера. <a href="{% url 'users:login' %}?next={{ request.path|urlencode }}">Войти в личный кабинет</a></p>{% endif %}
   {% if recommended_products %}<section class="recommended-section fw-recommendations" aria-labelledby="fw-recommendations-title"><h2 id="fw-recommendations-title">Возможно, вам понравится</h2><div class="fc-product-grid products-grid">{% for product in recommended_products %}{% include 'products/_furniture_card.html' %}{% endfor %}</div></section>{% endif %}

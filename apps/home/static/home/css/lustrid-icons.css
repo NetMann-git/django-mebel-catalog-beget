@@ -1,0 +1,27 @@
+/* Шаг 66: общий размер, оптическая толщина и привязка к тексту. */
+.fm-icon { display:inline-block; width:24px; height:24px; flex:0 0 auto; vertical-align:middle; }
+body.furniture-home .fi-page .fi-card-heading,
+body.furniture-home .fi-page .fi-group-title,
+body.furniture-home .fi-page .fi-reply-heading { display:flex; flex-flow:row nowrap; align-items:flex-start; gap:12px; }
+.fi-card-heading>span,.fi-group-title>span { min-width:0; }
+body.furniture-home .fi-card-heading>.fm-icon { width:24px; height:24px; margin-top:2px; color:#6a7658; }
+body.furniture-home .fi-group-title>.fm-icon { width:28px; height:28px; margin-top:3px; color:#6a7658; }
+body.furniture-home .fi-reply-heading .fi-icon { display:inline-flex; width:22px; height:22px; margin:1px 0 0; background:none; padding:0; }
+.fi-reply-heading .fm-icon { width:22px; height:22px; }
+body.furniture-home .fm-hero-benefits .fm-icon { width:30px; height:30px; }
+body.furniture-home .fm-advantage>.fm-icon { width:30px; height:30px; margin-top:2px; }
+.wishlist-btn,.fm-compare-toggle { display:inline-flex; align-items:center; gap:8px; }
+.wishlist-btn .heart { display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; flex:0 0 20px; font-size:inherit; }
+.wishlist-btn .heart .fm-icon,.fm-compare-toggle .fm-icon { width:20px; height:20px; }
+.wishlist-btn.active .heart .fm-icon { fill:currentColor; }
+.wishlist-btn .label,[data-comparison-label] { min-width:0; }
+.fw-empty__icon .fm-icon,.fm-compare__empty-icon .fm-icon { width:40px; height:40px; }
+.fi-contact-icon { display:inline-flex; vertical-align:middle; width:20px; height:20px; margin-right:8px; color:#6a7658; flex:0 0 auto; }
+.fi-contact-icon .fm-icon { width:20px; height:20px; }
+@media(max-width:540px) {
+ body.furniture-home .fi-page .fi-card-heading,body.furniture-home .fi-page .fi-group-title { gap:10px; }
+ body.furniture-home .fi-group-title>.fm-icon { width:25px; height:25px; }
+}
+.fm-action-icon { width:18px; height:18px; flex:0 0 18px; vertical-align:-3px; }
+.fm-button>.fm-action-icon,.fs-catalog-link>.fm-action-icon { margin-left:8px; }
+.fm-section-link>.fm-action-icon,.fm-text-link>.fm-action-icon { margin-left:4px; }

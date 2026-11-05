@@ -6,5 +6,5 @@
 <div class="home-callback__field" data-field="phone"><label class="fm-sr-only" for="callback-phone">Телефон</label>{{ callback_form.phone }}<span class="home-callback__error" aria-live="polite"></span></div>
 <div class="home-callback__field" data-field="comment"><label class="fm-request-label" for="callback-comment">Какую мебель вы хотите? <span>(необязательно)</span></label>{{ callback_form.comment }}<span class="home-callback__error" aria-live="polite"></span></div>
 <div class="fm-honeypot" aria-hidden="true"><label for="callback-website">Ваш сайт</label><input id="callback-website" name="website" tabindex="-1" autocomplete="off"></div>
-<button class="fm-button" type="submit">Отправить заявку <span aria-hidden="true">→</span></button>
+<button class="fm-button" type="submit">Отправить заявку {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-action-icon' %}</button>
 <p class="fm-form-legal">Нажимая кнопку, вы соглашаетесь с <a href="{% url 'personal_data_consent' %}">обработкой персональных данных</a>.</p></form><div id="home-callback-status" class="home-callback__status" role="status" aria-live="polite"></div></div></div></section>

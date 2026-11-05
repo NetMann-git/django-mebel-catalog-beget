@@ -6,23 +6,17 @@ body.furniture-home .fi-hero .fs-actions { gap:16px 24px; margin-top:24px; }
 .fi-hero-visual { min-width:0; overflow:hidden; border-radius:4px; }
 .fi-hero-visual .fm-editorial-photo { height:auto; aspect-ratio:1.12; }
 .fi-hero-visual img { object-position:center; }
-.fi-icon { display:inline-flex; flex:0 0 auto; width:44px; height:44px; align-items:center; justify-content:center; color:#657052; background:#e9e7db; border-radius:5px; margin-bottom:18px; }
-.fi-icon .fm-icon { width:28px; height:28px; }
 .fi-page .fm-eyebrow { display:flex; gap:12px; align-items:center; }
-.fi-page .fm-eyebrow .fi-icon { margin:0; width:36px; height:36px; background:#e5e4d6; }
 .fi-page .fm-eyebrow .fm-icon { width:24px; height:24px; }
-.fi-page .fs-directions .fi-icon { margin:0; width:28px; height:28px; background:none; }
 .fi-page .fs-directions a { justify-content:flex-start; }
 .fi-page .fs-directions a>span:last-child { margin-left:auto; }
 .fi-group-title { display:flex; align-items:center; gap:14px; }
-.fi-group-title .fi-icon { margin:0; }
 .fi-page .fs-service { display:flex; flex-direction:column; align-items:flex-start; min-width:0; }
 .fi-page .fs-service>.fs-catalog-link { margin-top:auto; padding-top:16px; }
 .fi-card-image { width:100%; margin-bottom:24px; overflow:hidden; border-radius:4px; }
 .fi-card-image .fm-editorial-photo { height:auto; aspect-ratio:1.9; }
 .fi-card-image img { object-position:center; }
 .fi-page .fi-reply-heading { display:flex; align-items:center; gap:10px; }
-.fi-reply-heading .fi-icon { width:28px; height:28px; margin:0; background:none; }
 .fi-reply-heading .fm-icon { width:24px; height:24px; }
 .fi-page .fr-review>header { width:100%; }
 .fi-page .fr-photos { width:100%; }
@@ -42,5 +36,4 @@ body.furniture-home .fi-hero .fs-actions { gap:16px 24px; margin-top:24px; }
  .fi-hero-visual .fm-editorial-photo { aspect-ratio:1.45; }
  .fi-card-image .fm-editorial-photo { aspect-ratio:1.6; }
  .fi-group-title { align-items:flex-start; gap:12px; }
- .fi-group-title .fi-icon { width:36px; height:36px; }
 }

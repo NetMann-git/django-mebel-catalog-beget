@@ -41,10 +41,11 @@ document.addEventListener('DOMContentLoaded', function() {
             // Обновляем состояние кнопки
             const heart = btn.querySelector('.heart');
             const label = btn.querySelector('.label');
+            btn.setAttribute('aria-pressed', String(data.is_favorite));
 
             if (data.is_favorite) {
                 btn.classList.add('active');
-                if (heart) heart.textContent = '❤️';
+                if (heart && !heart.querySelector('svg')) heart.textContent = '❤️';
                 if (label) label.textContent = 'В избранном';
 
                 // Если мы на странице избранного и карточка находится в рекомендациях,
@@ -58,7 +59,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             } else {
                 btn.classList.remove('active');
-                if (heart) heart.textContent = '🤍';
+                if (heart && !heart.querySelector('svg')) heart.textContent = '🤍';
                 if (label) label.textContent = 'В избранное';
 
                 // Если на странице избранного и карточка в списке,
@@ -108,9 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
                         const btn = card.querySelector('.wishlist-btn');
                         if (btn) {
                             btn.classList.remove('active');
+                            btn.setAttribute('aria-pressed', 'false');
                             const heart = btn.querySelector('.heart');
                             const label = btn.querySelector('.label');
-                            if (heart) heart.textContent = '🤍';
+                            if (heart && !heart.querySelector('svg')) heart.textContent = '🤍';
                             if (label) label.textContent = 'В избранное';
                         }
 
