@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 IMAGE_SIZES = {
     'table': (224, 168), 'category_table': (192, 128),
     'thumb': (160, 120), 'review': (320, 240), 'logo': (240, 180),
+    'card_small': (400, 300), 'form_thumb': (400, 400),
     'card': (800, 600), 'category_card': (640, 580),
     'preview': (960, 720), 'detail': (1200, 1000),
 }

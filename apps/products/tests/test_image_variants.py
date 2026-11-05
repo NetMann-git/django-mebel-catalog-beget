@@ -67,10 +67,12 @@ class ImageVariantTests(TestCase):
             (reverse('catalog:category_list_manage'), '.fm-categories__thumbnail', (192, 128)),
             (reverse('catalog:category_edit', args=[self.category.pk]), '.fm-categories__preview img', (960, 720)),
             ('/', '#categories .fm-category img', (640, 580)),
-            ('/', '.fm-showcase-image', (800, 600)),
+            ('/', '.fm-showcase-image', (400, 300)),
             ('/', '.fm-review-image', (320, 240)),
-            (reverse('catalog:catalog'), '.fc-card-image img', (800, 600)),
+            (reverse('catalog:catalog'), '.fc-card-image img', (400, 300)),
             (reverse('catalog:product_list_manage'), '.fm-manage__photo img', (224, 168)),
+            (reverse('catalog:product_edit', args=[self.product.pk]), '.car-gallery__cover', (224, 168)),
+            (reverse('catalog:product_edit', args=[self.product.pk]), '.car-gallery__card img', (320, 240)),
             (self.product.get_absolute_url(), '#main-image', (1200, 1000)),
             (self.product.get_absolute_url(), '.gallery-thumb-vertical', (160, 120)),
             (self.product.get_absolute_url(), '.review-image-thumb', (320, 240)),
@@ -109,3 +111,23 @@ class ImageVariantTests(TestCase):
         self.assertEqual(self.dimensions(image_variant(self.product.image, 'table')), (50, 40))
         with override_settings(STATIC_URL='/assets/'):
             self.assertTrue(image_variant(self.category.display_image_url, 'category_table').startswith('/assets/'))
+
+
+    def test_cards_have_real_small_and_retina_files_and_form_widget_uses_thumbnail(self):
+        from apps.products.forms import ImagePreviewWidget
+        for url, selector in [('/', '#portfolio .fm-showcase-image'), (reverse('catalog:catalog'), '.fc-card-image img')]:
+            soup = BeautifulSoup(self.client.get(url).content, 'html.parser')
+            image = soup.select_one(selector)
+            self.assertEqual(image['src'], image_variant(self.product.image, 'card_small'))
+            for item in image['srcset'].split(','):
+                url, density = item.strip().split()
+                bounds = (400, 300) if density == '1x' else (800, 600)
+                self.assertNotEqual(url, self.product.image.url)
+                width, height = self.dimensions(url)
+                self.assertLessEqual(width, bounds[0])
+                self.assertLessEqual(height, bounds[1])
+        html = ImagePreviewWidget().render('image', self.product.image)
+        image = BeautifulSoup(html, 'html.parser').select_one('img')
+        self.assertNotEqual(image['src'], self.product.image.url)
+        self.assertLessEqual(max(self.dimensions(image['src'])), 400)
+        self.assertEqual(Path(self.product.image.path).read_bytes(), self.original)

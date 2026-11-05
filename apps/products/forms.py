@@ -1,6 +1,7 @@
 # apps/products/forms.py
 from django import forms
-from django.utils.safestring import mark_safe
+from django.utils.html import format_html
+from .image_variants import image_variant
 from .models import Product, ProductGalleryImage, Badge, Brand
 from .manager_slugs import AutoSlugMixin
 from .car_model_forms import ProductModelForm
@@ -16,13 +17,13 @@ class ImagePreviewWidget(forms.ClearableFileInput):
         html = super().render(name, value, attrs, renderer)
         
         if value and hasattr(value, 'url'):
-            preview_html = f'''
+            preview_html = format_html('''
                 <div style="margin-bottom: 10px;">
-                    <img src="{value.url}" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ddd;">
+                    <img class="image-preview-thumbnail" src="{}" alt="Текущее изображение" style="max-width: 200px; max-height: 200px; border-radius: 4px; border: 1px solid #ddd;">
                     <p style="font-size: 12px; color: #999; margin-top: 5px;">Текущее изображение</p>
                 </div>
-            '''
-            return mark_safe(preview_html + html)
+            ''', image_variant(value, 'form_thumb'))
+            return format_html('{}{}', preview_html, html)
         
         return html
 
