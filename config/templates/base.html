@@ -66,6 +66,7 @@
     {% endblock %}
     <link rel="stylesheet" href="{% static 'css/cookie-preferences.css' %}">
     <link rel="stylesheet" href="{% static 'css/scroll-to-top.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/site-action-help.css' %}">
 </head>
 
 <body class="sticky-header {% block body_class %}{% endblock %}{% block body_theme_class %} {{ current_theme }}-theme{% endblock %}">
@@ -137,5 +138,6 @@
         <script src="{% static 'search/js/search.js' %}"></script>
         <script src="{% static 'appointments/js/modal_window.js' %}"></script>
     {% endblock %}
+    <script src="{% static 'home/js/site-action-help.js' %}" defer></script>
 </body>
 </html>

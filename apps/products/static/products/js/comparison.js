@@ -14,8 +14,11 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.compare-btn[data-product-id="' + productId + '"]')
             .forEach(btn => {
                 btn.classList.toggle('active', isAdded);
-                const label = btn.querySelector('span');
-                if (label) label.textContent = isAdded ? 'Убрать' : 'Сравнить';
+                const label = btn.querySelector('[data-comparison-label]') || btn.querySelector('span');
+                if (label) label.textContent = isAdded ? 'Убрать из сравнения' : 'Добавить к сравнению';
+                btn.setAttribute('aria-pressed', String(isAdded));
+                if (btn.dataset.productTitle) btn.setAttribute('aria-label',
+                    (isAdded ? 'Убрать из сравнения: ' : 'Добавить к сравнению: ') + btn.dataset.productTitle);
             });
 
         // Если мы на странице сравнения — обновляем её

@@ -1,0 +1,22 @@
+/* Шаг 62: подсказки не меняют размеры и положение элементов страницы. */
+.site-action-help {
+    position:fixed; z-index:100300; box-sizing:border-box;
+    width:max-content; max-width:min(360px,calc(100vw - 24px));
+    padding:14px 16px; background:#263028; color:#fffdf7;
+    border:1px solid #4e5b4b; border-radius:6px;
+    box-shadow:0 6px 22px #17201926;
+    font:400 14px/1.6 Arial,Helvetica,sans-serif;
+    text-align:left; white-space:normal; overflow-wrap:anywhere;
+    pointer-events:auto;
+}
+.site-action-help[hidden] { display:none; }
+.furniture-home .fc-card-actions .fm-compare-toggle {
+    display:inline-flex; align-items:center; gap:8px; min-height:44px;
+    border:1px solid #cdd3c3; border-radius:4px; padding:9px 12px;
+    background:#f0ede5; color:#45513b; text-align:left;
+    font-size:14px; line-height:1.45; cursor:pointer;
+}
+.furniture-home .fc-card-actions .fm-compare-toggle:hover { background:#e8e8dc; }
+.furniture-home .fc-card-actions .fm-compare-toggle.active { background:#e4ecdc; border-color:#8b9e78; color:#324829; }
+.furniture-home .fm-compare-icon { flex:0 0 20px; }
+.furniture-home .fm-compare-toggle [data-comparison-label] { min-width:0; overflow-wrap:anywhere; }
