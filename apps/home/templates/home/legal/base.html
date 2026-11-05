@@ -1,0 +1,9 @@
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}{{ page.title }} — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, follow"><meta name="description" content="{{ page.search_description }}"><meta property="og:title" content="{{ page.title }} — LUSTRID.RU"><meta property="og:description" content="{{ page.search_description }}"><meta property="og:type" content="website"><meta property="og:url" content="{{ request.build_absolute_uri }}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/public-offer.css' %}">{% endblock %}
+{% block furniture_content %}<div class="public-offer">
+<nav class="public-offer__crumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><span aria-current="page">{{ page.title }}</span></nav>
+{% block legal_content %}{% endblock %}
+<nav class="public-offer__links" aria-label="Документы и связь"><a href="{% url 'public_offer' %}">Условия заказа</a><a href="{% url 'privacy_policy' %}">Политика конфиденциальности</a><a href="{% url 'personal_data_consent' %}">Согласие на обработку данных</a><a href="{% url 'furniture_contacts' %}">Контакты мастерской</a></nav>
+</div>{% endblock %}

@@ -7,12 +7,12 @@ from django.views.decorators.http import require_safe
 
 @require_safe
 def public_offer(request: HttpRequest) -> HttpResponse:
-    """Show the draft until the service provider approves their actual terms."""
+    """Show ordering information without publishing a contractual offer."""
     response = render(request, 'home/legal/public_offer.html', {
         'page': {
-            'title': 'Договор публичной оферты',
-            'seo_title': 'Договор публичной оферты — Подберем АВТО',
-            'search_description': 'Условия подбора и сопровождения приобретения автомобиля.',
+            'title': 'Условия заказа мебели',
+            'seo_title': 'Условия заказа мебели — LUSTRID.RU',
+            'search_description': 'Обсуждение проекта мебели, материалов, комплектации и изготовления.',
         },
     })
     response['X-Robots-Tag'] = 'noindex, follow'
@@ -22,8 +22,8 @@ def public_offer(request: HttpRequest) -> HttpResponse:
 def _privacy_document(request: HttpRequest, template: str, title: str) -> HttpResponse:
     """Render an explicitly marked draft without advertising it to search engines."""
     response = render(request, template, {
-        'page': {'title': title, 'seo_title': title + ' — Подберем АВТО',
-                 'search_description': title + ' сайта carstar-rnd.ru.'},
+        'page': {'title': title, 'seo_title': title + ' — LUSTRID.RU',
+                 'search_description': title + ' сайта lustrid.ru.'},
     })
     response['X-Robots-Tag'] = 'noindex, follow'
     return response
