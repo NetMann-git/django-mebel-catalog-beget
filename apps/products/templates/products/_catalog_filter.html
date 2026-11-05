@@ -1,5 +1,5 @@
 {% load catalog_query %}
-<aside class="fc-sidebar"><details id="catalog-filter-panel" open><summary><span class="fm-filter-title">{% include 'home/includes/furniture_icon.html' with icon='filter' icon_class='fm-ui-icon' %}Подобрать мебель</span> <span aria-hidden="true">+</span></summary>
+<aside class="fc-sidebar"><details id="catalog-filter-panel" open><summary><span class="fm-filter-title">{% include 'home/includes/furniture_icon.html' with icon='filter' icon_class='fm-ui-icon' %}Подобрать мебель</span> <span class="fc-filter-toggle-icon" aria-hidden="true">+</span></summary>
 <form id="catalog-filter-form" method="get" action="{% url 'catalog:catalog' %}">
 {% for key, value in furniture_extra_filters %}<input type="hidden" name="{{ key }}" value="{{ value }}">{% endfor %}
 {% if selected_sort %}<input type="hidden" name="sort" value="{{ selected_sort }}">{% endif %}

@@ -13,12 +13,18 @@ document.addEventListener('DOMContentLoaded', () => {
     let observer = null;
     let retry = null;
 
-    const mobileLayout = window.matchMedia('(max-width: 720px)');
+    // Open by default on every screen; preserve an explicit manual choice in this visit.
+    let filterPanelOpen = true;
     function updatePanel() {
         const panel = workspace.querySelector('#catalog-filter-panel');
-        if (panel) panel.open = !mobileLayout.matches || !!workspace.querySelector('.catalog-filter-errors');
+        if (!panel) return;
+        if (workspace.querySelector('.catalog-filter-errors')) filterPanelOpen = true;
+        panel.open = filterPanelOpen;
     }
-    if (mobileLayout.addEventListener) mobileLayout.addEventListener('change', updatePanel);
+    workspace.addEventListener('toggle', event => {
+        const panel = workspace.querySelector('#catalog-filter-panel');
+        if (event.target === panel) filterPanelOpen = panel.open;
+    }, true);
 
     function initialize() {
         document.dispatchEvent(new Event('catalog:updated'));
@@ -89,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 appliedURL = new URL(url);
                 if (historyMode === 'push' && location.href !== url.href) history.pushState(null, '', url);
                 initialize();
-                if (window.matchMedia('(max-width: 720px)').matches && !workspace.querySelector('.catalog-filter-errors')) workspace.querySelector('#catalog-filter-panel').open = false;
                 status.textContent = workspace.querySelector('.catalog-count').textContent.trim();
                 workspace.querySelector('#catalog-results').focus({preventScroll: true});
             }
