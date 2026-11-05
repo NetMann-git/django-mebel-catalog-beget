@@ -25,7 +25,7 @@ class FurnitureHomeShowcaseTests(TestCase):
         self.assertNotContains(response,hidden.title)
         self.assertNotContains(response,'/media/products/hidden.jpg')
         self.assertNotContains(response,'<h3>Шкаф <дуб></h3>')
-        self.assertEqual(response.context['furniture_category_images']['shkafy'],self.product.image.url)
+        self.assertEqual(response.context['furniture_category_images']['shkafy'], self.category.display_image_url)
         self.assertEqual(Product.objects.count(),2)
 
     def test_only_published_reviews_of_active_products_and_image_priority(self):
@@ -58,10 +58,10 @@ class FurnitureHomeShowcaseTests(TestCase):
         self.assertContains(response,'Здесь пока нет опубликованных отзывов.')
         self.assertNotContains(response,'Здесь появится отзыв клиента')
 
-    def test_category_photos_use_public_images_and_skip_conflicted_category(self):
+    def test_category_artwork_does_not_depend_on_product_publication(self):
         self.product.is_featured=False;self.product.save(update_fields=['is_featured'])
         no_image=Product.objects.create(title='Без фото',slug='no-showcase-photo',category=self.category,price=100,image='')
-        self.assertEqual(category_images({'shkafy':'/catalog/?category=1'}),{'shkafy':self.product.image.url})
+        self.assertEqual(category_images({'shkafy':'/catalog/?category=1'}),{'shkafy':self.category.display_image_url})
         self.assertEqual(category_images({}),{})
         self.product.is_active=False;self.product.save(update_fields=['is_active'])
-        self.assertEqual(category_images({'shkafy':'/catalog/?category=1'}),{})
+        self.assertEqual(category_images({'shkafy':'/catalog/?category=1'}), {'shkafy': self.category.display_image_url})

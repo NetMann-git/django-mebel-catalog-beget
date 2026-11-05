@@ -1,0 +1,4 @@
+<div class="fm-categories__image-upload">
+<input type="{{ widget.type }}" name="{{ widget.name }}"{% include "django/forms/widgets/attrs.html" %}>
+{% if widget.is_initial and not widget.required %}<label class="fm-categories__clear" for="{{ widget.checkbox_id }}"><input type="checkbox" name="{{ widget.checkbox_name }}" id="{{ widget.checkbox_id }}"{% if widget.attrs.disabled %} disabled{% endif %}{% if widget.attrs.checked %} checked{% endif %}>Убрать загруженное фото{% if is_home_category %} и вернуть стандартную иллюстрацию{% endif %}</label>{% endif %}
+</div>

@@ -1,3 +1,4 @@
+from .category_management import CategoryForm
 from .models import VehicleImportSource
 from .models import EquipmentGroup, EquipmentOption
 from .car_model_forms import CarModelForm
@@ -92,6 +93,7 @@ class BadgeAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
+    form = CategoryForm
     list_display = ("title", "slug")
     prepopulated_fields = {"slug": ("title",)}
 

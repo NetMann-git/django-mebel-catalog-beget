@@ -10,7 +10,7 @@
   <p class="fm-categories__hint">В количестве изделий учитываются опубликованные и неопубликованные записи.</p>
   <table class="fm-categories__table"><caption class="fm-categories__sr">Категории мебельного каталога</caption><thead><tr><th scope="col">Название</th><th scope="col">Код категории</th><th scope="col">Изделий</th><th scope="col">Действия</th></tr></thead><tbody>
   {% for item in categories %}<tr>
-    <td class="fm-categories__name"><a href="{% url 'catalog:category_edit' item.pk %}">{{ item.title }}</a></td>
+    <td class="fm-categories__name">{% if item.display_image_url %}<img class="fm-categories__thumbnail" src="{{ item.display_image_url }}" alt="" loading="lazy">{% endif %}<a href="{% url 'catalog:category_edit' item.pk %}">{{ item.title }}</a></td>
     <td><span class="fm-categories__label" aria-hidden="true">Код</span><code>{{ item.slug }}</code></td>
     <td><span class="fm-categories__label" aria-hidden="true">Изделий</span>{{ item.product_count }}</td>
     <td class="fm-categories__actions"><a href="{% url 'catalog:category_edit' item.pk %}" aria-label="Редактировать категорию: {{ item.title }}">Редактировать</a><a href="{% url 'catalog:catalog' %}?category={{ item.pk }}" target="_blank" rel="noopener" aria-label="Посмотреть категорию на сайте: {{ item.title }}">На сайте ↗</a><a class="fm-categories__delete-link" href="{% url 'catalog:category_delete' item.pk %}" aria-label="Удаление категории: {{ item.title }}">Удаление</a></td>

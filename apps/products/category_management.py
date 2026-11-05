@@ -34,11 +34,20 @@ class CategoryForm(AutoSlugMixin, forms.ModelForm):
 
     class Meta:
         model = Category
-        fields = ('title', 'slug')
+        fields = ('title', 'slug', 'image')
+        widgets = {'image': forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png,image/webp'})}
+
+    def clean_image(self):
+        value = self.cleaned_data.get('image')
+        decoded = getattr(value, 'image', None)
+        if decoded is not None and decoded.format not in {'JPEG', 'PNG', 'WEBP'}:
+            raise forms.ValidationError('Выберите изображение JPG, PNG или WebP.')
+        return value
 
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
         self.fields['slug'].required = bool(self.instance.pk)
+        self.fields['image'].widget.template_name = 'products/categories/image_widget.html'
         for field in self.fields.values():
             field.widget.attrs['class'] = 'form-control'
 
@@ -62,7 +71,8 @@ def category_edit(
     category = get_object_or_404(Category, pk=category_id) if category_id else None
     is_home_category = _is_home_category(category)
     form = CategoryForm(
-        request.POST if request.method == 'POST' else None, instance=category,
+        request.POST if request.method == 'POST' else None,
+        request.FILES if request.method == 'POST' else None, instance=category,
     )
     if request.method == 'POST' and form.is_valid():
         form.save()
