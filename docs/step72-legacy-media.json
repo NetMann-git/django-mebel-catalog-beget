@@ -1,0 +1,164 @@
+[
+  {
+    "path": "home/images/2019/05/09/footer-logo.svg",
+    "sha256": "ced197d1999679d8f31f6d77b562189b1337261e570ffa719d0d9f3ca26e58bb",
+    "bytes": 9908,
+    "sha256_lf": "ced197d1999679d8f31f6d77b562189b1337261e570ffa719d0d9f3ca26e58bb"
+  },
+  {
+    "path": "home/images/2019/06/11/line-6.svg",
+    "sha256": "f0554ed07ead0b86cb6efc7310c76d1fd5a735ac90a42bb49d7cf1732be8282d",
+    "bytes": 557,
+    "sha256_lf": "f0554ed07ead0b86cb6efc7310c76d1fd5a735ac90a42bb49d7cf1732be8282d"
+  },
+  {
+    "path": "home/images/2025/01/21/kuzov-auto.jpg",
+    "sha256": "f01c906698d43be2041f3dfb7dad19c6e417c65260dbb562b9fc67474bf3139d",
+    "bytes": 26983
+  },
+  {
+    "path": "home/images/2025/01/21/kuzov-auto.webp",
+    "sha256": "3237b3d87e981f0aafa6d9ccc1f43dba885dbbfa668b631ac6e8fa96d4d06899",
+    "bytes": 6040
+  },
+  {
+    "path": "home/images/2025/01/23/brake.jpg",
+    "sha256": "8eaa335f3d2157d4b91bcf0c3fbda4a3d640381e128de000af598b3eacf561e4",
+    "bytes": 23571
+  },
+  {
+    "path": "home/images/2025/01/23/brake.webp",
+    "sha256": "50bf5e7ebc0448a76a48a22cfda80a0724395ede2b56417f5e1cde9722ac95d7",
+    "bytes": 5428
+  },
+  {
+    "path": "home/images/2025/01/23/car-suspension.jpg",
+    "sha256": "f614194a5b9de0f5fbdf07faf463b61064ecb090b370cba75111d5f5e7ef9407",
+    "bytes": 19505
+  },
+  {
+    "path": "home/images/2025/01/23/car-suspension.webp",
+    "sha256": "58a65141891e154d2ae441b62e6c32c2f23420e0cada26d506a3d1e1cb9eb3c4",
+    "bytes": 5246
+  },
+  {
+    "path": "home/images/2025/01/23/electrica.jpg",
+    "sha256": "fac1921500186648a27a161f88bae2154500f0413d29003b4427655981ea20f9",
+    "bytes": 17487
+  },
+  {
+    "path": "home/images/2025/01/23/electrica.webp",
+    "sha256": "bc5757ef9e9f7b8e891a773a372329548d7a82baedde2398a60bb42ec8cb7f20",
+    "bytes": 4080
+  },
+  {
+    "path": "home/images/2025/01/23/engine-n-transmission.jpg",
+    "sha256": "382aff2dea29cd48892c0db7fc8a865ecebbb3a735821d13fdb5545fb08e1d34",
+    "bytes": 14686
+  },
+  {
+    "path": "home/images/2025/01/23/engine-n-transmission.webp",
+    "sha256": "6800fbd4f06fadf10a6e2841aaf6f54efbc1b169555b77e2f88f2636a6a4526a",
+    "bytes": 4610
+  },
+  {
+    "path": "home/images/2025/04/15/yellowcar.jpg",
+    "sha256": "34486da4b553387161956655a444da76bf1910b23a79fc0a59e136b6483736f8",
+    "bytes": 244224
+  },
+  {
+    "path": "home/images/2025/04/15/yellowcar.webp",
+    "sha256": "8f08f65719fdb793e0b0d25cf69aa8c3c8005e2db975929857db24fa74d2f3de",
+    "bytes": 29074
+  },
+  {
+    "path": "home/images/2025/06/21/shadow-logo.png",
+    "sha256": "e4ab8d72f07c585aa7c4713eb8ed567337f0a8100f0fddb4bbd006d421842be4",
+    "bytes": 25307
+  },
+  {
+    "path": "home/images/2025/06/21/shadow-logo.webp",
+    "sha256": "d5811bcdf318e53a510258b96ffaf682cb40e3c12ed28601e1bc543781ede6b6",
+    "bytes": 7046
+  },
+  {
+    "path": "home/images/2025/07/30/china-cars.png",
+    "sha256": "f313be053d4e2f58996592a90ed8bdc7e420d4e95136a6ff451c121e02417c17",
+    "bytes": 1435216
+  },
+  {
+    "path": "home/images/2025/07/30/china-cars.webp",
+    "sha256": "38996b5410fb1338eb2aa17b767b6e563cf56d325c374f097bd488cadb5f8a8b",
+    "bytes": 168648
+  },
+  {
+    "path": "home/images/2025/08/07/proverka_lkp.jpg",
+    "sha256": "1ebe3201ffb6b44958f67463fd085b6463e79eccdaf62944b35a9c8a11be7295",
+    "bytes": 69317
+  },
+  {
+    "path": "home/images/2025/08/07/proverka_lkp.webp",
+    "sha256": "d00a2b221bbb75efac25633a1a53a68d0d11d1bda732b1854fc9c4ae86a3d2f7",
+    "bytes": 32014
+  },
+  {
+    "path": "home/images/2025/09/01/avto-voz.jpg",
+    "sha256": "a2fa0e05d223f95eb900938409350e0c62b17d9520de4ebd33627ae2d5b1d12c",
+    "bytes": 161525
+  },
+  {
+    "path": "home/images/2025/09/01/avto-voz.webp",
+    "sha256": "8c2b1fd7a152183bd86e2613f9a74a4cc8afefb74c9f808e2d9da519e1d31ed8",
+    "bytes": 129852
+  },
+  {
+    "path": "home/images/2025/09/01/danil_aksyuk.jpg",
+    "sha256": "ee8cc9a9e7fa2ca42546018971e34e19db12a335c4dfb724288dd9c90b94439f",
+    "bytes": 102882
+  },
+  {
+    "path": "home/images/2025/09/01/danil_aksyuk.webp",
+    "sha256": "dd611548ba657b769804a7ab7752c7d43d82e3701a15b0784d74558d1c968e9f",
+    "bytes": 42830
+  },
+  {
+    "path": "home/images/2025/09/01/exclisivecars.jpg",
+    "sha256": "ae8071d5a3a02bee6e2fb2da25a0743ad002a7f8aeb3aaf321fdcd49e0195f6d",
+    "bytes": 95282
+  },
+  {
+    "path": "home/images/2025/09/01/exclisivecars.webp",
+    "sha256": "b475a5c04ae6c5d330e1819122c4bb56fe3e91466497f3498dbe6a6281f1693f",
+    "bytes": 63924
+  },
+  {
+    "path": "home/images/2025/09/01/ivan.jpg",
+    "sha256": "6b11c3cce35fd36595b8d441deedafaa59313faeadb9ab65c4e1a4ec71e07992",
+    "bytes": 88221
+  },
+  {
+    "path": "home/images/2025/09/01/ivan.webp",
+    "sha256": "fd0d0bdab6b95700833ed3137f76925916da5cdfd56827c2854f8f32d9de9394",
+    "bytes": 36986
+  },
+  {
+    "path": "home/images/logo.png",
+    "sha256": "c829615a1ce2a9aa438f0d514a19532d81b5b3c64952833ef1c7596318d5829c",
+    "bytes": 15403
+  },
+  {
+    "path": "home/video/cars_video.mp4",
+    "sha256": "94f45d2f7c9e051e40198402b86188f5f41b5bff14b5f951b1e24a33b9aea621",
+    "bytes": 2713359
+  },
+  {
+    "path": "home/video/cars_video.webm",
+    "sha256": "fb3857b16ff02c705461ed04d31a894f77eaa8f8d5ce86e43a41343b599e1ba6",
+    "bytes": 2118712
+  },
+  {
+    "path": "home/video/cars_video_poster.webp",
+    "sha256": "12abf406801599440f7a77fbdda812dcb301a20c017a0a49f898b9cfe84b9c60",
+    "bytes": 38246
+  }
+]
