@@ -1,0 +1,73 @@
+/* Шаг 60: единая читаемая типографика мебельных страниц. */
+body.furniture-home { font-size:16px; line-height:1.6; }
+
+/* Основной текст. Размеры крупных заголовков и цен сохраняются. */
+body.furniture-home :is(.fm-hero-description, .fm-section-heading p,
+.fm-advantages > div > p, .fm-category p, .fm-advantage p,
+.fm-process-card p, .fm-project p, .fm-review p, .fm-faq p,
+.fm-callback-copy > p, .fm-reviews-empty, .fd-description, .fd-muted,
+.fs-service p, .fs-heading > p:last-of-type, .fs-project p,
+.fr-text, .fr-text p, .fl-intro, .fd-heading p:last-child,
+.car-inquiry__product, .fc-empty p) { font-size:16px; line-height:1.7; }
+body.furniture-home :is(.fm-category p, .fm-advantage p, .fm-process-card p,
+.fm-project p, .fm-review p, .fm-section-heading p, .fm-advantages > div > p,
+.fm-reviews-empty, .fd-description, .fd-muted, .fs-service p,
+.fs-heading > p:last-of-type, .fs-project p, .fl-intro,
+.fd-heading p:last-child) { color:#515b49; }
+
+/* Подписи, навигация по разделам, состояния и вспомогательные ссылки. */
+body.furniture-home :is(.fm-eyebrow, .fm-text-link, .fm-section-link,
+.fm-hero-benefits, .fm-material h3, .fm-review small, .fm-review h3,
+.fm-review-product, .fm-showcase-details, .fm-showcase-missing,
+.fm-callback-copy ul, .fm-form-legal, .fm-request-label,
+.home-callback__error, .home-callback__status, .fm-workshop-address,
+.fm-workshop-map, .fm-workshop-socials, .fc-breadcrumbs, .fl-breadcrumbs,
+.fd-breadcrumbs, .fd-gallery-bottom, .fd-article, .fd-availability,
+.fd-price > span:first-child, .fd-note, .fd-benefits, .fd-section-nav,
+.fd-related-heading button, .fs-catalog-link, .fs-directions a, .fr-count,
+.fl-field label, .fl-links, .fl-help, .fl-field-errors, .fl-error,
+.car-inquiry__note, .car-inquiry__error, .fc-card-category,
+.fc-availability, .fc-card-actions button, .fc-card-actions > a,
+.fc-badges span, .filter-chip, .catalog-count) { font-size:14px; line-height:1.6; }
+body.furniture-home :is(.fm-material h3, .fm-review small,
+.fm-review-product, .fm-showcase-details, .fm-showcase-missing,
+.fm-request-label, .fd-gallery-bottom, .fd-article, .fd-availability,
+.fd-price > span:first-child, .fd-note, .fd-benefits, .fd-section-nav,
+.fc-breadcrumbs, .fl-breadcrumbs, .fd-breadcrumbs,
+.fl-help, .fl-field label, .fl-links) { color:#56614d; }
+body.furniture-home .fm-form-legal { color:#59634f; }
+body.furniture-home .fm-callback-copy ul { color:#f2eddf; }
+body.furniture-home .fm-callback-copy > p { color:#f2eddf; }
+body.furniture-home .fm-hero-benefits { color:#f2eddf; }
+
+body.furniture-home .fm-advantage h3 { font-size:16px; line-height:1.5; }
+body.furniture-home :is(.fm-project h3, .fm-category h3,
+.fm-process-card h3, .fs-service h3) { font-size:18px; line-height:1.4; }
+body.furniture-home .fm-faq summary { font-size:16px; line-height:1.5; min-height:48px; }
+body.furniture-home .fd-specs > div { font-size:16px; line-height:1.6; }
+body.furniture-home .fd-specs dt { color:#56614d; }
+body.furniture-home .fd-price { grid-template-columns:minmax(0,1fr); }
+body.furniture-home .fd-price strong { white-space:normal; overflow-wrap:anywhere; }
+
+/* Формы: 16px также предотвращают автоматическое увеличение поля на iPhone. */
+body.furniture-home :is(.fm-form-panel, .fl-field, .car-inquiry__field,
+.review-form, .review-form-wrapper) :is(input, textarea, select),
+body.furniture-home :is(.car-inquiry__field label, .review-form label,
+.review-form-wrapper label) { font-size:16px; line-height:1.5; }
+body.furniture-home .fm-request-label span { color:#56614d; }
+body.furniture-home :is(.fm-button, .fd-secondary, .car-inquiry__submit,
+.fd-tools button) { font-size:16px; line-height:1.5; min-height:44px; }
+body.furniture-home .fd-section-nav a { display:inline-flex; align-items:center; min-height:44px; }
+body.furniture-home .fm-form-panel input { min-height:48px; }
+body.furniture-home .fm-advantage-grid { grid-template-columns:repeat(2,minmax(0,1fr)); }
+body.furniture-home .fm-advantage,
+body.furniture-home .fm-review > div { min-width:0; overflow-wrap:anywhere; }
+@media(max-width:720px) {
+    body.furniture-home .fm-review { align-items:flex-start; }
+    body.furniture-home .fm-section-link { max-width:120px; }
+    body.furniture-home .fd-benefits { grid-template-columns:1fr; }
+    body.furniture-home .fd-benefits li { display:flex; gap:12px; align-items:center; }
+    body.furniture-home .fd-benefits .fm-icon { margin-bottom:0; }
+    body.furniture-home .fd-specs > div { grid-template-columns:minmax(0,1fr); gap:5px; }
+    body.furniture-home .fd-section-nav { gap:8px 22px; }
+}
