@@ -71,3 +71,129 @@ body.furniture-home .fm-review > div { min-width:0; overflow-wrap:anywhere; }
     body.furniture-home .fd-specs > div { grid-template-columns:minmax(0,1fr); gap:5px; }
     body.furniture-home .fd-section-nav { gap:8px 22px; }
 }
+
+/* Шаг 61: композиция и выравнивание после увеличения текста. */
+body.furniture-home {
+    --fm-surface:#f0ede5;
+    --fm-border:#e2ded3;
+    --fm-ink:#252c25;
+    --fm-muted:#596252;
+    color:var(--fm-ink);
+}
+body.furniture-home .fm-container { max-width:1240px; }
+body.furniture-home .fm-section { padding:56px 0; }
+body.furniture-home .fm-section-heading { gap:32px; margin-bottom:28px; align-items:flex-start; }
+body.furniture-home .fm-section-heading > div { min-width:0; }
+body.furniture-home .fm-section h2 { font-size:28px; line-height:1.25; letter-spacing:-.6px; }
+body.furniture-home .fm-section-heading p { margin-top:12px; max-width:640px; }
+body.furniture-home .fm-section-link { min-height:44px; margin-top:0; gap:12px; flex-shrink:0; }
+body.furniture-home .fm-button { border-radius:4px; padding:14px 24px; }
+body.furniture-home .fm-button-small { padding:10px 18px; }
+body.furniture-home .fm-hero-inner { padding-top:56px; padding-bottom:40px; }
+body.furniture-home .fm-hero h1 { max-width:690px; line-height:1.12; }
+body.furniture-home .fm-hero-description { max-width:560px; }
+body.furniture-home .fm-hero-actions { gap:28px; margin-top:28px; }
+body.furniture-home .fm-hero-benefits { gap:28px; flex-wrap:wrap; }
+
+/* Карточки в одном ряду имеют общие нижние линии, без обрезки текста. */
+body.furniture-home .fm-category-grid { gap:24px; align-items:stretch; }
+body.furniture-home .fm-category { display:flex; flex-direction:column; min-width:0; }
+body.furniture-home .fm-category > :is(.fm-photo,.fm-category-image) { flex-shrink:0; width:100%; border-radius:4px; }
+body.furniture-home .fm-category h3 { margin-top:18px; }
+body.furniture-home .fm-category p { margin-top:8px; min-height:0; }
+body.furniture-home .fm-category .fm-card-arrow { margin-top:auto; padding-top:14px; align-self:flex-start; }
+body.furniture-home .fm-advantage-grid { gap:28px 32px; }
+body.furniture-home .fm-advantage { gap:14px; }
+body.furniture-home .fm-advantage p { margin-top:8px; }
+body.furniture-home .fm-process-grid { gap:24px; }
+body.furniture-home .fm-process-image { position:relative; display:block; }
+body.furniture-home .fm-process-image .fm-photo { aspect-ratio:1.6; width:100%; border-radius:4px; }
+body.furniture-home .fm-step-number { position:absolute; top:12px; left:12px; z-index:1; width:32px; height:32px; background:#f8f4e9; color:#414a38; font-size:14px; }
+body.furniture-home .fm-process-card h3 { margin-top:18px; }
+body.furniture-home .fm-process-card p { margin-top:10px; max-width:none; }
+body.furniture-home .fm-project-grid { gap:24px; align-items:stretch; }
+body.furniture-home .fm-project { min-width:0; }
+body.furniture-home .fm-project-link { display:flex; flex-direction:column; }
+body.furniture-home :is(.fm-showcase-image,.fm-showcase-missing) { flex-shrink:0; border-radius:4px; }
+body.furniture-home .fm-project h3 { margin-top:18px; min-height:2.8em; }
+body.furniture-home .fm-project p { margin-top:8px; }
+body.furniture-home .fm-showcase-details { margin-top:auto; padding-top:16px; min-height:44px; }
+body.furniture-home .fm-material-grid { gap:20px; }
+body.furniture-home .fm-material h3 { margin-top:12px; }
+body.furniture-home .fm-review-grid { gap:24px; align-items:stretch; }
+body.furniture-home .fm-review { padding:24px; gap:18px; border-color:var(--fm-border); border-radius:4px; background:#fffdf8; }
+body.furniture-home .fm-review-image { width:72px; height:72px; object-fit:cover; align-self:flex-start; flex-shrink:0; }
+body.furniture-home .fm-review > div { display:flex; flex-direction:column; flex:1; }
+body.furniture-home .fm-review-mark { display:none; }
+body.furniture-home .fm-review h3 { margin-top:auto; padding-top:20px; font-weight:600; }
+body.furniture-home .fm-review small { margin-top:4px; }
+body.furniture-home .fm-review-product { margin-top:12px; }
+body.furniture-home .fm-faq-grid { gap:12px 24px; align-items:start; }
+body.furniture-home .fm-faq { border-color:var(--fm-border); border-radius:4px; background:#fffdf8; }
+body.furniture-home .fm-faq summary { padding:18px 20px; gap:20px; }
+body.furniture-home .fm-faq summary span { flex-shrink:0; }
+body.furniture-home .fm-faq p { padding:0 20px 20px; }
+body.furniture-home .fm-callback-inner { padding-top:48px; padding-bottom:48px; gap:64px; grid-template-columns:minmax(0,1fr) minmax(0,.9fr); }
+body.furniture-home .fm-form-panel { padding:32px; border-radius:4px; }
+body.furniture-home .fm-form-panel form { gap:16px; }
+body.furniture-home .fm-request-label { margin-top:0; }
+body.furniture-home .fm-form-legal { margin-top:0 !important; }
+
+/* Каталог и информационные страницы используют тот же ритм. */
+body.furniture-home .fc-card-actions { gap:8px 16px; }
+body.furniture-home .fc-catalog .fc-card h3 { min-height:2.8em; }
+body.furniture-home .fc-catalog .fc-card-actions { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:0 12px; }
+body.furniture-home .fc-catalog .fc-card-actions > a { grid-column:1/-1; margin-left:0; border-top:1px solid var(--fm-border); margin-top:4px; }
+body.furniture-home .fc-catalog .fc-card-actions button { min-width:0; overflow-wrap:anywhere; text-align:left; }
+body.furniture-home .fd-overview { gap:48px; }
+body.furniture-home .fd-information { gap:48px; }
+body.furniture-home .fd-section-nav { margin-top:40px; margin-bottom:32px; padding:12px 0; }
+body.furniture-home .fd-note { margin-top:16px !important; }
+body.furniture-home .fs-heading { margin-bottom:40px; }
+body.furniture-home .fs-group { margin-bottom:56px; }
+body.furniture-home .fs-grid { gap:24px; }
+body.furniture-home .fs-service { padding:28px; border:1px solid var(--fm-border); background:#f5f2eb; border-radius:4px; }
+body.furniture-home .fs-service h3 { margin-bottom:14px; }
+body.furniture-home .fs-project { padding:32px; }
+body.furniture-home .fm-footer-top { gap:20px 32px; padding-bottom:24px; }
+body.furniture-home .fm-footer nav { gap:8px 24px; }
+body.furniture-home .fm-workshop-address { max-width:560px; }
+@media(max-width:1100px) {
+    body.furniture-home .fm-category-grid { grid-template-columns:repeat(3,minmax(0,1fr)); gap:32px 24px; }
+    body.furniture-home .fm-review-grid { grid-template-columns:1fr; }
+    body.furniture-home .fm-review { gap:24px; }
+    body.furniture-home .fm-callback-inner { gap:32px; }
+}
+@media(max-width:720px) {
+    body.furniture-home .fm-container { width:calc(100% - 40px); }
+    body.furniture-home .fm-section { padding:36px 0; }
+    body.furniture-home .fm-section h2 { font-size:25px; }
+    body.furniture-home .fm-section-heading { flex-direction:column; gap:8px; margin-bottom:24px; }
+    body.furniture-home .fm-section-link { text-align:left; max-width:none; white-space:normal; }
+    body.furniture-home .fm-category-grid { grid-template-columns:repeat(2,minmax(0,1fr)); gap:28px 20px; }
+    body.furniture-home .fm-hero-inner { padding-top:36px; padding-bottom:32px; }
+    body.furniture-home .fm-hero h1 { font-size:34px; line-height:1.15; letter-spacing:-.8px; }
+    body.furniture-home .fm-hero-actions { align-items:stretch; gap:12px; }
+    body.furniture-home .fm-hero-actions > a { width:100%; min-height:48px; justify-content:center; }
+    body.furniture-home .fm-hero-benefits { padding-top:28px; gap:20px; }
+    body.furniture-home .fm-advantage-grid { grid-template-columns:1fr; gap:24px; }
+    body.furniture-home .fm-advantage .fm-icon { width:36px; height:36px; }
+    body.furniture-home .fm-process-grid,
+    body.furniture-home .fm-project-grid { grid-template-columns:1fr; gap:28px; }
+    body.furniture-home .fm-project h3 { min-height:0; }
+    body.furniture-home .fm-process-image .fm-photo,
+    body.furniture-home .fm-showcase-image,
+    body.furniture-home .fm-showcase-missing { aspect-ratio:1.6; }
+    body.furniture-home .fm-review { padding:20px; gap:16px; }
+    body.furniture-home .fm-review-image { width:64px; height:64px; }
+    body.furniture-home .fm-faq summary { padding:16px; }
+    body.furniture-home .fm-faq p { padding:0 16px 16px; }
+    body.furniture-home .fm-callback-inner { grid-template-columns:1fr; padding-top:36px; padding-bottom:36px; gap:28px; }
+    body.furniture-home .fm-form-panel { padding:24px; }
+    body.furniture-home .fd-overview,
+    body.furniture-home .fd-information { gap:28px; }
+    body.furniture-home .fs-service,
+    body.furniture-home .fs-project { padding:24px; }
+    body.furniture-home .fs-grid { gap:20px; }
+    body.furniture-home .fs-group { margin-bottom:36px; }
+}
