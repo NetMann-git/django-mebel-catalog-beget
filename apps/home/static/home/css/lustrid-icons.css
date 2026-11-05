@@ -25,3 +25,18 @@ body.furniture-home .fm-advantage>.fm-icon { width:30px; height:30px; margin-top
 .fm-action-icon { width:18px; height:18px; flex:0 0 18px; vertical-align:-3px; }
 .fm-button>.fm-action-icon,.fs-catalog-link>.fm-action-icon { margin-left:8px; }
 .fm-section-link>.fm-action-icon,.fm-text-link>.fm-action-icon { margin-left:4px; }
+
+/* Шаг 67: навигация подборок и служебные элементы. */
+.fm-ui-icon { width:19px; height:19px; flex:0 0 19px; }
+.fm-ui-back { transform:rotate(180deg); }
+body.furniture-home .fc-tools a { display:inline-flex; align-items:center; gap:8px; min-height:44px; }
+.fm-filter-title,.fm-input-label { display:inline-flex; align-items:center; gap:8px; }
+body.furniture-home .filter-chip { display:inline-flex; align-items:center; gap:8px; }
+.filter-chip>.fm-ui-icon { width:16px; height:16px; flex-basis:16px; }
+.fd-stat-title { display:flex; align-items:flex-start; gap:10px; }
+.fd-stat-title>.fm-ui-icon { margin-top:3px; color:#657352; }
+.fd-stat-title>span { min-width:0; }
+.fd-stat-link { display:inline-flex; align-items:center; gap:8px; }
+.fd-search button,.fs-form button,.fd-logout { display:inline-flex; align-items:center; justify-content:center; gap:8px; }
+.lightbox-close,.lightbox-prev,.lightbox-next,.car-inquiry__close { display:inline-flex; align-items:center; justify-content:center; min-width:44px; min-height:44px; }
+.compare-btn.remove-btn { display:inline-flex; align-items:center; justify-content:center; }

@@ -9,6 +9,6 @@
 <form method="post" action="{% url 'users:login' %}">{% csrf_token %}
 <div class="fl-field"><label for="id_username">Имя пользователя</label><input type="text" name="username" id="id_username" value="{{ form.username.value|default_if_none:'' }}" maxlength="{{ form.username.field.max_length }}" autocomplete="username" required autofocus{% if form.errors %} aria-invalid="true"{% endif %}></div>
 <div class="fl-field"><label for="id_password">Пароль</label><input type="password" name="password" id="id_password" autocomplete="current-password" required{% if form.errors %} aria-invalid="true"{% endif %}></div>
-<input type="hidden" name="next" value="{{ next }}"><button type="submit" class="fm-button">Войти <span aria-hidden="true">→</span></button>
-</form><div class="fl-links"><a href="{% url 'users:password_reset' %}">Забыли пароль?</a><p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p><a href="{% url 'catalog:catalog' %}">Вернуться в каталог →</a></div>
+<input type="hidden" name="next" value="{{ next }}"><button type="submit" class="fm-button">Войти {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-action-icon' %}</button>
+</form><div class="fl-links"><a href="{% url 'users:password_reset' %}">Забыли пароль?</a><p>Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a></p><a href="{% url 'catalog:catalog' %}">Вернуться в каталог {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-action-icon' %}</a></div>
 </section></div>{% endblock %}

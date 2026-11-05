@@ -4,11 +4,11 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}"><link rel="stylesheet" href="{% static 'users/css/furniture-appointments.css' %}">{% endblock %}
 {% block furniture_content %}<div class="fm-container fd-page">
 <nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><span aria-current="page">Мои записи</span></nav>
-<header class="fd-heading"><div><p class="fm-eyebrow">Личный кабинет</p><h1>Мои записи</h1><p>Даты, время и текущий статус ваших записей.</p></div><a class="fm-button" href="{% url 'users:dashboard' %}">В личный кабинет →</a></header>
+<header class="fd-heading"><div><p class="fm-eyebrow">Личный кабинет</p><h1>Мои записи</h1><p>Даты, время и текущий статус ваших записей.</p></div><a class="fm-button" href="{% url 'users:dashboard' %}">В личный кабинет {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-action-icon' %}</a></header>
 {% if appointments %}<ol class="fa-list" aria-label="Ваши записи">{% for appointment in appointments %}<li class="fa-item"><dl>
 <div><dt>Дата</dt><dd><time datetime="{{ appointment.date|date:'Y-m-d' }}">{{ appointment.date|date:'d.m.Y' }}</time></dd></div>
 <div><dt>Время</dt><dd>{{ appointment.time|time:'H:i' }}</dd></div>
 <div class="fa-product"><dt>Изделие</dt><dd>{% if appointment.product %}<a href="{{ appointment.product.get_absolute_url }}">{{ appointment.product.title }}</a>{% else %}—{% endif %}</dd></div>
 <div><dt>Статус</dt><dd><span class="fa-status fa-status--{{ appointment.status }}">{{ appointment.get_status_display }}</span></dd></div>
-</dl></li>{% endfor %}</ol>{% else %}<section class="fa-empty"><h2>У вас пока нет записей.</h2><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог →</a></section>{% endif %}
+</dl></li>{% endfor %}</ol>{% else %}<section class="fa-empty"><h2>У вас пока нет записей.</h2><a class="fm-button" href="{% url 'catalog:catalog' %}">Перейти в каталог {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-action-icon' %}</a></section>{% endif %}
 </div>{% endblock %}
