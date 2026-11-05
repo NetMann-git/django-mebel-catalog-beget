@@ -1,4 +1,4 @@
-<h2>4. Фотографии · {{ package_photos|length }}</h2>
+{% load image_variants %}<h2>4. Фотографии · {{ package_photos|length }}</h2>
 <details><summary>Сведения о пакете и предупреждения</summary><p>Собран: {{ package_manifest.created_at }}. Это время сборки пакета, не получения объявления.</p>
 <p>Пакет может содержать фотографии прежних загрузок и не гарантирует полноту текущей галереи Encar. Проверьте состав. SHA-256 подтверждает целостность файлов, а не подлинность объявления.</p>
 {% if package_manifest.warnings %}<ul>{% for warning in package_manifest.warnings %}<li>{{ warning }}</li>{% endfor %}</ul>{% endif %}</details>
@@ -6,8 +6,8 @@
 {% if product %}
 <details><summary>Посмотреть текущие фотографии автомобиля</summary>
 <div class="encar-package-photos">
-{% if product.image %}<div class="encar-package-photo"><img src="{{ product.image.url }}" width="240" height="180" alt="Текущая обложка" loading="lazy"><span>Текущая обложка</span></div>{% endif %}
-{% for image in product.gallery.all %}{% if image.image and image.image.name != product.image.name %}<div class="encar-package-photo"><img src="{{ image.image.url }}" width="240" height="180" alt="Фото из текущей галереи" loading="lazy"><span>Порядок: {{ image.sort_order }}</span></div>{% endif %}{% endfor %}
+{% if product.image %}<div class="encar-package-photo"><img src="{{ product.image|image_variant:"review" }}" width="240" height="180" alt="Текущая обложка" loading="lazy"><span>Текущая обложка</span></div>{% endif %}
+{% for image in product.gallery.all %}{% if image.image and image.image.name != product.image.name %}<div class="encar-package-photo"><img src="{{ image.image|image_variant:"review" }}" width="240" height="180" alt="Фото из текущей галереи" loading="lazy"><span>Порядок: {{ image.sort_order }}</span></div>{% endif %}{% endfor %}
 </div>
 </details>
 <div class="encar-import__danger">

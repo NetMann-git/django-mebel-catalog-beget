@@ -1,4 +1,4 @@
-<!-- apps/reviews/templates/reviews/_review_list.html -->
+{% load image_variants %}<!-- apps/reviews/templates/reviews/_review_list.html -->
 
 {% load static %}
 
@@ -40,7 +40,7 @@
                            class="review-image-link" 
                            data-lightbox="review" 
                            data-title="Фото из отзыва">
-                            <img src="{{ image.image.url }}" alt="Фото" class="review-image-thumb">
+                            <img src="{{ image.image|image_variant:"review" }}" alt="Фото" class="review-image-thumb">
                         </a>
                     {% endfor %}
                 </div>

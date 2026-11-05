@@ -3,7 +3,7 @@
 from django.core.cache import cache
 from django.db import connections
 from django.db.models import Q
-from easy_thumbnails.files import get_thumbnailer
+from apps.products.image_variants import image_variant
 from apps.products.models import Product, Category, Badge, ProductAttribute
 from .models import SearchQuery
 
@@ -21,14 +21,7 @@ class SearchService:
         """Возвращает URL миниатюры для изображения."""
         if not image:
             return None
-        try:
-            thumbnail = get_thumbnailer(image).get_thumbnail({
-                'size': size,
-                'crop': True,
-            })
-            return thumbnail.url
-        except Exception:
-            return image.url
+        return image_variant(image, 'thumb')
 
     @staticmethod
     def search(query):
@@ -58,7 +51,7 @@ class SearchService:
 
     @staticmethod
     def suggest(query, request=None):
-        cache_key = f"search_suggest_{query.lower()}"
+        cache_key = f"search_suggest_v74_{query.lower()}"
         results = cache.get(cache_key)
         if results is not None:
             return results

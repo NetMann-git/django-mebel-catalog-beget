@@ -1,8 +1,8 @@
-{% load static %}
+{% load image_variants %}{% load static %}
 <article class="sppb-carousel-extended-item client-showcase-card">
  <div class="client-showcase-card__media">
   {% if client.image %}
-   <img class="client-showcase-card__image" alt="{{ client.name }} — {{ client.vehicle }}" decoding="async" loading="lazy" src="{{ client.image.url }}" />
+   <img class="client-showcase-card__image" alt="{{ client.name }} — {{ client.vehicle }}" decoding="async" loading="lazy" src="{{ client.image|image_variant:"card" }}" />
     {% endif %}
  </div>
  <div class="client-showcase-card__content">

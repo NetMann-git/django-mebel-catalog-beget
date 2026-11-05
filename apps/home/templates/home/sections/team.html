@@ -1,4 +1,4 @@
-{% load static %}
+{% load image_variants %}{% load static %}
 {% if team_members %}
 <section class="home-team" id="team">
  <div class="home-team__container">
@@ -9,7 +9,7 @@
    <article class="home-team-card">
     <div class="home-team-card__media">
      {% if member.image %}
-      <img class="home-team-card__image" src="{{ member.image.url }}" alt="{{ member.name }} — {{ member.position }}" loading="lazy" decoding="async">
+      <img class="home-team-card__image" src="{{ member.image|image_variant:"card" }}" alt="{{ member.name }} — {{ member.position }}" loading="lazy" decoding="async">
      {% endif %}
      <div class="home-team-card__overlay">
       <span class="home-team-card__name">{{ member.name }}</span>

@@ -8,6 +8,8 @@ from apps.wishlist.models import Favorite
 
 class FurnitureBrandPageTests(TestCase):
     def setUp(self):
+        from apps.products.tests.image_fixtures import image_test_storage
+        image_test_storage(self, ['brands/original-logo.png', 'products/original-brand-case.jpg'])
         self.brand=Brand.objects.create(name='Мебельная мастерская',slug='furniture-workshop',country='Россия',description='Описание мастерской\n\nВторая строка',meta_title='Мебель мастерской',meta_description='Индивидуальная мебель',logo='brands/original-logo.png')
         self.product=Product.objects.create(title='Шкаф из дуба',slug='brand-oak-case',brand=self.brand,price=120000,currency='EUR',image='products/original-brand-case.jpg')
         self.hidden=Product.objects.create(title='Скрытый проект',slug='private-brand-case',brand=self.brand,price=1,is_active=False)

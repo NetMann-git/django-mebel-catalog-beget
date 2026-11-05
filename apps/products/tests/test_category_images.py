@@ -9,6 +9,7 @@ from django.test import Client, TestCase
 from django.urls import reverse
 from apps.home.furniture_showcase import category_images
 from apps.products.category_management import CategoryForm
+from apps.products.image_variants import image_variant
 from apps.products.furniture_categories import FURNITURE_CATEGORIES
 from apps.products.models import Category, Product
 
@@ -47,10 +48,11 @@ class CategoryImageTests(TestCase):
         response = self.client.get(reverse('home'))
         soup = BeautifulSoup(response.content, 'html.parser')
         image = soup.select_one('#categories .fm-category img')
-        self.assertEqual(image['src'], self.category.image.url)
+        self.assertEqual(image['src'], image_variant(self.category.image, 'category_card'))
+        self.assertNotEqual(image['src'], self.category.image.url)
         self.assertNotIn('/products/random.jpg', str(soup.select_one('#categories')))
-        for url in [self.url, reverse('catalog:category_list_manage')]:
-            self.assertContains(self.client.get(url), self.category.image.url)
+        self.assertContains(self.client.get(self.url), image_variant(self.category.image, 'preview'))
+        self.assertContains(self.client.get(reverse('catalog:category_list_manage')), image_variant(self.category.image, 'category_table'))
         self.assertContains(self.client.get(self.url), 'enctype="multipart/form-data"')
 
     def test_keep_replace_and_clear_with_default_return(self):

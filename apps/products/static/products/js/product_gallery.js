@@ -41,7 +41,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Если есть миниатюры — используем их
         thumbs.forEach(function(thumb) {
             imageList.push({
-                src: thumb.dataset.full || thumb.src,
+                src: thumb.dataset.preview || thumb.src,
+                full: thumb.dataset.full || thumb.src,
+                thumb: thumb.src,
                 alt: thumb.alt || "Фото товара"
             });
         });
@@ -49,22 +51,11 @@ document.addEventListener("DOMContentLoaded", function () {
         // Если миниатюр нет, но есть главное фото — создаём одно изображение
         imageList.push({
             src: mainImage.src,
+            full: mainImage.dataset.full || mainImage.src,
+            thumb: mainImage.dataset.thumb || mainImage.src,
             alt: mainImage.alt || "Фото товара"
         });
-        // Создаём виртуальную миниатюру для отображения (скрытую)
-        const virtualThumb = document.createElement('img');
-        virtualThumb.src = mainImage.src;
-        virtualThumb.dataset.full = mainImage.src;
-        virtualThumb.alt = mainImage.alt || "Фото товара";
-        virtualThumb.className = 'gallery-thumb-vertical active';
-        virtualThumb.style.display = 'none';
-        // Добавляем в DOM, чтобы JS мог её найти
-        const container = document.querySelector('.gallery-thumbs-vertical');
-        if (container) {
-            container.appendChild(virtualThumb);
-        }
-        // Обновляем список thumbs
-        document.querySelectorAll(".gallery-thumb-vertical");
+
     }
 
     // Если нет изображений — выходим
@@ -126,7 +117,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         const imgData = imageList[index];
         if (imgData) {
-            lightboxImage.src = imgData.src;
+            lightboxImage.src = imgData.full;
             lightboxImage.alt = imgData.alt;
         }
         updateCounter();
@@ -165,7 +156,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         imageList.forEach(function(imgData, index) {
             const img = document.createElement("img");
-            img.src = imgData.src;
+            img.src = imgData.thumb;
+            img.loading = "lazy";
             img.className = "lightbox-thumb";
             if (index === currentIndex) {
                 img.classList.add("active");
@@ -174,7 +166,7 @@ document.addEventListener("DOMContentLoaded", function () {
             img.addEventListener("click", function (e) {
                 e.stopPropagation();
                 currentIndex = index;
-                lightboxImage.src = imageList[index].src;
+                lightboxImage.src = imageList[index].full;
                 lightboxImage.alt = imageList[index].alt;
                 updateCounter();
                 renderLightboxThumbs();

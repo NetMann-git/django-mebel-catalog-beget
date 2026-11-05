@@ -1,0 +1,32 @@
+{
+  "home/images/categories/polki.webp": {
+    "category_table": "home/images/categories/polki-variant-category_table.webp",
+    "category_card": "home/images/categories/polki-variant-category_card.webp",
+    "preview": "home/images/categories/polki-variant-preview.webp"
+  },
+  "home/images/categories/drugaya-mebel.webp": {
+    "category_table": "home/images/categories/drugaya-mebel-variant-category_table.webp",
+    "category_card": "home/images/categories/drugaya-mebel-variant-category_card.webp",
+    "preview": "home/images/categories/drugaya-mebel-variant-preview.webp"
+  },
+  "home/images/categories/stellazhi.webp": {
+    "category_table": "home/images/categories/stellazhi-variant-category_table.webp",
+    "category_card": "home/images/categories/stellazhi-variant-category_card.webp",
+    "preview": "home/images/categories/stellazhi-variant-preview.webp"
+  },
+  "home/images/categories/shkafy.webp": {
+    "category_table": "home/images/categories/shkafy-variant-category_table.webp",
+    "category_card": "home/images/categories/shkafy-variant-category_card.webp",
+    "preview": "home/images/categories/shkafy-variant-preview.webp"
+  },
+  "home/images/categories/garderobnye.webp": {
+    "category_table": "home/images/categories/garderobnye-variant-category_table.webp",
+    "category_card": "home/images/categories/garderobnye-variant-category_card.webp",
+    "preview": "home/images/categories/garderobnye-variant-preview.webp"
+  },
+  "home/images/categories/kuhni.webp": {
+    "category_table": "home/images/categories/kuhni-variant-category_table.webp",
+    "category_card": "home/images/categories/kuhni-variant-category_card.webp",
+    "preview": "home/images/categories/kuhni-variant-preview.webp"
+  }
+}

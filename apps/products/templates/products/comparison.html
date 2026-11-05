@@ -1,4 +1,4 @@
-{% extends 'home/furniture_base.html' %}{% load static price_format comparison_filters %}
+{% extends 'home/furniture_base.html' %}{% load image_variants %}{% load static price_format comparison_filters %}
 {% block title %}Сравнение мебели — LUSTRID.RU{% endblock %}
 {% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'products/css/furniture-comparison.css' %}">{% endblock %}
@@ -20,7 +20,7 @@
                         <th scope="col" data-product-id="{{ product.id }}">
                             <a class="fm-compare__product" href="{{ product.get_absolute_url }}">
                                 {% if product.image %}
-                                <img src="{{ product.image.url }}" alt="{{ product.title }}" decoding="async" loading="lazy">
+                                <img src="{{ product.image|image_variant:"review" }}" alt="{{ product.title }}" decoding="async" loading="lazy">
                                 {% else %}<span class="fm-compare__placeholder">Фото пока нет</span>{% endif %}
                                 <span>{{ product.title }}</span>
                             </a>

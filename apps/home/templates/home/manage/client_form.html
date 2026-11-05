@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}{% load image_variants %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
@@ -21,7 +21,7 @@
   <div class="client-form__current">
    <span>Текущее фото</span>
    {% if client.image %}
-    <img src="{{ client.image.url }}" alt="{{ client.name }}">
+    <img src="{{ client.image|image_variant:"preview" }}" alt="{{ client.name }}">
    {% elif client.legacy_image %}
     <img src="{% static client.legacy_image %}" alt="{{ client.name }}">
    {% endif %}

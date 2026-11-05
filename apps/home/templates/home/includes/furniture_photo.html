@@ -1,1 +1,1 @@
-{% load static %}<svg class="fm-photo {{ photo_class }}" viewBox="{{ box }}" preserveAspectRatio="xMidYMid slice" role="img" aria-label="{{ alt }}" focusable="false"><image href="{% static source %}" width="{{ source_width|default:'779' }}" height="{{ source_height|default:'1920' }}" /></svg>
+{% load image_variants %}<img class="fm-photo fm-reference-crop {{ photo_class }}" src="{% reference_crop source box %}" alt="{{ alt }}" loading="lazy" decoding="async">

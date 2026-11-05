@@ -9,6 +9,8 @@ from apps.reviews.models import Review
 
 class FurnitureDetailTests(TestCase):
     def setUp(self):
+        from apps.products.tests.image_fixtures import image_test_storage
+        image_test_storage(self, ['products/gallery/first.jpg', 'products/gallery/second.jpg', 'products/cover.jpg', 'products/gallery/detail.jpg'])
         cache.clear()
         self.category = Category.objects.create(title='Шкафы', slug='shkafy')
         self.item = Product.objects.create(title='Шкаф под размер', slug='wardrobe-detail', price=120000,
@@ -34,7 +36,10 @@ class FurnitureDetailTests(TestCase):
         photos = response.context['furniture_photos']
         self.assertEqual([p['image'].name for p in photos], ['products/gallery/first.jpg', 'products/gallery/second.jpg'])
         self.assertEqual(photos[0]['alt'], 'Первая фотография')
-        self.assertContains(response, 'id="main-image" class="main-image" src="/media/products/gallery/first.jpg"')
+        from bs4 import BeautifulSoup
+        main = BeautifulSoup(response.content, 'html.parser').select_one('#main-image')
+        self.assertEqual(main['data-full'], '/media/products/gallery/first.jpg')
+        self.assertNotEqual(main['src'], main['data-full'])
         self.assertContains(response, 'id="total-photos">2</span>')
         self.assertNotContains(response, 'Фотографии пока не добавлены')
 

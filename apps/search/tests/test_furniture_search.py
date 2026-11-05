@@ -10,6 +10,8 @@ from apps.wishlist.models import Favorite
 
 class FurnitureSearchTests(TestCase):
     def setUp(self):
+        from apps.products.tests.image_fixtures import image_test_storage
+        image_test_storage(self, ['products/original-search.jpg'])
         cache.clear()
         self.url = reverse('search:search')
         self.category = Category.objects.create(title='Шкафы', slug='search-cases')

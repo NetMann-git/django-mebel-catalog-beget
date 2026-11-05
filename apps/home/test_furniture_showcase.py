@@ -9,6 +9,8 @@ from apps.home.furniture_showcase import category_images
 
 class FurnitureHomeShowcaseTests(TestCase):
     def setUp(self):
+        from apps.products.tests.image_fixtures import image_test_storage
+        image_test_storage(self, ['products/original-oak.jpg', 'reviews/original-review.jpg'])
         self.category=Category.objects.create(title='Шкафы',slug='shkafy')
         self.product=Product.objects.create(title='Шкаф <дуб>',slug='showcase-oak',price=100,
             category=self.category,image='products/original-oak.jpg',is_featured=True)

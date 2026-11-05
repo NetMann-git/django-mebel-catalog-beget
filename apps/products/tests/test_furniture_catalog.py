@@ -7,6 +7,8 @@ from apps.products.models import Category, Product
 
 class FurnitureCatalogTests(TestCase):
     def setUp(self):
+        from apps.products.tests.image_fixtures import image_test_storage
+        image_test_storage(self, ['products/original-test.jpg'])
         cache.clear()
         self.category = Category.objects.create(title='Шкафы', slug='shkafy')
         self.item = Product.objects.create(title='Шкаф из дерева', slug='wood-wardrobe', category=self.category, price=120000)
@@ -22,7 +24,7 @@ class FurnitureCatalogTests(TestCase):
         self.assertContains(response, 'Каталог мебели')
         self.assertContains(response, 'furniture-catalog.css')
         self.assertContains(response, '/media/products/original-test.jpg')
-        self.assertNotContains(response, '/thumbs/')
+        self.assertContains(response, '.webp')
         self.assertContains(response, '120\u00a0000 $')
         self.assertNotContains(response, 'Каталог автомобилей')
         self.assertNotContains(response, 'themes/auto.css')

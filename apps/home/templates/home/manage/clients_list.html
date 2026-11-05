@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'base.html' %}{% load image_variants %}
 {% load static %}
 
 {% block title %}Наши клиенты — управление{% endblock %}
@@ -58,7 +58,7 @@
    {% endif %}
    <div class="client-admin-card__image">
     {% if client.image %}
-     <img src="{{ client.image.url }}" alt="{{ client.name }}">
+     <img src="{{ client.image|image_variant:"card" }}" alt="{{ client.name }}">
         {% elif client.rutube_embed_url %}
      <iframe
       class="client-admin-card__video-preview"

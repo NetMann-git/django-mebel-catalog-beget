@@ -1,4 +1,4 @@
-{% extends 'home/furniture_base.html' %}
+{% extends 'home/furniture_base.html' %}{% load image_variants %}
 {% load price_format static %}
 {% block title %}Управление изделиями — LUSTRID.RU{% endblock %}
 {% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
@@ -22,7 +22,7 @@
     <thead><tr><th scope="col">Фото</th><th scope="col">Изделие</th><th scope="col">Артикул</th><th scope="col">Цена</th><th scope="col">Категория</th><th scope="col">Видимость</th><th scope="col">Действия</th></tr></thead>
     <tbody>{% for product in products %}
       <tr>
-        <td class="fm-manage__photo">{% if product.image %}<img src="{{ product.image.url }}" alt="{{ product.title }}" width="112" height="84" loading="lazy">{% else %}<span class="fm-manage__no-photo">Нет фото</span>{% endif %}</td>
+        <td class="fm-manage__photo">{% if product.image %}<img src="{{ product.image|image_variant:"table" }}" alt="{{ product.title }}" width="112" height="84" loading="lazy">{% else %}<span class="fm-manage__no-photo">Нет фото</span>{% endif %}</td>
         <td class="fm-manage__name"><a href="{% url 'catalog:product_edit' product.pk %}">{{ product.title }}</a></td>
         <td><span class="fm-manage__label" aria-hidden="true">Артикул</span>{{ product.article|default:"—" }}</td>
         <td class="fm-manage__price"><span class="fm-manage__label" aria-hidden="true">Цена</span><span>{{ product.price|price_format }} {{ product.currency }}</span></td>

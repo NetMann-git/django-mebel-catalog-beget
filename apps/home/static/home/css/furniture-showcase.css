@@ -11,3 +11,5 @@
 .furniture-home .fm-review-product{display:block;font-size:11px;color:#65705b;margin-top:8px}
 .furniture-home .fm-reviews-empty{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:24px;border:1px solid #e1e2dc;border-radius:3px;font-size:13px;color:#777d70}
 @media(max-width:720px){.furniture-home .fm-showcase-image,.furniture-home .fm-showcase-missing{aspect-ratio:1.15}.furniture-home .fm-review-image{width:27%;max-width:110px}.furniture-home .fm-reviews-empty{align-items:flex-start;flex-direction:column}}
+
+.fm-reference-crop{object-fit:cover}

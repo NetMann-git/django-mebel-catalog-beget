@@ -3,6 +3,7 @@
 document.addEventListener("DOMContentLoaded", function () {
 
     const lightbox = document.getElementById("review-lightbox");
+    if (!lightbox) return;
     const lightboxImage = document.getElementById("review-lightbox-image");
     const lightboxCurrent = document.getElementById("review-lightbox-current");
     const lightboxTotal = document.getElementById("review-lightbox-total");
@@ -23,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     reviewLinks.forEach(function(link) {
         images.push({
             src: link.href,
+            thumb: link.querySelector("img")?.src || "",
             alt: link.dataset.title || "Фото из отзыва"
         });
     });
@@ -55,7 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
 
         images.forEach(function(imgData, index) {
             const img = document.createElement("img");
-            img.src = imgData.src;
+            img.src = imgData.thumb;
+            img.loading = "lazy";
             img.className = "lightbox-thumb";
             if (index === currentIndex) {
                 img.classList.add("active");
