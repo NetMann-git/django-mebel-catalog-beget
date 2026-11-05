@@ -7,6 +7,8 @@ from django.contrib import messages
 from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
+from django.core.paginator import Paginator
+from .callback_filters import clean_query, search_callbacks, filter_query, PAGE_SIZE
 
 from apps.products.models import Product
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
@@ -274,14 +276,21 @@ def callback_request_list(request):
     status = request.GET.get("status", "").strip()
     valid_statuses = {value for value, _label in CallbackRequest.STATUS_CHOICES}
 
-    callbacks = CallbackRequest.objects.select_related('product')
+    query = clean_query(request.GET.get('q'))
+    callbacks = CallbackRequest.objects.select_related('product').order_by('-created_at', '-pk')
     if status in valid_statuses:
         callbacks = callbacks.filter(status=status)
     else:
         status = ""
 
+    callbacks = search_callbacks(callbacks, query)
+    page_obj = Paginator(callbacks, PAGE_SIZE).get_page(request.GET.get('page'))
     context = {
-        "callbacks": callbacks,
+        "callbacks": page_obj.object_list,
+        "page_obj": page_obj,
+        "query": query,
+        "pagination_query": filter_query(status, query),
+        "matched_total": page_obj.paginator.count,
         "status": status,
         "status_choices": CallbackRequest.STATUS_CHOICES,
         "total": CallbackRequest.objects.count(),
@@ -308,7 +317,11 @@ def callback_request_status_update(request, pk):
 
     redirect_url = reverse("appointments:callback_request_list")
     current_filter = request.POST.get("current_filter", "").strip()
-    if current_filter in valid_statuses:
-        redirect_url = f"{redirect_url}?status={current_filter}"
+    if current_filter not in valid_statuses:
+        current_filter = ''
+    params = filter_query(current_filter, clean_query(request.POST.get('current_query')),
+                          request.POST.get('current_page'))
+    if params:
+        redirect_url = f"{redirect_url}?{params}"
 
     return redirect(redirect_url)

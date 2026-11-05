@@ -2,3 +2,11 @@
 @media(max-width:800px){.fm-callbacks__card-body{gap:22px}.fm-callbacks dl>div{grid-template-columns:minmax(0,1fr);gap:2px}}
 @media(max-width:600px){.fm-callbacks{padding-top:22px}.fm-callbacks__filter{gap:12px;padding:14px}.fm-callbacks__filter>div{flex:1 1 100%}.fm-callbacks__filter select{width:100%}.fm-callbacks__filter>.fm-callbacks__button{flex:1}.fm-callbacks__card-header{padding:16px;gap:12px}.fm-callbacks h2{font-size:17px}.fm-callbacks__card-body{grid-template-columns:minmax(0,1fr);padding:20px 16px;gap:24px}.fm-callbacks dl>div{grid-template-columns:110px minmax(0,1fr);gap:10px}.fm-callbacks__status-form{padding:16px;gap:12px}.fm-callbacks__status-form>div{flex:1 1 100%}.fm-callbacks__status-form select,.fm-callbacks__status-form button{width:100%}.fm-callbacks__status{flex-shrink:0}.fm-callbacks__comment>div{font-size:14px}}
 @media(max-width:360px){.fm-callbacks dl>div{grid-template-columns:minmax(0,1fr);gap:2px}.fm-callbacks__card-header{flex-wrap:wrap}}
+
+/* Шаг 71: поиск и страницы менеджерского списка. */
+.fm-callbacks__search { flex:1 1 340px; min-width:0; }
+.fm-callbacks input[type="search"] { width:100%; min-width:0; min-height:44px; padding:10px 12px; border:1px solid #d2d6c9; border-radius:4px; background:#fff; color:#29312a; font:inherit; font-size:16px; }
+.fm-callbacks input:focus-visible { outline:2px solid #5e714f; outline-offset:4px; }
+.fm-callbacks__pagination { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:12px 20px; margin-top:28px; font-size:14px; }
+.fm-callbacks__pagination a { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 14px; border:1px solid #d2d6c9; border-radius:4px; }
+.fm-callbacks__pagination a:hover { background:#f0eee7; }

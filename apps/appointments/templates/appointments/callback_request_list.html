@@ -10,11 +10,12 @@
   <h1 id="callbacks-title">Обращения клиентов</h1>
   <p class="fm-callbacks__counts">Всего обращений: <strong>{{ total }}</strong> · Новых: <strong>{{ new_count }}</strong></p>
   <form method="get" class="fm-callbacks__filter" aria-label="Фильтр обращений">
+    <div class="fm-callbacks__search"><label for="callback-query">Поиск по обращениям</label><input id="callback-query" type="search" name="q" value="{{ query }}" maxlength="200" placeholder="Клиент, телефон, email, изделие или текст" autocomplete="off"></div>
     <div><label for="callback-status">Статус обращения</label><select id="callback-status" name="status"><option value="">Все статусы</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
     <button type="submit" class="fm-callbacks__button">Показать</button>
-    {% if status %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}">Сбросить фильтр</a>{% endif %}
+    {% if status or query %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}">Сбросить фильтр</a>{% endif %}
   </form>
-  <p class="fm-callbacks__shown">Показано: {{ callbacks|length }}</p>
+  <p class="fm-callbacks__shown">Показано: {{ callbacks|length }} из {{ matched_total }}</p>
   <div class="fm-callbacks__list">
     {% for callback in callbacks %}
     <article class="fm-callbacks__card" aria-labelledby="callback-title-{{ callback.pk }}">
@@ -36,14 +37,19 @@
         </section>
       </div>
       <form method="post" action="{% url 'appointments:callback_request_status_update' callback.pk %}" class="fm-callbacks__status-form">
-        {% csrf_token %}<input type="hidden" name="current_filter" value="{{ status }}">
+        {% csrf_token %}<input type="hidden" name="current_filter" value="{{ status }}"><input type="hidden" name="current_query" value="{{ query }}"><input type="hidden" name="current_page" value="{{ page_obj.number }}">
         <div><label for="status-{{ callback.pk }}">Изменить статус</label><select name="status" id="status-{{ callback.pk }}" aria-label="Статус обращения {{ callback.pk }}">{% for value, label in status_choices %}<option value="{{ value }}"{% if callback.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
         <button type="submit" class="fm-callbacks__button" aria-label="Сохранить статус обращения {{ callback.pk }}">Сохранить статус</button>
       </form>
     </article>
     {% empty %}
-    <div class="fm-callbacks__empty"><h2>{% if status %}Нет обращений с этим статусом{% else %}Обращений пока нет{% endif %}</h2><p>{% if status %}Выберите другой статус или сбросьте фильтр.{% else %}Здесь появятся обращения, отправленные через формы сайта.{% endif %}</p></div>
+    <div class="fm-callbacks__empty"><h2>{% if query %}Обращения не найдены{% elif status %}Нет обращений с этим статусом{% else %}Обращений пока нет{% endif %}</h2><p>{% if status or query %}Измените поиск, выберите другой статус или сбросьте фильтр.{% else %}Здесь появятся обращения, отправленные через формы сайта.{% endif %}</p></div>
     {% endfor %}
   </div>
+  {% if page_obj.has_other_pages %}<nav class="fm-callbacks__pagination" aria-label="Страницы обращений">
+    {% if page_obj.has_previous %}<a href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ page_obj.previous_page_number }}">{% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-ui-icon fm-ui-back' %} Назад</a>{% endif %}
+    <span aria-current="page">Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}</span>
+    {% if page_obj.has_next %}<a href="?{% if pagination_query %}{{ pagination_query }}&amp;{% endif %}page={{ page_obj.next_page_number }}">Далее {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-ui-icon' %}</a>{% endif %}
+  </nav>{% endif %}
 </section>
 {% endblock %}
