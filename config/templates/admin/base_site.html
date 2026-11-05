@@ -1,0 +1,4 @@
+{% extends "admin/base.html" %}{% load static %}
+{% block title %}{{ title }} | LUSTRID{% endblock %}
+{% block extrahead %}{{ block.super }}{% include 'includes/lustrid_favicons.html' %}{% endblock %}
+{% block branding %}<div id="site-name"><a href="{% url 'admin:index' %}"><img src="{% static 'home/branding/logo-full-light.svg' %}" width="240" height="50" alt="LUSTRID — управление сайтом" style="display:block;max-width:100%;height:auto"></a></div>{% endblock %}

@@ -1,0 +1,14 @@
+/* Шаг 63: логотипы не зависят от шрифтов устройства, размеры резервируются. */
+.lustrid-logo { display:block; object-fit:contain; object-position:left center; max-width:100%; height:auto; }
+.furniture-home .fm-logo:has(.lustrid-logo) { display:inline-flex; align-items:center; flex-shrink:0; max-width:100%; padding:4px 0; }
+.furniture-home .fm-header .lustrid-logo--compact { width:232px; }
+.furniture-home .fm-footer .lustrid-logo--full { width:320px; }
+.site-header .logo .lustrid-logo { display:block!important; width:232px; height:auto; max-width:100%; }
+@media(max-width:1080px) { .furniture-home .fm-header .lustrid-logo--compact { width:212px; } }
+@media(max-width:720px) {
+ .furniture-home .fm-header .fm-logo:has(.lustrid-logo) { min-width:0; flex-shrink:1; }
+ .furniture-home .fm-header .lustrid-logo--compact { width:200px; }
+ .furniture-home .fm-footer .lustrid-logo--full { width:300px; }
+ .furniture-home .fm-footer-top>div:has(.lustrid-logo) { flex-basis:100%; min-width:0; }
+ .furniture-home .fm-footer-top .fm-footer-button { margin-left:0; }
+}

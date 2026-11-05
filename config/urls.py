@@ -10,8 +10,11 @@ from apps.home.views import home, services, materials, reviews, about, contacts,
 from apps.home.legal_views import public_offer, privacy_policy, personal_data_consent
 from apps.products.sitemaps import sitemaps
 from .seo_views import robots_txt
+from .branding_views import branding_icon
 
 urlpatterns = [
+    path('favicon.ico', branding_icon, {'filename': 'favicon.ico'}, name='favicon'),
+    path('apple-touch-icon.png', branding_icon, {'filename': 'apple-touch-icon.png'}, name='apple_touch_icon'),
     path('robots.txt', robots_txt, name='robots_txt'),
     path('sitemap.xml', sitemap_views.index,
          {'sitemaps': sitemaps, 'sitemap_url_name': 'sitemap_section'}, name='sitemap'),

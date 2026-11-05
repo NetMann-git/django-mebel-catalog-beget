@@ -5,7 +5,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    {% block favicon %}<link rel="icon" type="image/x-icon" href="{% static 'home/images/favicon.ico' %}">{% endblock %}
+    {% block favicon %}{% include 'includes/lustrid_favicons.html' %}{% endblock %}
     <title>
         {% block title %}
             {% if page %}
@@ -67,6 +67,7 @@
     <link rel="stylesheet" href="{% static 'css/cookie-preferences.css' %}">
     <link rel="stylesheet" href="{% static 'css/scroll-to-top.css' %}">
     <link rel="stylesheet" href="{% static 'home/css/site-action-help.css' %}">
+    <link rel="stylesheet" href="{% static 'home/css/lustrid-brand.css' %}">
 </head>
 
 <body class="sticky-header {% block body_class %}{% endblock %}{% block body_theme_class %} {{ current_theme }}-theme{% endblock %}">
