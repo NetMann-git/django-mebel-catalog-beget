@@ -1,6 +1,6 @@
 {% if workshop_contacts.has_content %}<section class="fm-workshop-contacts" aria-label="Контакты мастерской">
-<div>{% if workshop_contacts.phones %}<div class="fm-workshop-phones">{% for phone in workshop_contacts.phones %}<a href="{{ phone.url }}">{{ phone.text }}</a>{% endfor %}</div>{% endif %}
-{% if workshop_contacts.address %}<p class="fm-workshop-address">{{ workshop_contacts.address }}</p>{% endif %}
-{% if workshop_contacts.map_url %}<a class="fm-workshop-map" href="{{ workshop_contacts.map_url }}" target="_blank" rel="noopener noreferrer">Открыть карту ↗</a>{% endif %}</div>
-{% if workshop_contacts.socials %}<nav class="fm-workshop-socials" aria-label="Связаться с мастерской">{% for social in workshop_contacts.socials %}<a href="{{ social.url }}" target="_blank" rel="noopener noreferrer">{{ social.name }} ↗</a>{% endfor %}</nav>{% endif %}
+<div>{% if workshop_contacts.phones %}<div class="fm-workshop-phones">{% for phone in workshop_contacts.phones %}<a href="{{ phone.url }}">{% if show_icons %}<span class="fi-contact-icon">{% include 'home/includes/furniture_icon.html' with icon='phone' %}</span>{% endif %}{{ phone.text }}</a>{% endfor %}</div>{% endif %}
+{% if workshop_contacts.address %}<p class="fm-workshop-address">{% if show_icons %}<span class="fi-contact-icon">{% include 'home/includes/furniture_icon.html' with icon='pin' %}</span>{% endif %}{{ workshop_contacts.address }}</p>{% endif %}
+{% if workshop_contacts.map_url %}<a class="fm-workshop-map" href="{{ workshop_contacts.map_url }}" target="_blank" rel="noopener noreferrer">{% if show_icons %}<span class="fi-contact-icon">{% include 'home/includes/furniture_icon.html' with icon='pin' %}</span>{% endif %}Открыть карту ↗</a>{% endif %}</div>
+{% if workshop_contacts.socials %}<nav class="fm-workshop-socials" aria-label="Связаться с мастерской">{% for social in workshop_contacts.socials %}<a href="{{ social.url }}" target="_blank" rel="noopener noreferrer">{% if show_icons %}<span class="fi-contact-icon">{% include 'home/includes/furniture_icon.html' with icon='chat' %}</span>{% endif %}{{ social.name }} ↗</a>{% endfor %}</nav>{% endif %}
 </section>{% endif %}
