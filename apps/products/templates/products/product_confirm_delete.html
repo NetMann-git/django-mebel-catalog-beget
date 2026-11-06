@@ -1,25 +1,24 @@
-<!-- apps/products/templates/products/product_confirm_delete.html -->
-{% extends 'base.html' %}
-{% load static %}
-
-{% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'products/css/manage.css' %}">
-{% endblock %}
-
-{% block title %}Удаление товара{% endblock %}
-
-{% block content %}
-<div class="delete-container">
-    <h1>🗑️ Удаление товара</h1>
-    <p>Вы уверены, что хотите удалить товар <strong>"{{ product.title }}"</strong>?</p>
-    <p style="color: #999; font-size: 14px;">Это действие невозможно отменить.</p>
-    
-    <form method="post">
-        {% csrf_token %}
-        <div class="delete-actions">
-            <button type="submit" class="btn-delete-danger">Да, удалить</button>
-            <a href="{% url 'catalog:product_list_manage' %}" class="btn-cancel">Отмена</a>
-        </div>
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Удаление изделия — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-categories.css' %}">{% endblock %}
+{% block furniture_content %}
+<section class="fm-container fm-categories" aria-labelledby="product-delete-title">
+  <a class="fm-categories__back" href="{% url 'catalog:product_list_manage' %}" title="Вернуться к списку изделий без удаления">← К изделиям мастерской</a>
+  <div class="fm-categories__form-panel">
+    <p class="fm-categories__eyebrow">Управление мастерской</p>
+    <h1 id="product-delete-title">Удалить изделие?</h1>
+    <p class="fm-categories__category-title">«{{ product.title }}»</p>
+    {% if product.article %}<p class="fm-categories__hint">Артикул: {{ product.article }}</p>{% endif %}
+    <div class="fm-categories__notice"><p>После подтверждения карточка изделия будет удалена из каталога. Отменить удаление на сайте нельзя.</p><p>Если нужно временно скрыть изделие, откройте редактирование и снимите отметку «Активен».</p></div>
+    <form method="post" class="fm-categories__form">
+      {% csrf_token %}
+      <div class="fm-categories__form-actions">
+        <button type="submit" class="fm-categories__button fm-categories__button--danger" title="Окончательно удалить выбранное изделие из каталога">Удалить изделие</button>
+        <a class="fm-categories__button" href="{% url 'catalog:product_edit' product.id %}" title="Открыть карточку изделия для изменения данных или снятия с публикации">Редактировать</a>
+        <a class="fm-categories__button" href="{% url 'catalog:product_list_manage' %}" title="Вернуться к списку изделий без удаления">Отмена</a>
+      </div>
     </form>
-</div>
+  </div>
+</section>
 {% endblock %}
