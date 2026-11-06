@@ -109,7 +109,7 @@ def get_available_slots(request, date):
         )
     except WorkingHours.DoesNotExist:
         return JsonResponse(
-            {'error': 'В этот день салон не работает'},
+            {'error': 'В этот день мастерская не принимает записи'},
             status=404,
         )
 
@@ -144,7 +144,7 @@ def get_available_slots(request, date):
 
 def appointment_form(request, product_id=None):
     """
-    Форма записи на примерку.
+    Форма записи на консультацию.
     Для AJAX-запросов возвращает только HTML формы без base.html.
     """
     product = None
@@ -173,7 +173,7 @@ def appointment_submit(request):
         appointment = form.save()
 
         try:
-            subject = f'Новая запись на примерку — {appointment.name}'
+            subject = f'Новая запись на консультацию — {appointment.name}'
             html_message = render_to_string('appointments/email_admin_notification.html', {
                 'appointment': appointment,
                 'site_url': settings.SITE_URL,
@@ -191,7 +191,7 @@ def appointment_submit(request):
 
         if appointment.email:
             try:
-                subject = f'Подтверждение записи на примерку — {appointment.name}'
+                subject = f'Заявка на консультацию получена — {appointment.name}'
                 html_message = render_to_string('appointments/email_client_confirmation.html', {
                     'appointment': appointment,
                 })
@@ -208,13 +208,15 @@ def appointment_submit(request):
 
         messages.success(
             request,
-            'Спасибо! Ваша заявка на примерку отправлена. '
-            'Мы свяжемся с вами в течение 15 минут для подтверждения.'
+            'Спасибо! Ваша заявка на консультацию отправлена. '
+            'Мы свяжемся с вами для согласования даты и времени.'
         )
 
         if request.headers.get('x-requested-with') == 'XMLHttpRequest':
             return JsonResponse({'success': True, 'message': 'Заявка отправлена'})
-        return redirect('catalog:product_detail', slug=appointment.product.slug if appointment.product else 'catalog')
+        if appointment.product:
+            return redirect('catalog:product_detail', slug=appointment.product.slug)
+        return redirect('catalog:catalog')
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
         return JsonResponse({'success': False, 'errors': form.errors}, status=400)

@@ -4,10 +4,10 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Новая запись на примерку</title>
+    <title>Новая запись на консультацию</title>
 </head>
 <body>
-    <h2>📅 Новая запись на примерку</h2>
+    <h2>📅 Новая запись на консультацию</h2>
 
     <p><strong>Клиент:</strong> {{ appointment.name }}</p>
     <p><strong>Телефон:</strong> {{ appointment.phone }}</p>
@@ -17,7 +17,7 @@
     <p><strong>Дата:</strong> {{ appointment.date }}</p>
     <p><strong>Время:</strong> {{ appointment.time }}</p>
     {% if appointment.product %}
-        <p><strong>Товар:</strong> {{ appointment.product.title }}
+        <p><strong>Изделие:</strong> {{ appointment.product.title }}
         <a href="{{ appointment.product.get_absolute_url }}">(посмотреть)</a></p>
     {% endif %}
     {% if appointment.comment %}

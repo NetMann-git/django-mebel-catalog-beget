@@ -4,33 +4,28 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Подтверждение записи на примерку</title>
+    <title>Заявка на консультацию получена</title>
 </head>
 <body>
     <h2>Здравствуйте, {{ appointment.name }}!</h2>
 
-    <p>Вы записаны на примерку в наш салон.</p>
+    <p>Вы отправили заявку на консультацию в мастерскую LUSTRID.RU.</p>
 
     <h3>Детали записи</h3>
     <ul>
         <li><strong>Дата:</strong> {{ appointment.date|date:"d.m.Y" }}</li>
         <li><strong>Время:</strong> {{ appointment.time|time:"H:i" }}</li>
         {% if appointment.product %}
-            <li><strong>Товар:</strong> {{ appointment.product.title }}</li>
+            <li><strong>Изделие:</strong> {{ appointment.product.title }}</li>
         {% endif %}
         {% if appointment.comment %}
             <li><strong>Комментарий:</strong> {{ appointment.comment }}</li>
         {% endif %}
     </ul>
 
-    <p>Мы ждём вас по адресу: <strong>г. Москва, ул. Тверская, д. 10</strong></p>
-    <p>При себе, пожалуйста, иметь удобную обувь для примерки.</p>
+    <p>Мы получили заявку на консультацию. Дата и время требуют подтверждения мастерской.</p>
+    <p>Для обсуждения проекта подготовьте размеры помещения, фотографии и примеры мебели, которая вам нравится.</p>
 
-    <p>
-        Если вам нужно отменить или перенести запись, свяжитесь с нами по телефону:
-        <strong>+7 (999) 123-45-67</strong>
-    </p>
-
-    <p>С уважением,<br>Команда Wedding Salon</p>
+    <p>С уважением,<br>Мастерская LUSTRID.RU</p>
 </body>
 </html>

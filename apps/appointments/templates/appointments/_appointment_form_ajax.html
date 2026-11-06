@@ -3,10 +3,10 @@
 {% load static %}
 
 <div class="appointment-form-wrapper">
-    <h1>Записаться на примерку</h1>
+    <h1>Записаться на консультацию</h1>
     {% if product %}
         <p class="appointment-product">
-            Платье: <strong>{{ product.title }}</strong>
+            Изделие: <strong>{{ product.title }}</strong>
             {% if product.price %}
                 — {{ product.price|price_format }} {{ product.currency }}
             {% endif %}

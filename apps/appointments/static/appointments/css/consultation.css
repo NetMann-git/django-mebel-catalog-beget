@@ -1,0 +1,8 @@
+.consultation-page .appointment-form-wrapper {max-width:760px;margin-inline:auto}
+.consultation-page .appointment-form {padding:clamp(20px,4vw,36px);margin-block:24px;background:var(--fm-paper,#fff);border:1px solid #e5ded4;border-radius:16px}
+.consultation-page .appointment-form p {margin:0 0 18px}
+.consultation-page .appointment-form label {display:block;font-weight:600;margin-bottom:8px}
+.consultation-page .appointment-form input,.consultation-page .appointment-form select,.consultation-page .appointment-form textarea {box-sizing:border-box;width:100%;max-width:100%;padding:12px;border:1px solid #c9c1b7;border-radius:8px;background:#fff;color:#252a25;font:inherit}
+.consultation-page .appointment-form :focus-visible {outline:2px solid #40563f;outline-offset:3px}
+.consultation-page .helptext,.consultation-page .appointment-info {font-size:.95rem;color:#595f57}
+.consultation-page .errorlist {color:#9a3027}

@@ -18,8 +18,8 @@ class AppointmentForm(forms.ModelForm):
             'name': 'Ваше имя',
             'phone': 'Телефон',
             'email': 'Email',
-            'date': 'Дата примерки',
-            'time': 'Время примерки',
+            'date': 'Дата консультации',
+            'time': 'Время консультации',
             'comment': 'Комментарий',
         }
         help_texts = {

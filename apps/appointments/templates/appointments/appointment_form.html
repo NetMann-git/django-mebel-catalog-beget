@@ -1,33 +1,37 @@
 <!-- apps/appointments/templates/appointments/appointment_form.html -->
-{% extends "base.html" %}
+{% extends "home/furniture_base.html" %}
 {% load price_format l10n %}
 {% load static %}
 
-{% block title %}Запись на примерку{% endblock %}
+{% block title %}Запись на консультацию{% endblock %}
 
-{% block content %}
-<div class="container">
+{% block furniture_content %}
+<div class="fm-container fm-section consultation-page">
     <div class="appointment-form-wrapper">
-        <h1>Записаться на примерку</h1>
+        <h1>Записаться на консультацию</h1>
         {% if product %}
             <p class="appointment-product">
-                Платье: <strong>{{ product.title }}</strong>
+                Изделие: <strong>{{ product.title }}</strong>
                 {% if product.price %}
                     — {{ product.price|price_format }} {{ product.currency }}
                 {% endif %}
             </p>
         {% endif %}
 
-        <form method="post" action="{% url 'appointments:submit' %}" class="appointment-form">
+        <form method="post" action="{% url 'appointments:submit' %}" class="appointment-form" data-consultation-form>
             {% csrf_token %}
             {{ form.as_p }}
-            <button type="submit" class="btn btn-primary">Записаться</button>
+            <p data-slot-status role="status" aria-live="polite"></p>
+            <button type="submit" class="fm-button">Записаться</button>
         </form>
 
         <div class="appointment-info">
-            <p>📞 Или позвоните нам: <strong>+7 (999) 123-45-67</strong></p>
-            <p>⏰ Время работы: ежедневно с 10:00 до 20:00</p>
+            <p>Выберите удобное время для обсуждения мебели. Мастерская свяжется с вами для подтверждения записи.</p>
+            <p>Для встречи пригодятся размеры помещения, фотографии и примеры желаемой мебели.</p>
+            <a href="{% url 'furniture_contacts' %}">Контакты мастерской</a>
         </div>
     </div>
 </div>
 {% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'appointments/css/consultation.css' %}">{% endblock %}
+{% block extra_js %}{{ block.super }}<script src="{% static 'appointments/js/consultation.js' %}" defer></script>{% endblock %}

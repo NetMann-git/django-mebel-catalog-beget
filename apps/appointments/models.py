@@ -9,7 +9,7 @@ from django.core.exceptions import ValidationError
 
 class Appointment(models.Model):
     """
-    Запись на примерку.
+    Запись на консультацию.
     """
     STATUS_CHOICES = [
         ('pending', 'Ожидает подтверждения'),
@@ -53,11 +53,11 @@ class Appointment(models.Model):
     )
 
     date = models.DateField(
-        verbose_name='Дата примерки',
+        verbose_name='Дата консультации',
     )
 
     time = models.TimeField(
-        verbose_name='Время примерки',
+        verbose_name='Время консультации',
     )
 
     comment = models.TextField(
@@ -92,8 +92,8 @@ class Appointment(models.Model):
 
     class Meta:
         ordering = ['-created_at']
-        verbose_name = 'Запись на примерку'
-        verbose_name_plural = 'Записи на примерку'
+        verbose_name = 'Запись на консультацию'
+        verbose_name_plural = 'Записи на консультацию'
 
     def __str__(self):
         return f'{self.name} — {self.date} {self.time}'

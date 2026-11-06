@@ -94,7 +94,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 modalBody.innerHTML = `
                     <div class="appointment-success">
                         <h2>✅ Спасибо!</h2>
-                        <p>${data.message || 'Ваша заявка на примерку отправлена. Мы свяжемся с вами в течение 15 минут.'}</p>
+                        <p>${data.message || 'Ваша заявка на консультацию отправлена. Мы свяжемся с вами для согласования даты и времени.'}</p>
                         <button class="btn" onclick="document.querySelector('.modal-close').click()">Закрыть</button>
                     </div>
                 `;
