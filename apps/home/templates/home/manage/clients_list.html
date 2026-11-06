@@ -1,15 +1,17 @@
-{% extends 'base.html' %}{% load image_variants %}
+{% extends 'home/furniture_base.html' %}{% load image_variants %}
 {% load static %}
 
 {% block title %}Наши клиенты — управление{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/client-manage.css' %}">{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-content-manage.css' %}">{% endblock %}
 
-{% block content %}
+{% block furniture_content %}
 <div class="client-manage">
+ <nav class="content-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><a href="{% url 'users:manager_dashboard' %}">Панель мастерской</a><span aria-hidden="true">/</span><span aria-current="page">Клиенты</span></nav>
  <div class="client-manage__header">
   <div>
    <h1>Наши клиенты</h1>
-   <p>Карточки секции «Наши клиенты» на главной странице. Всего: {{ total }}.</p>
+   <p>Карточки клиентов и их проектов. Всего: {{ total }}.</p>
   </div>
   <a class="client-btn client-btn--primary" href="{% url 'home:client_create' %}">+ Добавить клиента</a>
  </div>
@@ -58,7 +60,7 @@
    {% endif %}
    <div class="client-admin-card__image">
     {% if client.image %}
-     <img src="{{ client.image|image_variant:"card" }}" alt="{{ client.name }}">
+     <img src="{{ client.image|image_variant:"card_small" }}" alt="{{ client.name }}">
         {% elif client.rutube_embed_url %}
      <iframe
       class="client-admin-card__video-preview"
@@ -138,6 +140,6 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}
+{% block extra_js %}{{ block.super }}
 <script src="{% static 'home/js/client-manage.js' %}" defer></script>
 {% endblock %}

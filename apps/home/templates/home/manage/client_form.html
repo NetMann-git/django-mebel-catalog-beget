@@ -1,13 +1,15 @@
-{% extends 'base.html' %}{% load image_variants %}
+{% extends 'home/furniture_base.html' %}{% load image_variants %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/client-manage.css' %}">{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-content-manage.css' %}">{% endblock %}
 
-{% block content %}
+{% block furniture_content %}
 <div class="client-manage client-manage--form">
+ <nav class="content-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><a href="{% url 'users:manager_dashboard' %}">Панель мастерской</a><span aria-hidden="true">/</span><a href="{% url 'home:client_list_manage' %}">Клиенты</a><span aria-hidden="true">/</span><span aria-current="page">{{ title }}</span></nav>
  <div class="client-manage__header">
-  <div><h1>{{ title }}</h1><p>Данные карточки для секции «Наши клиенты».</p></div>
+  <div><h1>{{ title }}</h1><p>Имя, проект, фотография и видео клиента.</p></div>
  </div>
 
  <form method="post" enctype="multipart/form-data" class="client-form">
@@ -21,7 +23,7 @@
   <div class="client-form__current">
    <span>Текущее фото</span>
    {% if client.image %}
-    <img src="{{ client.image|image_variant:"preview" }}" alt="{{ client.name }}">
+    <img src="{{ client.image|image_variant:"form_thumb" }}" alt="{{ client.name }}">
    {% elif client.legacy_image %}
     <img src="{% static client.legacy_image %}" alt="{{ client.name }}">
    {% endif %}

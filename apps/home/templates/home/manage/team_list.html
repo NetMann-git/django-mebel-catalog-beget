@@ -1,13 +1,15 @@
-{% extends 'base.html' %}{% load image_variants %}
+{% extends 'home/furniture_base.html' %}{% load image_variants %}
 {% load static %}
 
 {% block title %}Наша команда — управление{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/client-manage.css' %}">{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-content-manage.css' %}">{% endblock %}
 
-{% block content %}
+{% block furniture_content %}
 <div class="client-manage">
+ <nav class="content-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><a href="{% url 'users:manager_dashboard' %}">Панель мастерской</a><span aria-hidden="true">/</span><span aria-current="page">Команда</span></nav>
  <div class="client-manage__header">
-  <div><h1>Наша команда</h1><p>Сотрудники секции «Наша команда» на главной странице. Всего: {{ total }}.</p></div>
+  <div><h1>Наша команда</h1><p>Карточки сотрудников мастерской. Всего: {{ total }}.</p></div>
   <a class="client-btn client-btn--primary" href="{% url 'home:team_create' %}">+ Добавить сотрудника</a>
  </div>
 
@@ -63,4 +65,4 @@
 </div>
 {% endblock %}
 
-{% block extra_js %}<script src="{% static 'home/js/team-manage.js' %}" defer></script>{% endblock %}
+{% block extra_js %}{{ block.super }}<script src="{% static 'home/js/team-manage.js' %}" defer></script>{% endblock %}

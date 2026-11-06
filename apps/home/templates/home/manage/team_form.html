@@ -1,12 +1,14 @@
-{% extends 'base.html' %}{% load image_variants %}
+{% extends 'home/furniture_base.html' %}{% load image_variants %}
 {% load static %}
 
 {% block title %}{{ title }}{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/client-manage.css' %}">{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-content-manage.css' %}">{% endblock %}
 
-{% block content %}
+{% block furniture_content %}
 <div class="client-manage client-manage--form">
- <div class="client-manage__header"><div><h1>{{ title }}</h1><p>Данные сотрудника для секции «Наша команда».</p></div></div>
+ <nav class="content-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><a href="{% url 'users:manager_dashboard' %}">Панель мастерской</a><span aria-hidden="true">/</span><a href="{% url 'home:team_list_manage' %}">Команда</a><span aria-hidden="true">/</span><span aria-current="page">{{ title }}</span></nav>
+ <div class="client-manage__header"><div><h1>{{ title }}</h1><p>Имя, должность и фотография сотрудника мастерской.</p></div></div>
  <form method="post" enctype="multipart/form-data" class="client-form">
   {% csrf_token %}
   {% if form.non_field_errors %}<div class="client-form__errors">{{ form.non_field_errors }}</div>{% endif %}
