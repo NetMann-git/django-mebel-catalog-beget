@@ -5,9 +5,20 @@ from .models import ClientShowcase, ContactSettings, TeamMember
 
 @admin.register(ClientShowcase)
 class ClientShowcaseAdmin(admin.ModelAdmin):
-    list_display = ("name", "vehicle", "has_video_review", "sort_order", "is_published", "updated_at")
+    list_display = ("name", "project_title", "has_video_review", "sort_order", "is_published", "updated_at")
     list_filter = ("is_published",)
     search_fields = ("name", "vehicle", "rutube_url")
+
+    @admin.display(description="Изделие или проект", ordering="vehicle")
+    def project_title(self, obj):
+        return obj.vehicle
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        field = super().formfield_for_dbfield(db_field, request, **kwargs)
+        if db_field.name == "vehicle" and field is not None:
+            field.label = "Изделие или проект"
+            field.widget.attrs["placeholder"] = "Например, кухня или шкаф для прихожей"
+        return field
 
     @admin.display(boolean=True, description="Видеоотзыв")
     def has_video_review(self, obj):

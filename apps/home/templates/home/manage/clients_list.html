@@ -17,7 +17,7 @@
  <p class="client-manage__back"><a href="{% url 'users:manager_dashboard' %}">← Вернуться в панель менеджера</a></p>
 
  <form class="client-filters" method="get">
-  <input type="search" name="search" value="{{ search }}" placeholder="Имя клиента или автомобиль">
+  <input type="search" name="search" value="{{ search }}" placeholder="Имя клиента или проект">
   <select name="status">
    <option value=""{% if not status %} selected{% endif %}>Все статусы</option>
    <option value="published"{% if status == 'published' %} selected{% endif %}>Опубликованные</option>

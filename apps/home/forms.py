@@ -10,9 +10,10 @@ class ClientShowcaseForm(forms.ModelForm):
     class Meta:
         model = ClientShowcase
         fields = ("name", "vehicle", "image", "rutube_url", "sort_order", "is_published")
+        labels = {"vehicle": "Изделие или проект"}
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Например, Александр"}),
-            "vehicle": forms.TextInput(attrs={"class": "form-control", "placeholder": "Например, KIA Sorento"}),
+            "vehicle": forms.TextInput(attrs={"class": "form-control", "placeholder": "Например, кухня или шкаф для прихожей"}),
             "image": forms.ClearableFileInput(attrs={"class": "form-control", "accept": "image/*"}),
             "rutube_url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://rutube.ru/video/.../"}),
             "sort_order": forms.NumberInput(attrs={"class": "form-control", "min": 0}),

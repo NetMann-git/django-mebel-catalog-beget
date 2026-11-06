@@ -29,7 +29,7 @@
   {% endif %}
 
   <div class="client-form__field">{{ form.image.label_tag }}{{ form.image }}{{ form.image.errors }}<small>При редактировании старой карточки фото можно не менять.</small></div>
-  <div class="client-form__field">{{ form.rutube_url.label_tag }}{{ form.rutube_url }}{{ form.rutube_url.errors }}<small>Необязательно. Если ссылка заполнена, опубликованный клиент автоматически появится в секции «Отзывы о нашей работе».</small></div>
+  <div class="client-form__field">{{ form.rutube_url.label_tag }}{{ form.rutube_url }}{{ form.rutube_url.errors }}<small>Необязательно. Ссылка на видео Rutube сохраняется в карточке клиента.</small></div>
   <div class="client-form__field">{{ form.sort_order.label_tag }}{{ form.sort_order }}{{ form.sort_order.errors }}{% if form.sort_order.help_text %}<small>{{ form.sort_order.help_text }}</small>{% endif %}</div>
   <label class="client-form__check">{{ form.is_published }} <span>{{ form.is_published.label }}</span></label>
 

@@ -11,18 +11,24 @@ from .models import ClientShowcase, ContactSettings, TeamMember
 
 
 class ClientShowcaseTests(TestCase):
+    def setUp(self):
+        # Historical migrations seed auto-site cards; each scenario owns its fixtures.
+        ClientShowcase.objects.all().delete()
+
     def create_user(self, username, role):
         user = get_user_model().objects.create_user(username=username, password="testpass123")
         user.profile.role = role
         user.profile.save(update_fields=("role",))
         return user
 
-    def test_home_shows_only_published_clients(self):
+    def test_furniture_home_does_not_publish_legacy_auto_client_cards(self):
         ClientShowcase.objects.create(name="Виден", vehicle="KIA", legacy_image="x.webp", is_published=True)
         ClientShowcase.objects.create(name="Скрыт", vehicle="BMW", legacy_image="y.webp", is_published=False)
         response = self.client.get(reverse("home"))
-        self.assertContains(response, "Виден")
+        self.assertContains(response, "Категории мебели")
+        self.assertNotContains(response, "Виден")
         self.assertNotContains(response, "Скрыт")
+        self.assertEqual(ClientShowcase.objects.count(), 2)
 
     def test_manager_can_open_client_management(self):
         user = self.create_user("manager_clients", ROLE_MANAGER)
@@ -160,7 +166,7 @@ class ClientMediaRulesTests(TestCase):
         photo_only = ClientShowcase.objects.create(
             name="Фото",
             vehicle="Авто 1",
-            legacy_image="home/images/test.webp",
+            image="home/clients/test.webp",
             is_published=True,
         )
         video_only = ClientShowcase.objects.create(
