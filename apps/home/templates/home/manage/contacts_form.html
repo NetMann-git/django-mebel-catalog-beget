@@ -1,15 +1,17 @@
-{% extends 'base.html' %}
+{% extends 'home/furniture_base.html' %}
 {% load static %}
 
-{% block title %}Контакты главной страницы{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'home/css/client-manage.css' %}">{% endblock %}
+{% block title %}Контакты мастерской{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'users/css/furniture-dashboard.css' %}"><link rel="stylesheet" href="{% static 'home/css/furniture-contacts-manage.css' %}">{% endblock %}
 
-{% block content %}
-<div class="client-manage client-manage--form">
-    <div class="client-manage__header">
+{% block furniture_content %}
+<section class="fm-container fd-page contacts-manage" aria-labelledby="contacts-title">
+    <nav class="fd-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'users:dashboard' %}">Личный кабинет</a><span aria-hidden="true">/</span><a href="{% url 'users:manager_dashboard' %}">Панель мастерской</a><span aria-hidden="true">/</span><span aria-current="page">Контакты</span></nav>
+    <div class="fd-heading">
         <div>
-            <h1>Контакты главной страницы</h1>
-            <p>Телефоны, адрес, карта и ссылки на социальные сети.</p>
+            <p class="fm-eyebrow">Управление мастерской</p><h1 id="contacts-title">Контакты мастерской</h1>
+            <p>Телефоны, адрес, карта и ссылки на социальные сети. Изменения появятся в контактных блоках сайта после сохранения.</p>
         </div>
     </div>
 
@@ -27,9 +29,9 @@
         <label class="client-form__check">{{ form.is_published }} <span>{{ form.is_published.label }}</span></label>
 
         <div class="client-form__actions">
-            <button class="client-btn client-btn--primary" type="submit">Сохранить</button>
-            <a class="client-btn client-btn--light" href="{% url 'users:dashboard' %}">В личный кабинет</a>
+            <button class="fm-button" type="submit" title="Сохранить телефоны, адрес, карту и ссылки мастерской">Сохранить</button>
+            <a class="fd-catalog" href="{% url 'users:manager_dashboard' %}" title="Вернуться к управлению мастерской без сохранения изменений">В панель мастерской</a>
         </div>
     </form>
-</div>
+</section>
 {% endblock %}

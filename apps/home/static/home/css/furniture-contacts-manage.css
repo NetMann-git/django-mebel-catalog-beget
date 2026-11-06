@@ -1,0 +1,13 @@
+/* Contact editor within the furniture account shell. */
+.contacts-manage .client-form{max-width:880px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding:clamp(18px,4vw,32px);border:1px solid #e7e3d8;border-radius:6px;background:#faf9f5}
+.contacts-manage .client-form__field{min-width:0}
+.contacts-manage .client-form__field label{display:block;font-size:14px;font-weight:600;margin-bottom:9px}
+.contacts-manage .client-form__field input{box-sizing:border-box;width:100%;min-width:0;padding:12px 14px;border:1px solid #c9cbbb;border-radius:4px;background:#fff;color:#32382c;font:inherit;font-size:16px}
+.contacts-manage .client-form__field small{display:block;margin-top:8px;color:#626b59;font-size:12px;overflow-wrap:anywhere}
+.contacts-manage .client-form__check{display:flex;align-items:flex-start;gap:10px;grid-column:1/-1;cursor:pointer}
+.contacts-manage .client-form__check input{width:18px;height:18px;flex:0 0 18px;accent-color:#65705b;margin-top:3px}
+.contacts-manage .client-form__actions{display:flex;flex-wrap:wrap;align-items:center;gap:24px;grid-column:1/-1;border-top:1px solid #e7e3d8;padding-top:24px}
+.contacts-manage .client-form__errors{grid-column:1/-1}
+.contacts-manage .errorlist{color:#963b30;font-size:14px;margin-top:8px}
+.contacts-manage input:focus-visible{outline:2px solid #65705b;outline-offset:3px}
+@media(max-width:720px){.contacts-manage .client-form{grid-template-columns:1fr;gap:20px}.contacts-manage .client-form__actions{align-items:stretch;flex-direction:column}.contacts-manage .client-form__actions .fm-button{justify-content:center}}
