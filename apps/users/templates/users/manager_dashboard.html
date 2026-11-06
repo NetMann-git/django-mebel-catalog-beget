@@ -32,6 +32,6 @@
     <div class="fm-workshop__summary"><section><h3>Изделия в записях</h3><ul>{% for product in popular_products %}<li><span>{{ product.product__title }}</span><span>Записей: {{ product.count }}</span></li>{% empty %}<li>Нет данных</li>{% endfor %}</ul></section><section><h3>Записи по пользователям</h3><ul>{% for consultant in consultant_activity %}<li><span>{{ consultant.user__first_name|default:consultant.user__username|default:"Без пользователя" }}</span><span>Записей: {{ consultant.count }}</span></li>{% empty %}<li>Нет данных</li>{% endfor %}</ul></section></div>
     <a class="fm-workshop__text-link" href="{% url 'users:consultant_dashboard' %}">Открыть панель записей →</a>
   </details>
-  <details class="fm-workshop__extra"><summary>Дополнительные инструменты</summary><nav aria-label="Дополнительные инструменты"><a href="{% url 'home:client_list_manage' %}">Наши клиенты</a><a href="{% url 'catalog:import_encar' %}">Импорт из Encar</a><a href="{% url 'catalog:car_model_list' %}">Модели автомобилей</a></nav></details>
+  <details class="fm-workshop__extra"><summary>Дополнительные инструменты</summary><nav aria-label="Дополнительные инструменты"><a href="{% url 'home:client_list_manage' %}">Наши клиенты</a></nav></details>
 </section>
 {% endblock %}

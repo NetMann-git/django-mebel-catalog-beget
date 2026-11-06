@@ -1,9 +1,6 @@
 from .category_management import CategoryForm
-from .models import VehicleImportSource
 from .models import EquipmentGroup, EquipmentOption
-from .car_model_forms import CarModelForm
 from .furniture_forms import FurnitureAdminForm
-from .models import CarModel
 # apps/products/admin.py
 
 from django.contrib import admin
@@ -260,32 +257,6 @@ class ProductAdmin(admin.ModelAdmin):
     image_tag.short_description = "Фото"
 
 
-@admin.register(CarModel)
-class CarModelAdmin(admin.ModelAdmin):
-    """Manage the brand/model dictionary in Django admin."""
-
-    form = CarModelForm
-    list_display = ('name', 'brand', 'sort_order', 'slug')
-    list_filter = ('brand',)
-    search_fields = ('name', 'brand__name')
-    list_select_related = ('brand',)
-
-    def save_model(self, request, obj, form, change):
-        """Refresh catalog caches after dictionary edits."""
-        super().save_model(request, obj, form, change)
-        CatalogCache.clear_catalog()
-
-    def delete_model(self, request, obj):
-        """Refresh catalog caches after dictionary deletion."""
-        super().delete_model(request, obj)
-        CatalogCache.clear_catalog()
-
-    def delete_queryset(self, request, queryset):
-        """Refresh caches after bulk deletion."""
-        super().delete_queryset(request, queryset)
-        CatalogCache.clear_catalog()
-
-
 @admin.register(EquipmentGroup)
 class EquipmentGroupAdmin(admin.ModelAdmin):
     """Edit equipment headings and their order."""
@@ -299,29 +270,12 @@ class EquipmentGroupAdmin(admin.ModelAdmin):
 class EquipmentOptionAdmin(admin.ModelAdmin):
     """Maintain shared options without rewriting vehicle selections."""
 
-    list_display = ('name', 'group', 'encar_standard_code', 'sort_order', 'is_active')
+    list_display = ('name', 'group', 'sort_order', 'is_active')
+    exclude = ('encar_standard_code',)
     list_editable = ('sort_order', 'is_active')
     list_filter = ('group', 'is_active')
-    search_fields = ('name', 'encar_standard_code')
+    search_fields = ('name',)
 
     def has_delete_permission(self, request, obj=None):
         """Keep historical selections; disable options instead of deleting them."""
-        return False
-
-
-@admin.register(VehicleImportSource)
-class VehicleImportSourceAdmin(admin.ModelAdmin):
-    """Read-only diagnostics of confirmed imports."""
-
-    list_display = ('listing_id', 'internal_vehicle_id', 'product', 'imported_at')
-    search_fields = ('listing_id', 'internal_vehicle_id', 'product__title')
-    readonly_fields = tuple(field.name for field in VehicleImportSource._meta.fields)
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_add_permission(self, request):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
         return False

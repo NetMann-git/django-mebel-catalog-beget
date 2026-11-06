@@ -1,17 +1,12 @@
 # apps/products/urls.py
 from django.urls import path
 from . import views, gallery_management
-from .encar_import.views import import_encar
-from .encar_import.package_views import package_thumbnail
 from . import category_management
-from . import car_model_management
 from . import attribute_management
 
 app_name = "catalog"
 
 urlpatterns = [
-    path("manage/import-encar/photo/<str:token>/<int:index>/", package_thumbnail, name="package_thumbnail"),
-    path("manage/import-encar/", import_encar, name="import_encar"),
     path("", views.catalog, name="catalog"),
     
     # Маршруты сравнения (должны быть ПЕРЕД <slug:slug>/)
@@ -47,10 +42,6 @@ urlpatterns = [
          category_management.category_edit, name="category_edit"),
     path("manage/categories/<int:category_id>/delete/",
          category_management.category_delete, name="category_delete"),
-    path("manage/car-models/", car_model_management.car_model_list, name="car_model_list"),
-    path("manage/car-models/create/", car_model_management.car_model_edit, name="car_model_create"),
-    path("manage/car-models/<int:model_id>/edit/", car_model_management.car_model_edit, name="car_model_edit"),
-    path("manage/car-models/<int:model_id>/delete/", car_model_management.car_model_delete, name="car_model_delete"),
     path("manage/brands/", views.brand_list_manage, name="brand_list_manage"),
     path("manage/brands/create/", views.brand_create, name="brand_create"),
     path("manage/brands/<int:brand_id>/edit/", views.brand_edit, name="brand_edit"),

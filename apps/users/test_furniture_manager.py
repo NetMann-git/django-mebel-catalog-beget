@@ -49,12 +49,14 @@ class FurnitureManagerTests(TestCase):
         self.assertIsNotNone(primary)
         self.assertEqual(primary.select_one('a')['href'], reverse('catalog:product_list_manage'))
         self.assertNotIn('Encar', primary.get_text())
-        for name in ('home:client_list_manage', 'catalog:import_encar', 'catalog:car_model_list'):
+        for name in ('home:client_list_manage',):
             link = soup.find('a', href=reverse(name))
             self.assertIsNotNone(link)
             parent = link.find_parent('details')
             self.assertIsNotNone(parent)
             self.assertFalse(parent.has_attr('open'))
+        self.assertNotContains(response, 'Импорт из Encar')
+        self.assertNotContains(response, 'Модели автомобилей')
         self.assertContains(response, 'LUSTRID.RU')
         self.assertContains(response, 'Статистика записей')
         self.assertContains(response, 'noindex, nofollow')
