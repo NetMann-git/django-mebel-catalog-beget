@@ -124,7 +124,7 @@ class WorkingHours(models.Model):
         return f'{self.get_day_of_week_display()}: {self.start_time} - {self.end_time}'
 
 class CallbackRequest(models.Model):
-    """Обращение с главной страницы или страницы автомобиля."""
+    """Обращение с главной страницы или страницы изделия."""
 
     STATUS_NEW = 'new'
     STATUS_PROCESSED = 'processed'
@@ -146,7 +146,7 @@ class CallbackRequest(models.Model):
         null=True,
         blank=True,
         related_name='callback_requests',
-        verbose_name='Автомобиль',
+        verbose_name='Изделие',
     )
     status = models.CharField(
         max_length=20,
