@@ -3,8 +3,7 @@
 Контекст-билдеры для страниц товаров и каталога.
 """
 
-from apps.products.querysets import CatalogQuerySet
-from apps.products.filters import CatalogFilter
+from apps.products.filters import CatalogFilter, catalog_query_parameters, valid_id
 from apps.products.pagination import CatalogPaginator
 
 from apps.products.repository import CatalogRepository
@@ -28,69 +27,24 @@ class CatalogContextBuilder:
         context.update(filters.context())
         context.update(pagination.context())
 
-        # Списки ограничены значениями опубликованных автомобилей.
-        from apps.products.models import AttributeValue, ProductAttribute, CarModel
-        from apps.products.filters import FUEL_SLUGS, parse_number
-
-        active_attributes = ProductAttribute.objects.filter(
-            product__is_active=True,
-        )
-        years = AttributeValue.objects.filter(
-            product_attributes__in=active_attributes.filter(
-                attribute_type__slug="year",
-            ),
-        ).values_list("value", flat=True).distinct()
-        context["catalog_years"] = sorted(
-            {int(number) for value in years
-             if (number := parse_number(value)) is not None
-             and number == int(number)},
-            reverse=True,
-        )
-        context["fuel_values"] = AttributeValue.objects.filter(
-            product_attributes__in=active_attributes.filter(
-                attribute_type__slug__in=FUEL_SLUGS,
-            ),
-        ).distinct().order_by("value")
-
-        context["catalog_models"] = CarModel.objects.select_related("brand").all()
-        context["active_filter_count"] = sum(bool(value) for value in (
-            filters.brand, filters.model, filters.year, filters.query, filters.fuel_type,
-            filters.price_min or filters.price_max, filters.mileage_min or filters.mileage_max,
-            filters.engine_volume_min or filters.engine_volume_max,
-            filters.power_min or filters.power_max,
-        ))
-        context["advanced_filters_open"] = any((
-            filters.query, filters.fuel_type, filters.engine_volume_min,
-            filters.engine_volume_max, filters.power_min, filters.power_max,
-        ))
-        context["preserved_filters"] = [
-            (key, request.GET[key]) for key in (
-                "category", "availability", "transmission", "drive", "condition",
-                "year_min", "year_max",
-            ) if request.GET.get(key)
-        ]
-
-        # Шаг 05: контекст мебельной вёрстки, прежние GET-фильтры сохраняются.
+        # Furniture-only context: no years, engines, fuel or car-model queries.
         from apps.products.models import Category
-        category_id = filters.category
+        params = catalog_query_parameters(request.GET)
         context["furniture_category_title"] = (
-            Category.objects.filter(pk=category_id).values_list("title", flat=True).first()
-            if category_id.isascii() and category_id.isdigit() and len(category_id) < 19 else None
-        )
-        legacy_keys = (
-            "brand", "model", "year", "year_min", "year_max", "fuel_type", "availability",
-            "transmission", "drive", "condition", "mileage_min", "mileage_max",
-            "engine_volume_min", "engine_volume_max", "power_min", "power_max",
+            Category.objects.filter(pk=filters.category).values_list("title", flat=True).first()
+            if valid_id(filters.category) else None
         )
         context["furniture_extra_filters"] = [
-            (key, request.GET[key]) for key in legacy_keys if request.GET.get(key)
+            (key, params[key]) for key in ("brand", "availability") if params.get(key)
         ]
-        context["furniture_sort_filters"] = [
-            (key, value) for key, value in request.GET.items() if key not in ("sort", "page") and value
-        ]
+        context["furniture_sort_filters"] = [(key, value) for key, value in params.items() if key != "sort"]
         context["furniture_has_filters"] = any((
-            filters.query, filters.category, filters.price_min, filters.price_max,
-            context["furniture_extra_filters"],
+            filters.query, filters.category, filters.brand, filters.availability,
+            filters.price_min, filters.price_max,
+        ))
+        context["active_filter_count"] = sum(bool(value) for value in (
+            filters.query, filters.category, filters.brand, filters.availability,
+            filters.price_min or filters.price_max,
         ))
 
         # 5. Избранное (wishlist)

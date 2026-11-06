@@ -6,6 +6,7 @@
 from django.core.paginator import Paginator
 
 from apps.products.constants import ITEMS_PER_PAGE
+from apps.products.filters import catalog_query_parameters
 
 
 class CatalogPaginator:
@@ -20,8 +21,7 @@ class CatalogPaginator:
             request.GET.get("page")
         )
 
-        query_params = request.GET.copy()
-        query_params.pop("page", None)
+        query_params = catalog_query_parameters(request.GET)
 
         self.query_params = query_params.urlencode()
 

@@ -30,10 +30,7 @@ class CatalogRepository:
             from apps.products.models import Category
 
             data = {
-                "silhouettes": CatalogRepository.distinct("silhouette"),
                 "brands": Brand.objects.order_by("name"),
-                "collections": CatalogRepository.distinct("collection"),
-                "colors": CatalogRepository.distinct("color"),
                 "categories": Category.objects.order_by("title"),
                 "availabilities": AVAILABILITY_CHOICES,
             }

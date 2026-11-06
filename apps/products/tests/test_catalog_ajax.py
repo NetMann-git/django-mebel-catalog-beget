@@ -28,11 +28,11 @@ class CatalogAjaxTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['page_obj'].paginator.count, 3)
 
-    def test_mismatched_and_invalid_models_are_empty(self):
+    def test_automotive_models_are_ignored_and_brand_filter_still_works(self):
         for model in (self.x3.pk, 'abc', '999999999999999999999999'):
             response = self.client.get(self.url, {'brand': self.audi.pk, 'model': model})
             self.assertEqual(response.status_code, 200)
-            self.assertEqual(response.context['page_obj'].paginator.count, 0)
+            self.assertEqual(response.context['page_obj'].paginator.count, 7)
 
     def test_brand_keeps_products_without_model(self):
         response = self.client.get(self.url, {'brand': self.audi.pk})
@@ -45,7 +45,7 @@ class CatalogAjaxTests(TestCase):
         self.assertNotContains(response, '<html')
         self.assertEqual(response.context['page_obj'].paginator.count, 1)
 
-    def test_append_preserves_model_and_pagination(self):
+    def test_append_preserves_brand_and_pagination(self):
         response = self.client.get(self.url, {'brand': self.audi.pk, 'model': self.a3.pk, 'page': 2},
                                    HTTP_X_REQUESTED_WITH='XMLHttpRequest')
         data = response.json()
@@ -67,10 +67,11 @@ class CatalogAjaxTests(TestCase):
         self.assertContains(response, 'Проверьте диапазон')
         self.assertEqual(response.context['page_obj'].paginator.count, 0)
 
-    def test_sort_form_keeps_model_and_legacy_parameters(self):
+    def test_sort_form_keeps_brand_and_availability_but_drops_car_model(self):
         response = self.client.get(self.url, {'brand': self.audi.pk, 'model': self.a3.pk,
                                              'availability': 'in_stock', 'sort': 'price_desc'})
-        self.assertContains(response, f'name="model" value="{self.a3.pk}"')
+        self.assertNotContains(response, 'name="model"')
+        self.assertContains(response, f'name="brand" value="{self.audi.pk}"')
         self.assertContains(response, 'name="availability" value="in_stock"')
         products = list(response.context['products'])
         self.assertEqual(products[0].price, 105)

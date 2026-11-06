@@ -93,13 +93,16 @@ class FurnitureManageListTests(TestCase):
             original = Path(self.published.image.path)
             before = list(Product.objects.order_by('pk').values())
             response = self.client.get(self.url)
-            self.assertContains(response, self.published.image.url)
+            image = BeautifulSoup(response.content, 'html.parser').select_one('.fm-manage__photo img')
+            self.assertNotEqual(image['src'], self.published.image.url)
+            thumbnail_name = urlparse(image['src']).path.removeprefix('/media/')
+            self.assertTrue((Path(folder) / thumbnail_name).is_file())
             self.assertContains(response, 'Нет фото')
             confirm = self.client.get(reverse('catalog:product_delete', args=[self.published.pk]))
             self.assertEqual(confirm.status_code, 200)
             self.assertEqual(list(Product.objects.order_by('pk').values()), before)
             self.assertEqual(original.read_bytes(), raw)
-            self.assertEqual([str(p.relative_to(folder)) for p in Path(folder).rglob('*') if p.is_file()], [name])
+            self.assertCountEqual([str(p.relative_to(folder)) for p in Path(folder).rglob('*') if p.is_file()], [name, thumbnail_name])
 
     def test_untrusted_titles_and_queries_are_escaped(self):
         text = '<script>alert("x")</script>'

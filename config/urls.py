@@ -36,12 +36,10 @@ urlpatterns = [
     path('wishlist/', include('apps.wishlist.urls')),
     path('reviews/', include('apps.reviews.urls')),
     path('appointments/', include('apps.appointments.urls')),
-    path('size-helper/', include('apps.size_helper.urls')),
     path('account/', include('apps.users.urls')),
     path('account/content/', include('apps.home.urls')),
     path('search/', include('apps.search.urls')),
     path('recommendations/', include('apps.recommendations.urls', namespace='recommendations')),
-    path('calculator/', include('apps.calculator.urls')),
 ]
 
 if settings.DEBUG:

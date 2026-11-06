@@ -49,7 +49,7 @@ class CatalogFilterCategoryTest(TestCase):
         self.assertNotIn(self.product_b, result)
 
 
-class CatalogCarFilterTest(TestCase):
+class CatalogFurnitureFilterTest(TestCase):
     """Проверить числовые границы и совместное применение фильтров."""
 
     @classmethod
@@ -83,8 +83,8 @@ class CatalogCarFilterTest(TestCase):
         request = RequestFactory().get("/catalog/", params)
         return list(CatalogFilter(request.GET).apply(Product.objects.all()))
 
-    def test_mileage_is_compared_numerically(self):
-        self.assertEqual(self.filtered(mileage_min="95000"), [self.large])
+    def test_automotive_mileage_does_not_filter_furniture(self):
+        self.assertEqual(self.filtered(mileage_min="95000"), self.filtered())
 
     def test_all_numeric_ranges_and_year(self):
         self.assertEqual(self.filtered(
@@ -95,7 +95,7 @@ class CatalogCarFilterTest(TestCase):
 
     def test_invalid_range_returns_no_results(self):
         request = RequestFactory().get("/catalog/", {
-            "mileage_min": "100000", "mileage_max": "90000",
+            "price_min": "3000000", "price_max": "2000000",
         })
         selected = CatalogFilter(request.GET)
         self.assertTrue(selected.errors)
@@ -103,7 +103,7 @@ class CatalogCarFilterTest(TestCase):
 
     def test_blank_specs_stay_in_unfiltered_catalog(self):
         self.assertIn(self.unknown, self.filtered())
-        self.assertNotIn(self.unknown, self.filtered(power_min="1"))
+        self.assertIn(self.unknown, self.filtered(power_min="1"))
 
     def test_fuel_filter_and_title_search(self):
         fuel_id = AttributeValue.objects.get(
