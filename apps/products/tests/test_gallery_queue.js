@@ -96,6 +96,16 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   navigation.events.beforeunload(leaveAfterSubmit);
   assert.equal(leaveAfterSubmit.blocked, undefined);
   navigation.events.pageshow();
+  savedPhotos.append = (...photos) => { savedCards = photos; };
+  element('.car-gallery__saved-form').querySelector = selector => element(selector);
+  element('[data-save-order]').focus = () => {};
+  savedCards = [secondCard, firstCard];
+  orderInput.value = '9';
+  element('[data-reset-order]').events.click();
+  assert.deepEqual(savedCards, [firstCard, secondCard]);
+  assert.equal(orderInput.value, '1');
+  assert.equal(element('[data-pending-order]').hidden, true);
+
   const clean = event({target: {closest: () => photoAction}});
   savedPhotos.events.click(clean);
   assert.equal(clean.blocked, undefined);

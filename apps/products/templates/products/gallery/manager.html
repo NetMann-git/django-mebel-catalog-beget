@@ -37,6 +37,7 @@
         <p data-pending-message role="status">Порядок фото сохраняется отдельно.</p>
       </div>
       <button type="submit" data-save-order{% if not product.gallery.exists %} hidden{% endif %}>Сохранить порядок фото</button>
+      <button type="button" data-reset-order>Отменить перестановку</button>
     </div>
   </form>
   <div class="car-gallery__upload">

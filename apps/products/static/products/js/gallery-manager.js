@@ -44,6 +44,16 @@
     if (orderStatus) orderStatus.textContent = changed ? orderHint : '';
   }
 
+  root.querySelector('[data-reset-order]').addEventListener('click', () => {
+    if (busy || !orderChanged()) return;
+    savedPhotos.append(...originalCards);
+    orderFields.forEach(field => { field.value = field.defaultValue; });
+    pendingMessage.textContent = 'Порядок фото сохраняется отдельно.';
+    showOrderStatus();
+    orderStatus.textContent = 'Восстановлен последний сохранённый порядок фотографий.';
+    savedForm.querySelector('[data-save-order]').focus();
+  });
+
   savedPhotos.addEventListener('input', showOrderStatus);
 
   function updateOrder() {
