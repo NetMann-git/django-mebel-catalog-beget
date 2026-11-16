@@ -97,3 +97,33 @@ class FurnitureDetailTests(TestCase):
         self.assertContains(response, '?type=order')
         self.assertContains(response, 'furniture-reference.css')
         self.assertNotContains(response, 'themes/auto.css')
+
+
+class FurniturePreviewTests(TestCase):
+    def test_draft_preview_is_private_and_read_only(self):
+        from django.contrib.auth import get_user_model
+
+        draft = Product.objects.create(
+            title='Черновой шкаф', slug='draft-preview-wardrobe', price=120000,
+            description='Сохранённое описание', is_active=False,
+        )
+        url = reverse('catalog:product_preview', args=[draft.pk])
+        self.assertEqual(self.client.get(url).status_code, 302)
+        user = get_user_model().objects.create_user('preview-editor')
+        self.client.force_login(user)
+        self.assertEqual(self.client.get(url).status_code, 302)
+        user.profile.role = 'manager'
+        user.profile.save(update_fields=['role'])
+        self.assertEqual(self.client.get(draft.get_absolute_url()).status_code, 404)
+        self.assertEqual(self.client.post(url).status_code, 405)
+        response = self.client.get(url)
+        self.assertContains(response, 'Черновой шкаф')
+        self.assertContains(response, 'Сохранённое описание')
+        self.assertContains(response, 'noindex, nofollow')
+        self.assertNotContains(response, 'Заказать изготовление')
+        self.assertNotContains(response, 'Оставить отзыв')
+        self.assertIn('no-store', response['Cache-Control'])
+        edit_url = reverse('catalog:product_edit', args=[draft.pk])
+        self.assertContains(self.client.get(edit_url), url)
+        draft.refresh_from_db()
+        self.assertFalse(draft.is_active)

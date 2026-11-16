@@ -1,7 +1,8 @@
 # apps/products/views.py
 
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
+from django.views.decorators.cache import never_cache
+from django.views.decorators.http import require_POST, require_safe
 from django.views.decorators.vary import vary_on_headers
 from django.views.decorators.csrf import ensure_csrf_cookie
 
@@ -226,19 +227,35 @@ def product_detail(request, slug):
 
     context["review_form"] = ReviewForm(user=request.user)
     context["gallery_images"] = product.gallery.exclude(image=product.image.name or '')
-    # Шаг 06: обложка и галерея без повторов, с сохранением оригинальных файлов.
+    context["furniture_photos"] = furniture_photos(product, context["gallery_images"])
+    return render(request, "products/product_detail.html", context)
+
+
+def furniture_photos(product, gallery_images):
     photos = []
     seen = set()
     if product.image:
         photos.append({"image": product.image, "alt": product.title})
         seen.add(product.image.name)
-    for photo in context["gallery_images"]:
+    for photo in gallery_images:
         if photo.image and photo.image.name not in seen:
             photos.append({"image": photo.image, "alt": photo.alt or product.title})
             seen.add(photo.image.name)
-    context["furniture_photos"] = photos
+    return photos
 
-    return render(request, "products/product_detail.html", context)
+
+@never_cache
+@require_safe
+@role_required(ROLE_MANAGER, ROLE_ADMIN)
+def product_preview(request, product_id):
+    product = get_object_or_404(Product, pk=product_id)
+    gallery = product.gallery.exclude(image=product.image.name or '')
+    return render(request, "products/product_detail.html", {
+        "product": product,
+        "furniture_photos": furniture_photos(product, gallery),
+        "is_preview": True,
+    })
+
 
 @require_POST
 def clear_recently_viewed_ajax(request):

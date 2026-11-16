@@ -12,7 +12,10 @@
 {% block furniture_content %}
 <div class="form-container">
     <h1>{{ title }}</h1>
-    {% if product %}<p><a href="#product-gallery">Добавить фотографии ↓</a></p>{% endif %}
+    {% if product %}
+        <p><a href="{% url 'catalog:product_preview' product.pk %}" target="_blank" rel="noopener">Предпросмотр изделия (новая вкладка)</a> · <a href="#product-gallery">Добавить фотографии ↓</a></p>
+        <p>В предпросмотре отображаются сохранённые данные изделия.</p>
+    {% endif %}
     
     <!-- Кнопка Сохранить вверху -->
     <div style="margin-bottom: 20px;">
