@@ -17,16 +17,27 @@
   const collator = new Intl.Collator('ru', {numeric: true, sensitivity: 'base'});
   let items = [], busy = false, editorDirty = false;
   (document.getElementById('product-form') || document.getElementById('product_form'))?.addEventListener('input', () => { editorDirty = true; });
+  const savedForm = root.querySelector('.car-gallery__saved-form');
   const savedPhotos = root.querySelector('[data-saved-photos]');
   const orderStatus = root.querySelector('[data-order-status]');
   let draggedPhoto = null;
+  let leavingGallery = false;
+  const orderFields = Array.from(savedPhotos.querySelectorAll('.car-gallery__order input'));
+  const orderChanged = () => orderFields.some(field => field.value !== field.defaultValue);
+  const orderHint = 'Порядок изменён. Нажмите «Сохранить порядок».';
+
+  function showOrderStatus() {
+    if (orderStatus) orderStatus.textContent = orderChanged() ? orderHint : '';
+  }
+
+  savedPhotos.addEventListener('input', showOrderStatus);
 
   function updateOrder() {
     const cards = savedPhotos.querySelectorAll('[data-saved-photo]');
     cards.forEach((card, index) => {
       card.querySelector('.car-gallery__order input').value = index + 1;
     });
-    orderStatus.textContent = 'Порядок изменён. Нажмите «Сохранить порядок».';
+    showOrderStatus();
   }
 
   savedPhotos.querySelectorAll('[data-move-controls]').forEach(controls => {
@@ -80,8 +91,18 @@
     updateOrder();
   });
 
-  root.querySelector('.car-gallery__saved-form').addEventListener('submit', event => {
-    if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) event.preventDefault();
+  savedForm.addEventListener('submit', event => {
+    if (orderChanged() && event.submitter?.hasAttribute('formaction')) {
+      event.preventDefault();
+      orderStatus.textContent = 'Сначала сохраните порядок фотографий, затем повторите действие.';
+      orderStatus.scrollIntoView({block: 'nearest'});
+      return;
+    }
+    if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) {
+      event.preventDefault();
+      return;
+    }
+    leavingGallery = true;
   });
   root.querySelector('[data-limits]').textContent = `За один выбор: до ${cap.files} файлов, по ${mb(cap.bytes)}, всего до ${mb(cap.total)}. До ${cap.pixels / 1000000} Мп на фото; в галерее — до ${cap.gallery} фото.`;
   function updateSummary() {
@@ -202,12 +223,18 @@
   start.addEventListener('click', run); retry.addEventListener('click', run);
   refresh.addEventListener('click', event => {
     event.preventDefault();
-    if (!editorDirty || confirm('В полях изделия есть несохранённые изменения. Обновить страницу без их сохранения?')) location.reload();
+    if ((editorDirty || orderChanged()) && !confirm('На странице есть несохранённые изменения. Обновить страницу без сохранения?')) return;
+    leavingGallery = true;
+    location.reload();
   });
   root.querySelectorAll('[data-delete-photo]').forEach(button => button.addEventListener('click', event => {
-    if (!confirm('Удалить эту фотографию?')) event.preventDefault();
+    if (!orderChanged() && !confirm('Удалить эту фотографию?')) event.preventDefault();
   }));
+  window.addEventListener('pageshow', () => { leavingGallery = false; });
   window.addEventListener('beforeunload', event => {
-    if (busy) { event.preventDefault(); event.returnValue = ''; }
+    if (busy || (!leavingGallery && orderChanged())) {
+      event.preventDefault();
+      event.returnValue = '';
+    }
   });
 })();
