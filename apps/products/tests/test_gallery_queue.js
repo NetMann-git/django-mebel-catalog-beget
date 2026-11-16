@@ -128,5 +128,13 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   await element('[data-retry]').events.click();
   assert.deepEqual(calls, ['photo_2.jpg','photo_10.jpg','photo_11.jpg','photo_10.jpg']);
   assert.equal(element('[data-status]').textContent, 'Добавлено: 2, пропущено дублей: 1, ошибок: 0.');
+  savedCards = [secondCard, firstCard];
+  orderInput.value = '9';
+  savedPhotos.events.input();
+  await element('[data-conflict-refresh]').events.click();
+  assert.deepEqual(savedCards, [secondCard, firstCard]);
+  assert.equal(orderInput.value, '9');
+  assert.equal(element('[data-pending-order]').hidden, false);
+  assert.match(element('[data-pending-message]').textContent, /осталась в форме/);
   console.log('Queue checks passed: numeric sort, removal, sequential requests, duplicates, partial failure, retry.');
 })().catch(error => { console.error(error); process.exitCode = 1; });

@@ -164,7 +164,7 @@ def reorder(request: HttpRequest, product_id: int) -> HttpResponse:
                 current = {f'order_{photo.pk}': str(photo.sort_order) for photo in photos}
                 if json.loads(baseline) != current:
                     return JsonResponse({
-                        'error': 'Галерея изменилась. Отмените свою перестановку, обновите список фотографий и повторите изменение.',
+                        'error': 'Галерея изменилась. Нажмите «Загрузить сохранённый порядок», затем повторите перестановку.',
                     }, status=409)
             submitted = {key[6:] for key in request.POST if key.startswith('order_') and key != 'order_baseline'}
             if submitted != {str(photo.pk) for photo in photos}:

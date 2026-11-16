@@ -11,6 +11,7 @@
   const start = root.querySelector('[data-start]');
   const retry = root.querySelector('[data-retry]');
   const refresh = root.querySelector('[data-refresh]');
+  const conflictRefresh = root.querySelector('[data-conflict-refresh]');
   const progress = root.querySelector('[data-progress]');
   const csrf = root.querySelector('[name=csrfmiddlewaretoken]').value;
   const mb = bytes => (bytes / 1048576).toFixed(1) + ' МБ';
@@ -298,10 +299,14 @@
       savedPhotos.append(...originalCards);
       orderFields.forEach(field => { field.defaultValue = field.value; });
       showOrderStatus();
+      conflictRefresh.hidden = true;
       orderStatus.textContent = 'Порядок фотографий сохранён.';
       pendingMessage.textContent = 'Порядок фото сохраняется отдельно.';
     } catch (error) {
-      if (error.status === 409) refresh.hidden = false;
+      if (error.status === 409) {
+        refresh.hidden = false;
+        conflictRefresh.hidden = false;
+      }
       const message = 'Не удалось подтвердить сохранение порядка. ' + error.message;
       pendingMessage.textContent = message;
       orderStatus.textContent = message;
@@ -370,6 +375,7 @@
       showOrderStatus();
       feedback.textContent = 'Список фотографий обновлён.';
       refresh.hidden = true;
+      conflictRefresh.hidden = true;
       return true;
     } catch (error) {
       feedback.textContent = 'Не удалось обновить список фотографий. ' + error.message;
@@ -433,15 +439,22 @@
     }
   }
   start.addEventListener('click', run); retry.addEventListener('click', run);
-  refresh.addEventListener('click', async () => {
-    if (busy || !requireSavedOrder()) return;
+  async function refreshGallery() {
+    if (busy) return;
+    if (orderChanged() && !confirm('Загрузить сохранённый порядок фото? Ваша несохранённая перестановка будет отменена.')) return;
     setBusy(true);
     try {
-      await syncSavedPhotos();
+      const updated = await syncSavedPhotos();
+      if (!updated && orderChanged()) {
+        pendingMessage.textContent = 'Список фотографий не обновился. Ваша перестановка осталась в форме.';
+      }
     } finally {
       setBusy(false);
     }
-  });
+  }
+
+  refresh.addEventListener('click', refreshGallery);
+  conflictRefresh.addEventListener('click', refreshGallery);
   window.addEventListener('pageshow', () => {
     leavingGallery = false;
     showOrderStatus();
