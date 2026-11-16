@@ -23,3 +23,26 @@
 @media (max-width: 360px) {
     .car-gallery__grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+.car-gallery__drag {
+    align-self: flex-start;
+    color: #344962;
+    cursor: grab;
+    font-size: 13px;
+    padding: 5px 0;
+}
+
+.car-gallery__card--dragging {
+    opacity: .55;
+}
+
+.car-gallery__move {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.car-gallery__move button {
+    flex: 1 0 auto;
+    padding-inline: 6px;
+}

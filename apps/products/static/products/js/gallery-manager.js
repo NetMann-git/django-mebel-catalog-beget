@@ -17,6 +17,69 @@
   const collator = new Intl.Collator('ru', {numeric: true, sensitivity: 'base'});
   let items = [], busy = false, editorDirty = false;
   (document.getElementById('product-form') || document.getElementById('product_form'))?.addEventListener('input', () => { editorDirty = true; });
+  const savedPhotos = root.querySelector('[data-saved-photos]');
+  const orderStatus = root.querySelector('[data-order-status]');
+  let draggedPhoto = null;
+
+  function updateOrder() {
+    const cards = savedPhotos.querySelectorAll('[data-saved-photo]');
+    cards.forEach((card, index) => {
+      card.querySelector('.car-gallery__order input').value = index + 1;
+    });
+    orderStatus.textContent = 'Порядок изменён. Нажмите «Сохранить порядок».';
+  }
+
+  savedPhotos.querySelectorAll('[data-move-controls]').forEach(controls => {
+    controls.hidden = false;
+  });
+  savedPhotos.querySelectorAll('[data-drag-photo]').forEach(handle => {
+    handle.hidden = false;
+    handle.draggable = true;
+    handle.addEventListener('dragstart', event => {
+      draggedPhoto = handle.closest('[data-saved-photo]');
+      event.dataTransfer.effectAllowed = 'move';
+      event.dataTransfer.setData('text/plain', 'photo-order');
+      draggedPhoto.classList.add('car-gallery__card--dragging');
+    });
+    handle.addEventListener('dragend', () => {
+      draggedPhoto?.classList.remove('car-gallery__card--dragging');
+      draggedPhoto = null;
+    });
+  });
+  savedPhotos.addEventListener('dragover', event => {
+    const target = event.target.closest('[data-saved-photo]');
+    if (draggedPhoto && target && target !== draggedPhoto) {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = 'move';
+    }
+  });
+  savedPhotos.addEventListener('drop', event => {
+    const target = event.target.closest('[data-saved-photo]');
+    if (!draggedPhoto || !target || target === draggedPhoto) return;
+    event.preventDefault();
+    const cards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
+    if (cards.indexOf(draggedPhoto) < cards.indexOf(target)) {
+      target.after(draggedPhoto);
+    } else {
+      target.before(draggedPhoto);
+    }
+    updateOrder();
+  });
+  savedPhotos.addEventListener('click', event => {
+    const button = event.target.closest('[data-move-photo]');
+    if (!button) return;
+    const card = button.closest('[data-saved-photo]');
+    if (button.dataset.movePhoto === 'earlier' && card.previousElementSibling) {
+      card.previousElementSibling.before(card);
+    } else if (button.dataset.movePhoto === 'later' && card.nextElementSibling) {
+      card.nextElementSibling.after(card);
+    } else {
+      return;
+    }
+    button.focus();
+    updateOrder();
+  });
+
   root.querySelector('.car-gallery__saved-form').addEventListener('submit', event => {
     if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) event.preventDefault();
   });
