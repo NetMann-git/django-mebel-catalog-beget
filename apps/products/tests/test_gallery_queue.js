@@ -60,6 +60,8 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   const event = attrs => ({...attrs, preventDefault() { this.blocked = true; }});
   const photoAction = {hasAttribute: name => name === 'data-photo-action'};
   savedCards = [secondCard, firstCard];
+  savedPhotos.events.input();
+  assert.equal(element('[data-pending-order]').hidden, false);
   const click = event({target: {closest: () => photoAction}});
   savedPhotos.events.click(click);
   assert.equal(click.blocked, true);
@@ -72,6 +74,8 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   assert.equal(save.blocked, undefined);
   navigation.events.pageshow();
   savedCards = [firstCard, secondCard];
+  savedPhotos.events.input();
+  assert.equal(element('[data-pending-order]').hidden, true);
   const clean = event({target: {closest: () => photoAction}});
   savedPhotos.events.click(clean);
   assert.equal(clean.blocked, undefined);

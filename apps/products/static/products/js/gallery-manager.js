@@ -19,6 +19,7 @@
   (document.getElementById('product-form') || document.getElementById('product_form'))?.addEventListener('input', () => { editorDirty = true; });
   const savedForm = root.querySelector('.car-gallery__saved-form');
   const savedPhotos = root.querySelector('[data-saved-photos]');
+  const pendingOrder = root.querySelector('[data-pending-order]');
   const orderStatus = root.querySelector('[data-order-status]');
   let draggedPhoto = null;
   let leavingGallery = false;
@@ -29,10 +30,12 @@
     return originalCards.some((card, index) => card !== currentCards[index])
       || orderFields.some(field => field.value !== field.defaultValue);
   };
-  const orderHint = 'Порядок изменён. Нажмите «Сохранить порядок».';
+  const orderHint = 'Порядок изменён. Нажмите «Сохранить порядок фото».';
 
   function showOrderStatus() {
-    if (orderStatus) orderStatus.textContent = orderChanged() ? orderHint : '';
+    const changed = orderChanged();
+    if (pendingOrder) pendingOrder.hidden = !changed;
+    if (orderStatus) orderStatus.textContent = changed ? orderHint : '';
   }
 
   savedPhotos.addEventListener('input', showOrderStatus);
@@ -244,7 +247,10 @@
     leavingGallery = true;
     location.reload();
   });
-  window.addEventListener('pageshow', () => { leavingGallery = false; });
+  window.addEventListener('pageshow', () => {
+    leavingGallery = false;
+    showOrderStatus();
+  });
   window.addEventListener('beforeunload', event => {
     if (busy || (!leavingGallery && orderChanged())) {
       event.preventDefault();

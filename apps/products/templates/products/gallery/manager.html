@@ -29,7 +29,14 @@
     </div>
     {% if product.gallery.exists %}
     <p data-order-status role="status" aria-live="polite"></p>
-    <button type="submit">Сохранить порядок</button>
+    <button type="submit">Сохранить порядок фото</button>
+    <div class="car-gallery__pending-order" data-pending-order hidden>
+      <div>
+        <strong>Порядок фотографий не сохранён</strong>
+        <p>Сохранение товара не сохраняет порядок фото.</p>
+      </div>
+      <button type="submit">Сохранить порядок фото</button>
+    </div>
     {% endif %}
   </form>
   <div class="car-gallery__upload">
