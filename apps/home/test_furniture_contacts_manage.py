@@ -79,3 +79,20 @@ class FurnitureContactsManageTests(TestCase):
         self.assertContains(response, data['address'])
         self.assertContains(response, 'tel:' + data['phone_primary'])
         self.assertNotContains(response, 'Открыть карту')
+
+    def test_rejects_links_that_the_public_contact_block_cannot_display(self):
+        data = {
+            'phone_primary': self.item.phone_primary,
+            'address': self.item.address,
+            'map_url': 'https://user@example.com/map',
+            'telegram_url': 'ftp://example.com/channel',
+        }
+        response = self.client.post(self.url, data)
+        self.assertFormError(
+            response.context['form'], 'map_url', 'Укажите ссылку HTTP или HTTPS без логина и пароля.'
+        )
+        self.assertFormError(
+            response.context['form'], 'telegram_url', 'Укажите ссылку HTTP или HTTPS без логина и пароля.'
+        )
+        self.item.refresh_from_db()
+        self.assertNotEqual(self.item.map_url, data['map_url'])

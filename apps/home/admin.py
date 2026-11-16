@@ -1,5 +1,6 @@
 from django.contrib import admin
 
+from .forms import ContactSettingsForm
 from .models import ClientShowcase, ContactSettings, TeamMember
 
 
@@ -36,6 +37,7 @@ class TeamMemberAdmin(admin.ModelAdmin):
 
 @admin.register(ContactSettings)
 class ContactSettingsAdmin(admin.ModelAdmin):
+    form = ContactSettingsForm
     list_display = ("phone_primary", "address", "is_published", "updated_at")
 
     def has_add_permission(self, request):

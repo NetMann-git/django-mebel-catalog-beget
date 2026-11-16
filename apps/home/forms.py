@@ -3,6 +3,7 @@ from urllib.parse import urlparse
 
 from django import forms
 
+from .contact_links import public_url
 from .models import ClientShowcase, ContactSettings, TeamMember
 
 
@@ -90,11 +91,10 @@ class ContactSettingsForm(forms.ModelForm):
             "is_published": forms.CheckboxInput(attrs={"class": "form-check-input"}),
         }
 
-    def clean_map_url(self):
-        value = (self.cleaned_data.get("map_url") or "").strip()
-        if not value:
-            return ""
-        parsed = urlparse(value)
-        if parsed.scheme not in {"http", "https"}:
-            raise forms.ValidationError("Ссылка на карту должна начинаться с http:// или https://.")
-        return value
+    def clean(self):
+        cleaned_data = super().clean()
+        for name in ("map_url", "telegram_url", "vk_url", "max_url"):
+            value = cleaned_data.get(name)
+            if value and not public_url(value):
+                self.add_error(name, "Укажите ссылку HTTP или HTTPS без логина и пароля.")
+        return cleaned_data

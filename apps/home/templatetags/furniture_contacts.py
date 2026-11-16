@@ -2,6 +2,7 @@
 import re
 from urllib.parse import urlsplit
 from django import template
+from apps.home.contact_links import public_url
 from apps.home.models import ContactSettings
 
 register = template.Library()
@@ -21,15 +22,6 @@ def phone_link(value):
     if not digits:
         return None
     return {'text': value, 'url': 'tel:' + ('+' if value.startswith('+') else '') + digits}
-
-
-def public_url(value):
-    value = (value or '').strip()
-    try:
-        parsed = urlsplit(value)
-        return value if parsed.scheme.lower() in {'http', 'https'} and parsed.hostname and not parsed.username and not parsed.password else ''
-    except ValueError:
-        return ''
 
 
 def public_social_url(value):
