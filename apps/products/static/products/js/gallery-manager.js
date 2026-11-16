@@ -16,7 +16,12 @@
   const mb = bytes => (bytes / 1048576).toFixed(1) + ' МБ';
   const collator = new Intl.Collator('ru', {numeric: true, sensitivity: 'base'});
   let items = [], busy = false, editorDirty = false;
-  (document.getElementById('product-form') || document.getElementById('product_form'))?.addEventListener('input', () => { editorDirty = true; });
+  const editorForm = document.getElementById('product-form') || document.getElementById('product_form');
+  function markEditorDirty() {
+    editorDirty = true;
+  }
+  editorForm?.addEventListener('input', markEditorDirty);
+  editorForm?.addEventListener('change', markEditorDirty);
   const savedForm = root.querySelector('.car-gallery__saved-form');
   const savedPhotos = root.querySelector('[data-saved-photos]');
   const pendingOrder = root.querySelector('[data-pending-order]');
@@ -120,6 +125,17 @@
       event.preventDefault();
     }
   }, {capture: true});
+
+  editorForm?.addEventListener('submit', event => {
+    if (event.defaultPrevented) return;
+    if (busy) {
+      event.preventDefault();
+      alert('Дождитесь завершения действия в галерее, затем сохраните товар.');
+      return;
+    }
+    if (blockPendingPhotoAction(event)) return;
+    leavingGallery = true;
+  });
 
   savedForm.addEventListener('submit', event => {
     if (busy || event.submitter?.hasAttribute('data-save-order')) {
@@ -414,7 +430,7 @@
     showOrderStatus();
   });
   window.addEventListener('beforeunload', event => {
-    if (busy || (!leavingGallery && orderChanged())) {
+    if (busy || (!leavingGallery && (editorDirty || orderChanged()))) {
       event.preventDefault();
       event.returnValue = '';
     }

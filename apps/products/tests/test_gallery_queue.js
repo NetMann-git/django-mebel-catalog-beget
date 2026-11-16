@@ -71,6 +71,11 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   savedPhotos.events.click(click);
   assert.equal(click.blocked, true);
   assert.match(warnings[0], /Сначала сохраните порядок/);
+  const editor = element('product-form');
+  editor.events.change();
+  const blockedProductSave = event();
+  editor.events.submit(blockedProductSave);
+  assert.equal(blockedProductSave.blocked, true);
   const leave = event();
   navigation.events.beforeunload(leave);
   assert.equal(leave.blocked, true);
@@ -81,6 +86,16 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   savedCards = [firstCard, secondCard];
   savedPhotos.events.input();
   assert.equal(element('[data-pending-order]').hidden, true);
+  const leaveWithProductChanges = event();
+  navigation.events.beforeunload(leaveWithProductChanges);
+  assert.equal(leaveWithProductChanges.blocked, true);
+  const productSave = event();
+  editor.events.submit(productSave);
+  assert.equal(productSave.blocked, undefined);
+  const leaveAfterSubmit = event();
+  navigation.events.beforeunload(leaveAfterSubmit);
+  assert.equal(leaveAfterSubmit.blocked, undefined);
+  navigation.events.pageshow();
   const clean = event({target: {closest: () => photoAction}});
   savedPhotos.events.click(clean);
   assert.equal(clean.blocked, undefined);
