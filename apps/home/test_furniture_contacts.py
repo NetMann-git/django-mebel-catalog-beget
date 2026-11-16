@@ -32,8 +32,7 @@ class FurnitureContactTests(TestCase):
         self.record.delete()
         self.assertEqual(self.client.get(reverse('home')).status_code,200)
 
-    def test_published_settings_are_shown_even_if_they_match_initial_values(self):
-        # Publication in the existing editor is authoritative; no content blacklist.
+    def test_only_legacy_social_accounts_are_hidden(self):
         from importlib import import_module
         module = import_module('apps.home.migrations.0008_seed_contacts')
         class HistoricalApps:
@@ -41,13 +40,17 @@ class FurnitureContactTests(TestCase):
                 return ContactSettings
         module.seed_contacts(HistoricalApps(), None)
         self.record.refresh_from_db()
-        response=self.client.get(reverse('home'))
-        for text in [self.record.phone_primary,self.record.phone_secondary,self.record.address,
-                     self.record.telegram_url,self.record.vk_url,self.record.max_url,self.record.map_url]:
-            from django.utils.html import escape
-            self.assertContains(response,escape(text))
-        self.assertContains(response,'Контакты мастерской')
-        self.assertContains(response,'tel:+79885808899')
+        from django.utils.html import escape
+        self.record.telegram_url += '/?utm_source=old'
+        self.record.save(update_fields=['telegram_url'])
+        for name in ['home', 'furniture_contacts', 'catalog:catalog']:
+            response = self.client.get(reverse(name))
+            for value in [self.record.phone_primary, self.record.address, self.record.map_url]:
+                self.assertContains(response, escape(value))
+            for value in [self.record.telegram_url, self.record.vk_url, self.record.max_url]:
+                self.assertNotContains(response, escape(value))
+        self.record.refresh_from_db()
+        self.assertTrue(self.record.telegram_url.endswith('/?utm_source=old'))
 
     def test_map_only_published_record_is_not_suppressed(self):
         ContactSettings.objects.filter(pk=1).update(phone_primary='',phone_secondary='',address='',telegram_url='',vk_url='',max_url='')

@@ -6,6 +6,14 @@ from apps.home.models import ContactSettings
 
 register = template.Library()
 
+# These accounts came from the original automotive catalog.
+LEGACY_SOCIAL_ACCOUNTS = {
+    ('t.me', '/auto_korea_pod_zakaz'),
+    ('vk.com', '/podberemauto'),
+    ('xn----8sbbggha0dnibq5a.xn--p1ai', '/max.ru/channel_podberem_auto'),
+    ('max.ru', '/channel_podberem_auto'),
+}
+
 
 def phone_link(value):
     value = (value or '').strip()
@@ -24,6 +32,15 @@ def public_url(value):
         return ''
 
 
+def public_social_url(value):
+    url = public_url(value)
+    if not url:
+        return ''
+    parsed = urlsplit(url)
+    account = (parsed.hostname, parsed.path.rstrip('/').casefold())
+    return '' if account in LEGACY_SOCIAL_ACCOUNTS else url
+
+
 def get_contacts():
     record = ContactSettings.objects.filter(pk=1, is_published=True).first()
     if not record:
@@ -32,7 +49,7 @@ def get_contacts():
     address = (record.address or '').strip()
     socials = [{'name': label, 'url': url} for field, label in [
         ('telegram_url', 'Telegram'), ('vk_url', 'ВКонтакте'), ('max_url', 'MAX')]
-        if (url := public_url(getattr(record, field)))]
+        if (url := public_social_url(getattr(record, field)))]
     map_url = public_url(record.map_url)
     return {'phones': phones, 'primary': phones[0] if phones else None,
             'address': address, 'map_url': map_url,

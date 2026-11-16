@@ -11,3 +11,9 @@
 .contacts-manage .errorlist{color:#963b30;font-size:14px;margin-top:8px}
 .contacts-manage input:focus-visible{outline:2px solid #65705b;outline-offset:3px}
 @media(max-width:720px){.contacts-manage .client-form{grid-template-columns:1fr;gap:20px}.contacts-manage .client-form__actions{align-items:stretch;flex-direction:column}.contacts-manage .client-form__actions .fm-button{justify-content:center}}
+
+.contacts-manage__social-note {
+    grid-column: 1 / -1;
+    margin: 0;
+    color: #626b59;
+}
