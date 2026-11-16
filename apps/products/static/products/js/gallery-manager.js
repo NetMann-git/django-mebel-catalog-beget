@@ -279,6 +279,8 @@
 
   async function saveOrder() {
     const data = new FormData(savedForm);
+    const baseline = Object.fromEntries(orderFields.map(field => [field.name, field.defaultValue]));
+    data.set('order_baseline', JSON.stringify(baseline));
     setBusy(true);
     pendingMessage.textContent = 'Сохраняем порядок фото…';
     orderStatus.textContent = pendingMessage.textContent;
@@ -299,6 +301,7 @@
       orderStatus.textContent = 'Порядок фотографий сохранён.';
       pendingMessage.textContent = 'Порядок фото сохраняется отдельно.';
     } catch (error) {
+      if (error.status === 409) refresh.hidden = false;
       const message = 'Не удалось подтвердить сохранение порядка. ' + error.message;
       pendingMessage.textContent = message;
       orderStatus.textContent = message;
@@ -321,7 +324,11 @@
         throw new Error(`Сервер не смог обработать запрос (${response.status}). Повторите попытку.`);
       }
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Не удалось выполнить действие в галерее.');
+      if (!response.ok) {
+        const error = new Error(result.error || 'Не удалось выполнить действие в галерее.');
+        error.status = response.status;
+        throw error;
+      }
       return result;
     } catch(error) {
       if (error.name === 'AbortError') throw new Error('Истекло время ожидания. Повторите попытку.');

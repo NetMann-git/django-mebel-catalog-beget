@@ -159,7 +159,14 @@ def reorder(request: HttpRequest, product_id: int) -> HttpResponse:
         with transaction.atomic():
             product = lock_product(product_id)
             photos = list(product.gallery.all())
-            submitted = {key[6:] for key in request.POST if key.startswith('order_')}
+            baseline = request.POST.get('order_baseline')
+            if baseline is not None:
+                current = {f'order_{photo.pk}': str(photo.sort_order) for photo in photos}
+                if json.loads(baseline) != current:
+                    return JsonResponse({
+                        'error': 'Галерея изменилась. Отмените свою перестановку, обновите список фотографий и повторите изменение.',
+                    }, status=409)
+            submitted = {key[6:] for key in request.POST if key.startswith('order_') and key != 'order_baseline'}
             if submitted != {str(photo.pk) for photo in photos}:
                 raise ValueError
             for photo in photos:

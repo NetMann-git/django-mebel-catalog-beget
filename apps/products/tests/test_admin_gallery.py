@@ -134,6 +134,21 @@ class AdminGalleryTests(TestCase):
         self.product.refresh_from_db()
         self.assertEqual(self.product.image.name, photo.image.name)
 
+    def test_ajax_reorder_rejects_stale_saved_positions(self):
+        self.upload(image_bytes())
+        self.upload(image_bytes(color='blue'))
+        first, second = self.product.gallery.all()
+        baseline = json.dumps({
+            f'order_{first.pk}': str(first.sort_order),
+            f'order_{second.pk}': str(second.sort_order),
+        })
+        data = {'order_baseline': baseline, f'order_{first.pk}': '9', f'order_{second.pk}': '1'}
+        self.assertEqual(self.client.post(self.url('reorder'), data, HTTP_ACCEPT='application/json').status_code, 200)
+        data[f'order_{first.pk}'] = '0'
+        self.assertEqual(self.client.post(self.url('reorder'), data, HTTP_ACCEPT='application/json').status_code, 409)
+        first.refresh_from_db()
+        self.assertEqual(first.sort_order, 9)
+
     def test_ajax_reorder_returns_saved_order_and_reports_invalid_input(self):
         self.upload(image_bytes())
         self.upload(image_bytes(color='blue'))
