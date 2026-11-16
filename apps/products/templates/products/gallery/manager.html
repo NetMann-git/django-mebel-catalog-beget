@@ -12,7 +12,7 @@
     {% csrf_token %}
     <div class="car-gallery__grid" data-saved-photos>
     {% for photo in product.gallery.all %}
-      <article class="car-gallery__card" data-saved-photo>
+      <article class="car-gallery__card" data-saved-photo="{{ photo.pk }}">
         {% if not forloop.first or not forloop.last %}
         <span class="car-gallery__drag" data-drag-photo title="Перетащите фото на новое место" aria-hidden="true" hidden>⋮⋮ Перетащить</span>
         <div class="car-gallery__move" data-move-controls hidden>
@@ -26,7 +26,8 @@
         <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_cover' photo.pk %}{% else %}{% url 'catalog:gallery_cover' photo.pk %}{% endif %}" formnovalidate data-photo-action data-set-cover>Сделать обложкой</button>
         <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_delete' photo.pk %}{% else %}{% url 'catalog:gallery_delete' photo.pk %}{% endif %}" formnovalidate data-photo-action data-delete-photo>Удалить</button>
       </article>
-    {% empty %}<p>В галерее пока нет фотографий.</p>{% endfor %}
+    {% endfor %}
+    <p data-empty-gallery{% if product.gallery.exists %} hidden{% endif %}>В галерее пока нет фотографий.</p>
     </div>
     {% if product.gallery.exists %}
     <p data-order-status role="status" aria-live="polite"></p>

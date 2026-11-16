@@ -24,7 +24,7 @@
   const orderStatus = root.querySelector('[data-order-status]');
   let draggedPhoto = null;
   let leavingGallery = false;
-  const orderFields = Array.from(savedPhotos.querySelectorAll('.car-gallery__order input'));
+  let orderFields = Array.from(savedPhotos.querySelectorAll('.car-gallery__order input'));
   let originalCards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
   const orderChanged = () => {
     const currentCards = savedPhotos.querySelectorAll('[data-saved-photo]');
@@ -90,9 +90,9 @@
     const button = event.target.closest('[data-move-photo]');
     if (!button) return;
     const card = button.closest('[data-saved-photo]');
-    if (button.dataset.movePhoto === 'earlier' && card.previousElementSibling) {
+    if (button.dataset.movePhoto === 'earlier' && card.previousElementSibling?.matches('[data-saved-photo]')) {
       card.previousElementSibling.before(card);
-    } else if (button.dataset.movePhoto === 'later' && card.nextElementSibling) {
+    } else if (button.dataset.movePhoto === 'later' && card.nextElementSibling?.matches('[data-saved-photo]')) {
       card.nextElementSibling.after(card);
     } else {
       return;
@@ -125,6 +125,11 @@
       return;
     }
     if (event.submitter?.hasAttribute('data-photo-action') && blockPendingPhotoAction(event)) return;
+    if (event.submitter?.hasAttribute('data-delete-photo')) {
+      event.preventDefault();
+      deletePhoto(event.submitter);
+      return;
+    }
     if (event.submitter?.hasAttribute('data-set-cover') && canSaveCoverInPlace()) {
       event.preventDefault();
       saveCover(event.submitter);
@@ -180,6 +185,53 @@
     return preview.hidden || Boolean(savedPhotos.querySelector('[data-cover-badge]:not([hidden])'));
   }
 
+  function updateCoverPreview(url) {
+    const preview = root.querySelector('[data-cover-preview]');
+    const image = preview.querySelector('img');
+    if (url) image.src = url;
+    else image.removeAttribute('src');
+    preview.hidden = !url;
+  }
+
+  async function deletePhoto(button) {
+    const feedback = root.querySelector('[data-cover-status]');
+    const card = button.closest('[data-saved-photo]');
+    setBusy(true);
+    feedback.textContent = 'Удаляем фотографию…';
+    try {
+      const result = await post(button.formAction, fields({}), {Accept: 'application/json'});
+      if (typeof result.cover_url !== 'string' || !Array.isArray(result.cover_ids)) {
+        throw new Error('Сервер не подтвердил удаление.');
+      }
+
+      const removedField = card.querySelector('.car-gallery__order input');
+      originalCards = originalCards.filter(item => item !== card);
+      orderFields = orderFields.filter(field => field !== removedField);
+      card.remove();
+      updateCoverPreview(result.cover_url);
+      originalCards.forEach(item => {
+        item.querySelector('[data-cover-badge]').hidden = !result.cover_ids.includes(item.dataset.savedPhoto);
+      });
+      if (originalCards.length < 2) {
+        savedPhotos.querySelectorAll('[data-drag-photo], [data-move-controls]').forEach(control => {
+          control.hidden = true;
+        });
+      }
+      if (!originalCards.length) {
+        savedPhotos.querySelector('[data-empty-gallery]').hidden = false;
+        savedForm.querySelectorAll('[data-save-order]').forEach(control => { control.hidden = true; });
+      }
+      feedback.textContent = 'Фотография удалена.';
+    } catch (error) {
+      feedback.textContent = 'Не удалось подтвердить удаление. ' + error.message;
+    } finally {
+      setBusy(false);
+      const nextFocus = card.isConnected ? button :
+        savedPhotos.querySelector('[data-delete-photo]') || input;
+      nextFocus.focus({preventScroll: true});
+    }
+  }
+
   async function saveCover(button) {
     const feedback = root.querySelector('[data-cover-status]');
     const selectedCard = button.closest('[data-saved-photo]');
@@ -188,9 +240,7 @@
     try {
       const result = await post(button.formAction, fields({}), {Accept: 'application/json'});
       if (!result.cover_url) throw new Error('Сервер не подтвердил смену обложки.');
-      const preview = root.querySelector('[data-cover-preview]');
-      preview.querySelector('img').src = result.cover_url;
-      preview.hidden = false;
+      updateCoverPreview(result.cover_url);
       savedPhotos.querySelectorAll('[data-cover-badge]').forEach(badge => {
         badge.hidden = !selectedCard.contains(badge);
       });

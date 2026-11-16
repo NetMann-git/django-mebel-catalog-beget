@@ -114,6 +114,7 @@ def cover(request: HttpRequest, image_id: int) -> HttpResponse:
 @require_POST
 def delete(request: HttpRequest, image_id: int) -> HttpResponse:
     """Delete through existing commit-aware file cleanup signals."""
+    wants_json = request.headers.get('Accept') == 'application/json'
     photo = get_object_or_404(ProductGalleryImage, pk=image_id)
     with transaction.atomic():
         product = lock_product(photo.product_id)
@@ -126,6 +127,17 @@ def delete(request: HttpRequest, image_id: int) -> HttpResponse:
                 image_sha256=replacement.image_sha256 if replacement else '',
             )
         photo.delete()
+        if wants_json:
+            cover_ids = []
+            if product.image:
+                cover_ids = list(
+                    product.gallery.filter(image=product.image.name).values_list('pk', flat=True)
+                )
+    if wants_json:
+        return JsonResponse({
+            'cover_url': image_variant(product.image, 'table') if product.image else '',
+            'cover_ids': [str(pk) for pk in cover_ids],
+        })
     messages.success(request, 'Фотография удалена. Если она была обложкой, выбрана следующая доступная.')
     return editor(product.pk)
 

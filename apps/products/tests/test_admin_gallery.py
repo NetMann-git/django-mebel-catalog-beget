@@ -75,6 +75,25 @@ class AdminGalleryTests(TestCase):
         self.assertEqual(self.product.image.name, first.image.name)
         self.assertTrue(Path(first.image.path).exists())
 
+    def test_ajax_delete_reports_replacement_and_empty_gallery(self):
+        self.upload(image_bytes())
+        self.upload(image_bytes(color='blue'))
+        first, second = self.product.gallery.all()
+        self.client.post(self.url('cover', first.pk))
+        result = self.client.post(self.url('delete', first.pk), HTTP_ACCEPT='application/json')
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.json()['cover_ids'], [str(second.pk)])
+        self.assertTrue(result.json()['cover_url'])
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.image.name, second.image.name)
+
+        result = self.client.post(self.url('delete', second.pk), HTTP_ACCEPT='application/json')
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(result.json(), {'cover_url': '', 'cover_ids': []})
+        self.assertFalse(self.product.gallery.exists())
+        self.product.refresh_from_db()
+        self.assertFalse(self.product.image)
+
     def test_ajax_cover_returns_preview(self):
         self.upload(image_bytes())
         self.upload(image_bytes(color='blue'))
