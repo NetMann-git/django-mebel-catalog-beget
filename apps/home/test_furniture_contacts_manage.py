@@ -41,3 +41,26 @@ class FurnitureContactsManageTests(TestCase):
         self.assertTemplateUsed(response, 'home/furniture_base.html')
         self.item.refresh_from_db()
         self.assertEqual(self.item.map_url, data['map_url'])
+
+    def test_missing_record_is_created_only_after_valid_save(self):
+        self.item.delete()
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, 200)
+        self.assertFalse(response.context['form']['is_published'].value())
+        self.assertFalse(ContactSettings.objects.filter(pk=1).exists())
+
+        response = self.client.post(self.url, {'map_url': 'invalid', 'is_published': 'on'})
+        self.assertTrue(response.context['form'].errors)
+        self.assertFalse(ContactSettings.objects.filter(pk=1).exists())
+
+        data = {
+            'phone_primary': '+79002223344',
+            'address': 'Новый адрес мастерской',
+            'map_url': 'https://yandex.ru/map-widget/v1/?z=12',
+        }
+        self.assertRedirects(self.client.post(self.url, data), self.url)
+        self.assertFalse(ContactSettings.objects.get(pk=1).is_published)
+        self.assertNotContains(self.client.get(reverse('furniture_contacts')), data['address'])
+
+        self.assertRedirects(self.client.post(self.url, {**data, 'is_published': 'on'}), self.url)
+        self.assertContains(self.client.get(reverse('furniture_contacts')), data['address'])

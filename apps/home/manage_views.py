@@ -332,19 +332,9 @@ def team_delete(request, member_id):
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def contacts_manage(request):
-    contacts, _ = ContactSettings.objects.get_or_create(
-        pk=1,
-        defaults={
-            "phone_primary": "+7(988)580-88-99",
-            "phone_secondary": "+7(928)959-54-59",
-            "address": "Ростов-на-Дону, Максима Горького 249",
-            "map_url": "https://yandex.ru/map-widget/v1/?z=12&ol=biz&oid=11795644110",
-            "telegram_url": "https://t.me/auto_korea_pod_zakaz",
-            "vk_url": "https://vk.com/podberemauto",
-            "max_url": "https://xn----8sbbggha0dnibq5a.xn--p1ai/max.ru/channel_podberem_auto",
-            "is_published": True,
-        },
-    )
+    contacts = ContactSettings.objects.filter(pk=1).first()
+    if contacts is None:
+        contacts = ContactSettings(pk=1, is_published=False)
 
     if request.method == "POST":
         form = ContactSettingsForm(request.POST, instance=contacts)

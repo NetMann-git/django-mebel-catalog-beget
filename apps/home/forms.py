@@ -78,10 +78,11 @@ class ContactSettingsForm(forms.ModelForm):
             "max_url",
             "is_published",
         )
+        labels = {"is_published": "Показывать контакты на сайте"}
         widgets = {
-            "phone_primary": forms.TextInput(attrs={"class": "form-control", "placeholder": "+7 (988) 580-88-99"}),
-            "phone_secondary": forms.TextInput(attrs={"class": "form-control", "placeholder": "+7 (928) 959-54-59"}),
-            "address": forms.TextInput(attrs={"class": "form-control", "placeholder": "Ростов-на-Дону, Максима Горького 249"}),
+            "phone_primary": forms.TextInput(attrs={"class": "form-control", "placeholder": "+7 (___) ___-__-__"}),
+            "phone_secondary": forms.TextInput(attrs={"class": "form-control", "placeholder": "+7 (___) ___-__-__"}),
+            "address": forms.TextInput(attrs={"class": "form-control", "placeholder": "Город, улица, дом"}),
             "map_url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://yandex.ru/map-widget/v1/...?"}),
             "telegram_url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://t.me/..."}),
             "vk_url": forms.URLInput(attrs={"class": "form-control", "placeholder": "https://vk.com/..."}),
