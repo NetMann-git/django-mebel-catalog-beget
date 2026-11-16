@@ -9,6 +9,7 @@ from django.core.exceptions import ValidationError
 from django.db import DatabaseError, transaction
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
+from django.template.loader import render_to_string
 from django.urls import reverse
 from django.views.decorators.http import require_POST
 
@@ -31,7 +32,13 @@ def editor(product_id: int) -> HttpResponse:
 @require_POST
 def prepare(request: HttpRequest, product_id: int) -> JsonResponse:
     """Validate a bounded selection or incrementally cache legacy hashes."""
-    get_object_or_404(Product, pk=product_id)
+    product = get_object_or_404(Product, pk=product_id)
+    if request.POST.get('action') == 'snapshot':
+        html = render_to_string('products/gallery/manager.html', {
+            'product': product,
+            'gallery_admin': request.resolver_match.url_name == 'products_product_gallery_prepare',
+        }, request=request)
+        return JsonResponse({'html': html})
     try:
         if request.POST.get('action') == 'hashes':
             return JsonResponse({'ready': prepare_hashes(product_id)})

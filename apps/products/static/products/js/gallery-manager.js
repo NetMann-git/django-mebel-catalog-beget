@@ -49,24 +49,27 @@
     showOrderStatus();
   }
 
-  savedPhotos.querySelectorAll('[data-move-controls]').forEach(controls => {
-    controls.hidden = false;
-  });
-  savedPhotos.querySelectorAll('[data-drag-photo]').forEach(handle => {
-    handle.hidden = false;
-    handle.draggable = true;
-    handle.addEventListener('dragstart', event => {
-      if (busy) { event.preventDefault(); return; }
-      draggedPhoto = handle.closest('[data-saved-photo]');
-      event.dataTransfer.effectAllowed = 'move';
-      event.dataTransfer.setData('text/plain', 'photo-order');
-      draggedPhoto.classList.add('car-gallery__card--dragging');
+  function enablePhotoControls() {
+    savedPhotos.querySelectorAll('[data-move-controls]').forEach(controls => {
+      controls.hidden = false;
     });
-    handle.addEventListener('dragend', () => {
-      draggedPhoto?.classList.remove('car-gallery__card--dragging');
-      draggedPhoto = null;
+    savedPhotos.querySelectorAll('[data-drag-photo]').forEach(handle => {
+      handle.hidden = false;
+      handle.draggable = true;
+      handle.addEventListener('dragstart', event => {
+        if (busy) { event.preventDefault(); return; }
+        draggedPhoto = handle.closest('[data-saved-photo]');
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', 'photo-order');
+        draggedPhoto.classList.add('car-gallery__card--dragging');
+      });
+      handle.addEventListener('dragend', () => {
+        draggedPhoto?.classList.remove('car-gallery__card--dragging');
+        draggedPhoto = null;
+      });
     });
-  });
+  }
+  enablePhotoControls();
   savedPhotos.addEventListener('dragover', event => {
     const target = event.target.closest('[data-saved-photo]');
     if (draggedPhoto && target && target !== draggedPhoto) {
@@ -311,8 +314,42 @@
     busy = value;
     root.querySelectorAll('button, input').forEach(el => { el.disabled = value; });
   }
+  function requireSavedOrder() {
+    if (!orderChanged()) return true;
+    status.textContent = 'Сначала сохраните порядок фото, затем продолжите.';
+    return false;
+  }
+
+  async function syncSavedPhotos() {
+    const feedback = root.querySelector('[data-sync-status]');
+    try {
+      const result = await post(root.dataset.prepare, fields({action: 'snapshot'}));
+      const template = document.createElement('template');
+      if (typeof result.html !== 'string') throw new Error('Некорректный ответ сервера.');
+      template.innerHTML = result.html;
+      const grid = template.content.querySelector('[data-saved-photos]');
+      const gridPreview = template.content.querySelector('[data-cover-preview]');
+      if (!grid || !gridPreview) throw new Error('Список фотографий отсутствует в ответе.');
+
+      savedPhotos.replaceChildren(...grid.childNodes);
+      updateCoverPreview(gridPreview.querySelector('img').getAttribute('src'));
+      originalCards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
+      orderFields = Array.from(savedPhotos.querySelectorAll('.car-gallery__order input'));
+      savedForm.querySelectorAll('[data-save-order]').forEach(button => {
+        button.hidden = !originalCards.length;
+      });
+      enablePhotoControls();
+      showOrderStatus();
+      feedback.textContent = 'Список фотографий обновлён.';
+      refresh.hidden = true;
+    } catch (error) {
+      feedback.textContent = 'Не удалось обновить список фотографий. ' + error.message;
+      refresh.hidden = false;
+    }
+  }
+
   async function run() {
-    if (busy) return;
+    if (busy || !requireSavedOrder()) return;
     if (selectionError()) { status.textContent = selectionError(); return; }
     const pending = items.filter(i => !['added','duplicate'].includes(i.state));
     if (!pending.length) { status.textContent = 'Выберите фотографии для загрузки.'; return; }
@@ -355,19 +392,25 @@
         i.state = 'error'; show(i, error.message || 'Ошибка сети.', true);
       });
     } finally {
-      setBusy(false);
       const count = state => items.filter(i => i.state === state).length;
       status.textContent = `Добавлено: ${count('added')}, пропущено дублей: ${count('duplicate')}, ошибок: ${count('error')}.`;
       retry.hidden = !count('error');
-      refresh.hidden = !items.some(i => ['added','duplicate'].includes(i.state));
+      try {
+        if (count('added') || count('duplicate')) await syncSavedPhotos();
+      } finally {
+        setBusy(false);
+      }
     }
   }
   start.addEventListener('click', run); retry.addEventListener('click', run);
-  refresh.addEventListener('click', event => {
-    event.preventDefault();
-    if ((editorDirty || orderChanged()) && !confirm('На странице есть несохранённые изменения. Обновить страницу без сохранения?')) return;
-    leavingGallery = true;
-    location.reload();
+  refresh.addEventListener('click', async () => {
+    if (busy || !requireSavedOrder()) return;
+    setBusy(true);
+    try {
+      await syncSavedPhotos();
+    } finally {
+      setBusy(false);
+    }
   });
   window.addEventListener('pageshow', () => {
     leavingGallery = false;

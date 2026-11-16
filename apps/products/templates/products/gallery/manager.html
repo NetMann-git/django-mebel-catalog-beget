@@ -29,17 +29,15 @@
     {% endfor %}
     <p data-empty-gallery{% if product.gallery.exists %} hidden{% endif %}>В галерее пока нет фотографий.</p>
     </div>
-    {% if product.gallery.exists %}
     <p data-order-status role="status" aria-live="polite"></p>
-    <button type="submit" data-save-order>Сохранить порядок фото</button>
+    <button type="submit" data-save-order{% if not product.gallery.exists %} hidden{% endif %}>Сохранить порядок фото</button>
     <div class="car-gallery__pending-order" data-pending-order hidden>
       <div>
         <strong>Порядок фотографий не сохранён</strong>
         <p data-pending-message role="status">Порядок фото сохраняется отдельно.</p>
       </div>
-      <button type="submit" data-save-order>Сохранить порядок фото</button>
+      <button type="submit" data-save-order{% if not product.gallery.exists %} hidden{% endif %}>Сохранить порядок фото</button>
     </div>
-    {% endif %}
   </form>
   <div class="car-gallery__upload">
     <h4>Добавить фотографии</h4>
@@ -54,7 +52,8 @@
     <p data-status role="status" aria-live="polite"></p>
     <button type="button" data-start>Загрузить фотографии</button>
     <button type="button" data-retry hidden>Повторить неудачные</button>
-    <a href="#product-gallery" data-refresh hidden>Обновить галерею после загрузки</a>
+    <button type="button" data-refresh hidden>Обновить список фотографий</button>
+    <p data-sync-status role="status"></p>
     <noscript>Для очереди фотографий включите JavaScript. Фотографии загружаются через эту очередь.</noscript>
   </div>
 </section>

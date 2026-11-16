@@ -75,6 +75,20 @@ class AdminGalleryTests(TestCase):
         self.assertEqual(self.product.image.name, first.image.name)
         self.assertTrue(Path(first.image.path).exists())
 
+    def test_gallery_snapshot_uses_correct_editor_actions(self):
+        self.upload(image_bytes())
+        photo = self.product.gallery.get()
+        admin_response = self.client.post(self.url('prepare'), {'action': 'snapshot'})
+        self.assertEqual(admin_response.status_code, 200)
+        self.assertIn(self.url('delete', photo.pk), admin_response.json()['html'])
+
+        self.user.profile.role = 'manager'
+        self.user.profile.save()
+        manager_url = reverse('catalog:gallery_prepare', args=[self.product.pk])
+        manager_response = self.client.post(manager_url, {'action': 'snapshot'})
+        self.assertEqual(manager_response.status_code, 200)
+        self.assertIn(reverse('catalog:gallery_delete', args=[photo.pk]), manager_response.json()['html'])
+
     def test_ajax_delete_reports_replacement_and_empty_gallery(self):
         self.upload(image_bytes())
         self.upload(image_bytes(color='blue'))

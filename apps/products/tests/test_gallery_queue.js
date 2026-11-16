@@ -45,7 +45,12 @@ const context = {
     const data = options.body;
     let body = {}, ok = true;
     if (url === '/prepare') {
-      body = data.get('action') === 'hashes' ? {ready: true} : {token: 'signed'};
+      if (data.get('action') === 'snapshot') {
+        ok = false;
+        body = {error: 'Тест сбоя обновления'};
+      } else {
+        body = data.get('action') === 'hashes' ? {ready: true} : {token: 'signed'};
+      }
     } else {
       const file = data.get('image'); calls.push(file.name);
       const content = await file.text();
@@ -93,6 +98,8 @@ vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/g
   await element('[data-start]').events.click();
   assert.deepEqual(calls, ['photo_2.jpg','photo_10.jpg','photo_11.jpg']);
   assert.equal(element('[data-status]').textContent, 'Добавлено: 1, пропущено дублей: 1, ошибок: 1.');
+  assert.equal(element('[data-refresh]').hidden, false);
+  assert.match(element('[data-sync-status]').textContent, /Тест сбоя обновления/);
   await element('[data-retry]').events.click();
   assert.deepEqual(calls, ['photo_2.jpg','photo_10.jpg','photo_11.jpg','photo_10.jpg']);
   assert.equal(element('[data-status]').textContent, 'Добавлено: 2, пропущено дублей: 1, ошибок: 0.');
