@@ -133,7 +133,7 @@
       deletePhoto(event.submitter);
       return;
     }
-    if (event.submitter?.hasAttribute('data-set-cover') && canSaveCoverInPlace()) {
+    if (event.submitter?.hasAttribute('data-set-cover')) {
       event.preventDefault();
       saveCover(event.submitter);
       return;
@@ -182,12 +182,6 @@
     });
     updateSummary(); status.textContent = selectionError(); retry.hidden = true; progress.value = 0;
   });
-  function canSaveCoverInPlace() {
-    const preview = root.querySelector('[data-cover-preview]');
-    // Changing a standalone cover adds the old cover as a new gallery card.
-    return preview.hidden || Boolean(savedPhotos.querySelector('[data-cover-badge]:not([hidden])'));
-  }
-
   function updateCoverPreview(url) {
     const preview = root.querySelector('[data-cover-preview]');
     const image = preview.querySelector('img');
@@ -237,22 +231,23 @@
 
   async function saveCover(button) {
     const feedback = root.querySelector('[data-cover-status]');
-    const selectedCard = button.closest('[data-saved-photo]');
+    const actionUrl = button.formAction;
     setBusy(true);
     feedback.textContent = 'Сохраняем обложку…';
     try {
-      const result = await post(button.formAction, fields({}), {Accept: 'application/json'});
+      const result = await post(actionUrl, fields({}), {Accept: 'application/json'});
       if (!result.cover_url) throw new Error('Сервер не подтвердил смену обложки.');
       updateCoverPreview(result.cover_url);
-      savedPhotos.querySelectorAll('[data-cover-badge]').forEach(badge => {
-        badge.hidden = !selectedCard.contains(badge);
-      });
-      feedback.textContent = 'Обложка сохранена.';
+      const updated = await syncSavedPhotos();
+      feedback.textContent = updated ? 'Обложка сохранена.' :
+        'Обложка сохранена. Нажмите «Обновить список фотографий», чтобы увидеть изменения.';
     } catch (error) {
       feedback.textContent = 'Не удалось подтвердить смену обложки. ' + error.message;
     } finally {
       setBusy(false);
-      button.focus({preventScroll: true});
+      const currentButton = Array.from(savedPhotos.querySelectorAll('[data-set-cover]'))
+        .find(control => control.formAction === actionUrl);
+      (currentButton || input).focus({preventScroll: true});
     }
   }
 
@@ -342,9 +337,11 @@
       showOrderStatus();
       feedback.textContent = 'Список фотографий обновлён.';
       refresh.hidden = true;
+      return true;
     } catch (error) {
       feedback.textContent = 'Не удалось обновить список фотографий. ' + error.message;
       refresh.hidden = false;
+      return false;
     }
   }
 

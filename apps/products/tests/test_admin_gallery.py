@@ -108,6 +108,22 @@ class AdminGalleryTests(TestCase):
         self.product.refresh_from_db()
         self.assertFalse(self.product.image)
 
+    def test_ajax_cover_preserves_standalone_image_in_refreshed_gallery(self):
+        self.product.image.save('legacy.jpg', ContentFile(image_bytes(color='green')))
+        old_cover = self.product.image.name
+        self.upload(image_bytes())
+        new_cover = self.product.gallery.get()
+
+        response = self.client.post(self.url('cover', new_cover.pk), HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.image.name, new_cover.image.name)
+        old_photo = self.product.gallery.get(image=old_cover)
+
+        response = self.client.post(self.url('prepare'), {'action': 'snapshot'})
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(self.url('cover', old_photo.pk), response.json()['html'])
+
     def test_ajax_cover_returns_preview(self):
         self.upload(image_bytes())
         self.upload(image_bytes(color='blue'))
