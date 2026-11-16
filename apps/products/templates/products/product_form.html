@@ -13,13 +13,16 @@
 <div class="form-container">
     <h1>{{ title }}</h1>
     {% if product %}
-        <p><a href="{% url 'catalog:product_preview' product.pk %}" target="_blank" rel="noopener">Предпросмотр изделия (новая вкладка)</a> · <a href="#product-gallery">Добавить фотографии ↓</a></p>
+        <p><a href="#product-gallery">Добавить фотографии ↓</a></p>
         <p>В предпросмотре отображаются сохранённые данные изделия.</p>
+    {% else %}
+        <p>Сохраните изделие, чтобы открыть предпросмотр. Для черновика снимите отметку «Активен».</p>
     {% endif %}
     
     <!-- Кнопка Сохранить вверху -->
     <div style="margin-bottom: 20px;">
         <button type="submit" form="product-form" class="btn-save">💾 Сохранить изделие</button>
+        {% if product %}<a href="{% url 'catalog:product_preview' product.pk %}" class="btn-cancel" target="_blank" rel="noopener" title="Открыть сохранённое изделие в новой вкладке">Предпросмотр изделия</a>{% endif %}
         <a href="{% url 'catalog:product_list_manage' %}" class="btn-cancel">Отмена</a>
     </div>
     

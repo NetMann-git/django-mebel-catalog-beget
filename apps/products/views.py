@@ -249,11 +249,16 @@ def furniture_photos(product, gallery_images):
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def product_preview(request, product_id):
     product = get_object_or_404(Product, pk=product_id)
+    return render_product_preview(request, product, reverse('catalog:product_edit', args=[product.pk]))
+
+
+def render_product_preview(request, product, edit_url):
     gallery = product.gallery.exclude(image=product.image.name or '')
     return render(request, "products/product_detail.html", {
         "product": product,
         "furniture_photos": furniture_photos(product, gallery),
         "is_preview": True,
+        "preview_edit_url": edit_url,
     })
 
 

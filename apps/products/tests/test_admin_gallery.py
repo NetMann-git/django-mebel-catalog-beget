@@ -52,6 +52,25 @@ class AdminGalleryTests(TestCase):
         response = self.client.get(reverse('admin:products_product_add'))
         self.assertContains(response, 'Сначала сохраните изделие')
 
+    def test_admin_preview_link_and_product_permissions(self):
+        self.product.is_active = False
+        self.product.save(update_fields=['is_active'])
+        url = reverse('admin:products_product_preview', args=[self.product.pk])
+        self.assertContains(self.client.get(self.change), url)
+        response = self.client.get(url)
+        self.assertContains(response, 'Черновик')
+        self.assertContains(response, self.change)
+        self.assertIn('no-store', response['Cache-Control'])
+        self.assertEqual(self.client.post(url).status_code, 405)
+
+        staff = get_user_model().objects.create_user('preview-staff', is_staff=True)
+        self.client.force_login(staff)
+        self.assertEqual(self.client.get(url).status_code, 403)
+        staff.user_permissions.add(Permission.objects.get(
+            content_type__app_label='products', codename='view_product',
+        ))
+        self.assertContains(self.client.get(url), 'Черновик')
+
     def test_upload_original_deduplicate_cover_order_delete_and_return(self):
         raw = image_bytes()
         self.assertEqual(self.upload(raw).json()['status'], 'added')

@@ -5,7 +5,9 @@ from .furniture_forms import FurnitureAdminForm
 
 from django.contrib import admin
 from django.core.exceptions import PermissionDenied
+from django.http import Http404
 from django.urls import path, reverse
+from django.views.decorators.http import require_safe
 from functools import partial
 from . import gallery_management
 from django.utils.html import format_html
@@ -114,7 +116,13 @@ class ProductAdmin(admin.ModelAdmin):
         )}) for name, options in super().get_fieldsets(request, obj)]
 
     def get_urls(self):
-        urls = []
+        urls = [
+            path(
+                '<int:product_id>/preview/',
+                self.admin_site.admin_view(require_safe(self.preview_view)),
+                name='products_product_preview',
+            ),
+        ]
         for action in ('prepare', 'upload', 'cover', 'delete', 'reorder'):
             urls.append(path(
                 'gallery/<int:identifier>/' + action + '/',
@@ -122,6 +130,17 @@ class ProductAdmin(admin.ModelAdmin):
                 name='products_product_gallery_' + action,
             ))
         return urls + super().get_urls()
+
+    def preview_view(self, request, product_id):
+        from .views import render_product_preview
+
+        product = self.get_object(request, str(product_id))
+        if product is None:
+            raise Http404
+        if not self.has_view_or_change_permission(request, product):
+            raise PermissionDenied
+        edit_url = reverse('admin:products_product_change', args=[product.pk])
+        return render_product_preview(request, product, edit_url)
 
     def gallery_action(self, request, identifier, action):
         from django.shortcuts import get_object_or_404

@@ -5,6 +5,7 @@
 {% endblock %}
 {% block object-tools-items %}
 {{ block.super }}
+{% if gallery_product %}<li><a href="{% url 'admin:products_product_preview' gallery_product.pk %}" target="_blank" rel="noopener">Предпросмотр изделия</a></li>{% endif %}
 {% if gallery_can_edit %}<li><a href="#product-gallery">Фотографии</a></li>{% endif %}
 {% endblock %}
 {% block content %}
@@ -16,6 +17,6 @@
 {% elif gallery_product %}
 <p>Для управления фотографиями нужны права изменения изделия, добавления, изменения и удаления фотографий галереи.</p>
 {% else %}
-<p>Сначала сохраните изделие кнопкой «Сохранить и продолжить редактирование». Затем появится галерея для загрузки фотографий и выбора главного фото.</p>
+<p>Сначала сохраните изделие кнопкой «Сохранить и продолжить редактирование». Затем появятся предпросмотр изделия и галерея для загрузки фотографий.</p>
 {% endif %}
 {% endblock %}

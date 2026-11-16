@@ -5,7 +5,7 @@
 {% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'products/css/equipment.css' %}"><link rel="stylesheet" href="{% static 'reviews/css/reviews.css' %}"><link rel="stylesheet" href="{% static 'appointments/css/car_inquiry.css' %}"><link rel="stylesheet" href="{% static 'products/css/furniture-detail.css' %}">{% endblock %}
 {% block furniture_content %}<div class="fm-container fd-page">
 {% if is_preview %}
-<p class="fd-note"><strong>Предпросмотр</strong> · {% if product.is_active %}Опубликованное изделие{% else %}Черновик{% endif %} · <a href="{% url 'catalog:product_edit' product.pk %}">К редактированию</a></p>
+<p class="fd-note"><strong>Предпросмотр</strong> · {% if product.is_active %}Опубликованное изделие{% else %}Черновик{% endif %} · <a href="{{ preview_edit_url }}">К карточке в редакторе</a></p>
 {% endif %}
 <nav class="fc-breadcrumbs" aria-label="Хлебные крошки"><a href="{% url 'home' %}">Главная</a><span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}">Каталог</a>{% if product.category %}<span aria-hidden="true">/</span><a href="{% url 'catalog:catalog' %}?category={{ product.category.pk }}">{{ product.category.title }}</a>{% endif %}<span aria-hidden="true">/</span><span aria-current="page">{{ product.title }}</span></nav>
 <div class="fd-overview"><section class="fd-gallery" aria-label="Фотографии изделия">

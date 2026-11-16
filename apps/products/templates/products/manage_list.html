@@ -29,6 +29,7 @@
         <td><span class="fm-manage__label" aria-hidden="true">Категория</span>{{ product.category.title|default:"—" }}</td>
         <td><span class="fm-manage__label" aria-hidden="true">Видимость</span><span class="fm-manage__status{% if not product.is_active %} fm-manage__status--draft{% endif %}">{% if product.is_active %}Опубликовано{% else %}Не опубликовано{% endif %}</span></td>
         <td class="fm-manage__actions">
+          <a href="{% url 'catalog:product_preview' product.pk %}" target="_blank" rel="noopener" aria-label="Предпросмотр изделия: {{ product.title }}">Предпросмотр изделия</a>
           <a href="{% url 'catalog:product_edit' product.pk %}" aria-label="Редактировать: {{ product.title }}">Редактировать</a>
           {% if product.is_active %}<a href="{{ product.get_absolute_url }}" target="_blank" rel="noopener" aria-label="Посмотреть на сайте: {{ product.title }}">На сайте ↗</a>{% endif %}
           <a class="fm-manage__delete" href="{% url 'catalog:product_delete' product.pk %}" aria-label="Удалить: {{ product.title }}">Удалить</a>
