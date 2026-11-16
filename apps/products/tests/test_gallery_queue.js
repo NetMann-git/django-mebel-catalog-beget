@@ -7,6 +7,7 @@ const {webcrypto} = require('node:crypto');
 class Element {
   constructor() { this.events = {}; this.children = []; this.dataset = {}; }
   addEventListener(name, fn) { this.events[name] = fn; }
+  querySelectorAll() { return []; }
   append(...items) { this.children.push(...items); }
   replaceChildren() { this.children = []; }
   remove() { this.removed = true; }
@@ -20,13 +21,24 @@ root.querySelectorAll = () => [];
 element('[name=csrfmiddlewaretoken]').value = 'csrf-test';
 const cap = element('gallery-upload-limits');
 cap.textContent = JSON.stringify({files: 60, bytes: 1000, total: 10000, pixels: 40000000, gallery: 300});
-let calls = [], failBlue = true, saved = new Set();
+let calls = [], failBlue = true, saved = new Set(), warnings = [];
+const orderInput = {value: '1', defaultValue: '1'};
+const savedPhotos = element('[data-saved-photos]');
+const firstCard = {}, secondCard = {};
+let savedCards = [firstCard, secondCard];
+savedPhotos.querySelectorAll = selector => {
+  if (selector === '[data-saved-photo]') return savedCards;
+  if (selector === '.car-gallery__order input') return [orderInput];
+  return [];
+};
+const navigation = element('window');
+navigation.crypto = webcrypto;
 const context = {
   document: {getElementById: id => id === 'product-gallery' ? root : element(id), createElement: () => new Element()},
-  window: {crypto: webcrypto, addEventListener() {}}, crypto: webcrypto,
+  window: navigation, crypto: webcrypto,
   URL: {createObjectURL: f => f.name, revokeObjectURL() {}},
   Intl, FormData, AbortController, setTimeout, clearTimeout, Uint8Array,
-  confirm: () => true, location: {reload() {}},
+  alert: message => warnings.push(message), confirm: () => true, location: {reload() {}},
   fetch: async (url, options) => {
     assert.equal(options.headers['X-CSRFToken'], 'csrf-test');
     assert.equal(options.method, 'POST');
@@ -45,6 +57,26 @@ const context = {
 };
 vm.runInNewContext(fs.readFileSync(path.join(__dirname, '../static/products/js/gallery-manager.js'), 'utf8'), context);
 (async () => {
+  const event = attrs => ({...attrs, preventDefault() { this.blocked = true; }});
+  const photoAction = {hasAttribute: name => name === 'data-photo-action'};
+  savedCards = [secondCard, firstCard];
+  const click = event({target: {closest: () => photoAction}});
+  savedPhotos.events.click(click);
+  assert.equal(click.blocked, true);
+  assert.match(warnings[0], /Сначала сохраните порядок/);
+  const leave = event();
+  navigation.events.beforeunload(leave);
+  assert.equal(leave.blocked, true);
+  const save = event({submitter: {hasAttribute: () => false}});
+  element('.car-gallery__saved-form').events.submit(save);
+  assert.equal(save.blocked, undefined);
+  navigation.events.pageshow();
+  savedCards = [firstCard, secondCard];
+  const clean = event({target: {closest: () => photoAction}});
+  savedPhotos.events.click(clean);
+  assert.equal(clean.blocked, undefined);
+
+
   element('[data-files]').files = [
     new File(['blue'], 'photo_10.jpg'), new File(['red'], 'photo_2.jpg'),
     new File(['red'], 'photo_11.jpg'), new File(['remove'], 'photo_20.jpg'),

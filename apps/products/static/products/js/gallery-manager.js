@@ -23,7 +23,12 @@
   let draggedPhoto = null;
   let leavingGallery = false;
   const orderFields = Array.from(savedPhotos.querySelectorAll('.car-gallery__order input'));
-  const orderChanged = () => orderFields.some(field => field.value !== field.defaultValue);
+  const originalCards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
+  const orderChanged = () => {
+    const currentCards = savedPhotos.querySelectorAll('[data-saved-photo]');
+    return originalCards.some((card, index) => card !== currentCards[index])
+      || orderFields.some(field => field.value !== field.defaultValue);
+  };
   const orderHint = 'Порядок изменён. Нажмите «Сохранить порядок».';
 
   function showOrderStatus() {
@@ -91,13 +96,25 @@
     updateOrder();
   });
 
-  savedForm.addEventListener('submit', event => {
-    if (orderChanged() && event.submitter?.hasAttribute('formaction')) {
+  function blockPendingPhotoAction(event) {
+    if (!orderChanged()) return false;
+    event.preventDefault();
+    const message = 'Сначала сохраните порядок фотографий, затем повторите действие.';
+    orderStatus.textContent = message;
+    alert(message);
+    return true;
+  }
+
+  savedPhotos.addEventListener('click', event => {
+    const action = event.target.closest('[data-photo-action]');
+    if (!action || blockPendingPhotoAction(event)) return;
+    if (action.hasAttribute('data-delete-photo') && !confirm('Удалить эту фотографию?')) {
       event.preventDefault();
-      orderStatus.textContent = 'Сначала сохраните порядок фотографий, затем повторите действие.';
-      orderStatus.scrollIntoView({block: 'nearest'});
-      return;
     }
+  }, {capture: true});
+
+  savedForm.addEventListener('submit', event => {
+    if (event.submitter?.hasAttribute('data-photo-action') && blockPendingPhotoAction(event)) return;
     if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) {
       event.preventDefault();
       return;
@@ -227,9 +244,6 @@
     leavingGallery = true;
     location.reload();
   });
-  root.querySelectorAll('[data-delete-photo]').forEach(button => button.addEventListener('click', event => {
-    if (!orderChanged() && !confirm('Удалить эту фотографию?')) event.preventDefault();
-  }));
   window.addEventListener('pageshow', () => { leavingGallery = false; });
   window.addEventListener('beforeunload', event => {
     if (busy || (!leavingGallery && orderChanged())) {
