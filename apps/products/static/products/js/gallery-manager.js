@@ -125,6 +125,11 @@
       return;
     }
     if (event.submitter?.hasAttribute('data-photo-action') && blockPendingPhotoAction(event)) return;
+    if (event.submitter?.hasAttribute('data-set-cover') && canSaveCoverInPlace()) {
+      event.preventDefault();
+      saveCover(event.submitter);
+      return;
+    }
     if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) {
       event.preventDefault();
       return;
@@ -169,6 +174,35 @@
     });
     updateSummary(); status.textContent = selectionError(); retry.hidden = true; progress.value = 0;
   });
+  function canSaveCoverInPlace() {
+    const preview = root.querySelector('[data-cover-preview]');
+    // Changing a standalone cover adds the old cover as a new gallery card.
+    return preview.hidden || Boolean(savedPhotos.querySelector('[data-cover-badge]:not([hidden])'));
+  }
+
+  async function saveCover(button) {
+    const feedback = root.querySelector('[data-cover-status]');
+    const selectedCard = button.closest('[data-saved-photo]');
+    setBusy(true);
+    feedback.textContent = 'Сохраняем обложку…';
+    try {
+      const result = await post(button.formAction, fields({}), {Accept: 'application/json'});
+      if (!result.cover_url) throw new Error('Сервер не подтвердил смену обложки.');
+      const preview = root.querySelector('[data-cover-preview]');
+      preview.querySelector('img').src = result.cover_url;
+      preview.hidden = false;
+      savedPhotos.querySelectorAll('[data-cover-badge]').forEach(badge => {
+        badge.hidden = !selectedCard.contains(badge);
+      });
+      feedback.textContent = 'Обложка сохранена.';
+    } catch (error) {
+      feedback.textContent = 'Не удалось подтвердить смену обложки. ' + error.message;
+    } finally {
+      setBusy(false);
+      button.focus({preventScroll: true});
+    }
+  }
+
   async function saveOrder() {
     const data = new FormData(savedForm);
     setBusy(true);
@@ -213,10 +247,10 @@
         throw new Error(`Сервер не смог обработать запрос (${response.status}). Повторите попытку.`);
       }
       const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Не удалось загрузить фотографию.');
+      if (!response.ok) throw new Error(result.error || 'Не удалось выполнить действие в галерее.');
       return result;
     } catch(error) {
-      if (error.name === 'AbortError') throw new Error('Истекло время ожидания. Повторите попытку: дубли будут пропущены.');
+      if (error.name === 'AbortError') throw new Error('Истекло время ожидания. Повторите попытку.');
       throw error;
     } finally { clearTimeout(timer); }
   }

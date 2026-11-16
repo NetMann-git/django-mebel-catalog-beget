@@ -15,6 +15,7 @@ from django.views.decorators.http import require_POST
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
 from apps.users.decorators import role_required
 from .gallery_upload import add_photo, choose_cover, limits, lock_product, prepare_hashes
+from .image_variants import image_variant
 from .models import Product, ProductGalleryImage
 
 logger = logging.getLogger(__name__)
@@ -103,6 +104,8 @@ def cover(request: HttpRequest, image_id: int) -> HttpResponse:
         product = lock_product(photo.product_id)
         photo = get_object_or_404(product.gallery, pk=image_id)
         choose_cover(product, photo)
+    if request.headers.get('Accept') == 'application/json':
+        return JsonResponse({'cover_url': image_variant(product.image, 'table')})
     messages.success(request, 'Обложка изменена.')
     return editor(product.pk)
 

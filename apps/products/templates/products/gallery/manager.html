@@ -6,7 +6,8 @@
          data-upload="{% if gallery_admin %}{% url 'admin:products_product_gallery_upload' product.pk %}{% else %}{% url 'catalog:gallery_add' product.pk %}{% endif %}">
   <h3 id="car-gallery-title">Фотографии изделия</h3>
   <p>Новые фото добавляются в конец. Обложка и старые фотографии сохраняются. Изменения галереи сохраняются отдельно от полей изделия.</p>
-  {% if product.image %}<p>Текущая обложка: <img class="car-gallery__cover" src="{{ product.image|image_variant:"table" }}" alt="Обложка изделия"></p>{% endif %}
+  <p data-cover-preview{% if not product.image %} hidden{% endif %}>Текущая обложка: <img class="car-gallery__cover"{% if product.image %} src="{{ product.image|image_variant:"table" }}"{% endif %} alt="Обложка изделия"></p>
+  <p data-cover-status role="status"></p>
   <form method="post" action="{% if gallery_admin %}{% url 'admin:products_product_gallery_reorder' product.pk %}{% else %}{% url 'catalog:gallery_order' product.pk %}{% endif %}" class="car-gallery__saved-form">
     {% csrf_token %}
     <div class="car-gallery__grid" data-saved-photos>
@@ -20,9 +21,9 @@
         </div>
         {% endif %}
         <img src="{{ photo.image|image_variant:"review" }}" alt="{{ photo.alt|default:product.title }}" loading="lazy">
-        {% if product.image.name == photo.image.name %}<strong>Обложка</strong>{% endif %}
+        <strong data-cover-badge{% if product.image.name != photo.image.name %} hidden{% endif %}>Обложка</strong>
         <label class="car-gallery__order"><span>Порядок</span><input inputmode="numeric" name="order_{{ photo.pk }}" type="number" min="0" max="1000000" value="{{ photo.sort_order }}" required></label>
-        <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_cover' photo.pk %}{% else %}{% url 'catalog:gallery_cover' photo.pk %}{% endif %}" formnovalidate data-photo-action>Сделать обложкой</button>
+        <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_cover' photo.pk %}{% else %}{% url 'catalog:gallery_cover' photo.pk %}{% endif %}" formnovalidate data-photo-action data-set-cover>Сделать обложкой</button>
         <button type="submit" formaction="{% if gallery_admin %}{% url 'admin:products_product_gallery_delete' photo.pk %}{% else %}{% url 'catalog:gallery_delete' photo.pk %}{% endif %}" formnovalidate data-photo-action data-delete-photo>Удалить</button>
       </article>
     {% empty %}<p>В галерее пока нет фотографий.</p>{% endfor %}

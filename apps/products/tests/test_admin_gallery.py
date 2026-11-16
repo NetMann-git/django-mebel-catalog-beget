@@ -75,6 +75,16 @@ class AdminGalleryTests(TestCase):
         self.assertEqual(self.product.image.name, first.image.name)
         self.assertTrue(Path(first.image.path).exists())
 
+    def test_ajax_cover_returns_preview(self):
+        self.upload(image_bytes())
+        self.upload(image_bytes(color='blue'))
+        photo = self.product.gallery.last()
+        response = self.client.post(self.url('cover', photo.pk), HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(response.json()['cover_url'])
+        self.product.refresh_from_db()
+        self.assertEqual(self.product.image.name, photo.image.name)
+
     def test_ajax_reorder_returns_saved_order_and_reports_invalid_input(self):
         self.upload(image_bytes())
         self.upload(image_bytes(color='blue'))
