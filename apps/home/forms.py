@@ -93,7 +93,7 @@ class ContactSettingsForm(forms.ModelForm):
     def clean_map_url(self):
         value = (self.cleaned_data.get("map_url") or "").strip()
         if not value:
-            raise forms.ValidationError("Укажите ссылку на карту.")
+            return ""
         parsed = urlparse(value)
         if parsed.scheme not in {"http", "https"}:
             raise forms.ValidationError("Ссылка на карту должна начинаться с http:// или https://.")

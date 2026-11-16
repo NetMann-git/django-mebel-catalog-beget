@@ -64,3 +64,18 @@ class FurnitureContactsManageTests(TestCase):
 
         self.assertRedirects(self.client.post(self.url, {**data, 'is_published': 'on'}), self.url)
         self.assertContains(self.client.get(reverse('furniture_contacts')), data['address'])
+
+    def test_contacts_can_be_published_with_no_map(self):
+        self.item.delete()
+        data = {
+            'phone_primary': '+79002223344',
+            'address': 'Мастерская без карты',
+            'map_url': '',
+            'is_published': 'on',
+        }
+        self.assertRedirects(self.client.post(self.url, data), self.url)
+        self.assertEqual(ContactSettings.objects.get(pk=1).map_url, '')
+        response = self.client.get(reverse('furniture_contacts'))
+        self.assertContains(response, data['address'])
+        self.assertContains(response, 'tel:' + data['phone_primary'])
+        self.assertNotContains(response, 'Открыть карту')
