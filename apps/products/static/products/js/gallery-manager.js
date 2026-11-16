@@ -20,11 +20,12 @@
   const savedForm = root.querySelector('.car-gallery__saved-form');
   const savedPhotos = root.querySelector('[data-saved-photos]');
   const pendingOrder = root.querySelector('[data-pending-order]');
+  const pendingMessage = root.querySelector('[data-pending-message]');
   const orderStatus = root.querySelector('[data-order-status]');
   let draggedPhoto = null;
   let leavingGallery = false;
   const orderFields = Array.from(savedPhotos.querySelectorAll('.car-gallery__order input'));
-  const originalCards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
+  let originalCards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
   const orderChanged = () => {
     const currentCards = savedPhotos.querySelectorAll('[data-saved-photo]');
     return originalCards.some((card, index) => card !== currentCards[index])
@@ -55,6 +56,7 @@
     handle.hidden = false;
     handle.draggable = true;
     handle.addEventListener('dragstart', event => {
+      if (busy) { event.preventDefault(); return; }
       draggedPhoto = handle.closest('[data-saved-photo]');
       event.dataTransfer.effectAllowed = 'move';
       event.dataTransfer.setData('text/plain', 'photo-order');
@@ -74,7 +76,7 @@
   });
   savedPhotos.addEventListener('drop', event => {
     const target = event.target.closest('[data-saved-photo]');
-    if (!draggedPhoto || !target || target === draggedPhoto) return;
+    if (busy || !draggedPhoto || !target || target === draggedPhoto) return;
     event.preventDefault();
     const cards = Array.from(savedPhotos.querySelectorAll('[data-saved-photo]'));
     if (cards.indexOf(draggedPhoto) < cards.indexOf(target)) {
@@ -117,6 +119,11 @@
   }, {capture: true});
 
   savedForm.addEventListener('submit', event => {
+    if (busy || event.submitter?.hasAttribute('data-save-order')) {
+      event.preventDefault();
+      if (!busy) saveOrder();
+      return;
+    }
     if (event.submitter?.hasAttribute('data-photo-action') && blockPendingPhotoAction(event)) return;
     if (editorDirty && !confirm('В полях изделия есть несохранённые изменения. Продолжить без их сохранения?')) {
       event.preventDefault();
@@ -162,12 +169,43 @@
     });
     updateSummary(); status.textContent = selectionError(); retry.hidden = true; progress.value = 0;
   });
-  async function post(url, data) {
+  async function saveOrder() {
+    const data = new FormData(savedForm);
+    setBusy(true);
+    pendingMessage.textContent = 'Сохраняем порядок фото…';
+    orderStatus.textContent = pendingMessage.textContent;
+    try {
+      const result = await post(savedForm.action, data, {Accept: 'application/json'});
+      const cardsByField = new Map(originalCards.map(card => [
+        card.querySelector('.car-gallery__order input').name, card,
+      ]));
+      if (!Array.isArray(result.order) || result.order.length !== cardsByField.size
+          || new Set(result.order).size !== cardsByField.size
+          || result.order.some(name => !cardsByField.has(name))) {
+        throw new Error('Сервер не подтвердил порядок фотографий.');
+      }
+      originalCards = result.order.map(name => cardsByField.get(name));
+      savedPhotos.append(...originalCards);
+      orderFields.forEach(field => { field.defaultValue = field.value; });
+      showOrderStatus();
+      orderStatus.textContent = 'Порядок фотографий сохранён.';
+      pendingMessage.textContent = 'Порядок фото сохраняется отдельно.';
+    } catch (error) {
+      const message = 'Не удалось подтвердить сохранение порядка. ' + error.message;
+      pendingMessage.textContent = message;
+      orderStatus.textContent = message;
+    } finally {
+      setBusy(false);
+      if (!orderChanged()) savedForm.querySelector('[data-save-order]').focus({preventScroll: true});
+    }
+  }
+
+  async function post(url, data, headers = {}) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 120000);
     try {
       const response = await fetch(url, {method: 'POST', body: data, credentials: 'same-origin',
-        headers: {'X-CSRFToken': csrf}, signal: controller.signal});
+        headers: {'X-CSRFToken': csrf, ...headers}, signal: controller.signal});
       if (response.redirected) throw new Error('Сессия закончилась или нет доступа. Войдите заново.');
       if (!(response.headers.get('content-type') || '').includes('application/json')) {
         if (response.status === 413) throw new Error('Хостинг отклонил размер файла (413). Уменьшите файл или измените лимит на сервере.');

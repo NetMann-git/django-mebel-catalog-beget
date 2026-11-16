@@ -132,6 +132,7 @@ def delete(request: HttpRequest, image_id: int) -> HttpResponse:
 def reorder(request: HttpRequest, product_id: int) -> HttpResponse:
     """Persist explicit positions without touching cover or publication status."""
     get_object_or_404(Product, pk=product_id)
+    wants_json = request.headers.get('Accept') == 'application/json'
     try:
         with transaction.atomic():
             product = lock_product(product_id)
@@ -146,7 +147,13 @@ def reorder(request: HttpRequest, product_id: int) -> HttpResponse:
                 photo.sort_order = int(value)
             ProductGalleryImage.objects.bulk_update(photos, ['sort_order'])
     except (ValueError, KeyError):
-        messages.error(request, 'Укажите целый порядок от 0 до 1000000 для каждого фото. Если галерея изменилась, обновите страницу.')
+        error = 'Укажите целый порядок от 0 до 1000000 для каждого фото. Если галерея изменилась, обновите страницу.'
+        if wants_json:
+            return JsonResponse({'error': error}, status=400)
+        messages.error(request, error)
     else:
+        if wants_json:
+            ordered = sorted(photos, key=lambda photo: (photo.sort_order, photo.pk))
+            return JsonResponse({'order': [f'order_{photo.pk}' for photo in ordered]})
         messages.success(request, 'Порядок фотографий сохранён.')
     return editor(product_id)

@@ -75,6 +75,21 @@ class AdminGalleryTests(TestCase):
         self.assertEqual(self.product.image.name, first.image.name)
         self.assertTrue(Path(first.image.path).exists())
 
+    def test_ajax_reorder_returns_saved_order_and_reports_invalid_input(self):
+        self.upload(image_bytes())
+        self.upload(image_bytes(color='blue'))
+        first, second = self.product.gallery.all()
+        data = {f'order_{first.pk}': '3', f'order_{second.pk}': '1'}
+        response = self.client.post(self.url('reorder'), data, HTTP_ACCEPT='application/json')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()['order'], [f'order_{second.pk}', f'order_{first.pk}'])
+        response = self.client.post(
+            self.url('reorder'), {f'order_{first.pk}': '0'}, HTTP_ACCEPT='application/json',
+        )
+        self.assertEqual(response.status_code, 400)
+        first.refresh_from_db()
+        self.assertEqual(first.sort_order, 3)
+
     def test_saving_product_fields_does_not_replace_cover(self):
         self.upload(image_bytes())
         cover = self.product.gallery.get().image.name
