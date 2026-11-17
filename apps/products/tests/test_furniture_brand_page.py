@@ -31,7 +31,7 @@ class FurnitureBrandPageTests(TestCase):
         self.product.is_active=False;self.product.save(update_fields=['is_active'])
         response=self.client.get(self.url)
         self.assertContains(response,'Опубликованных изделий этого бренда пока нет')
-        self.assertContains(response,'href="/#callback"')
+        self.assertContains(response,'href="#callback"')
         self.assertNotContains(response,self.product.title)
         self.assertEqual(Product.objects.filter(brand=self.brand).count(),2)
 

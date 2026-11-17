@@ -5,3 +5,8 @@
 .furniture-home .fm-form-panel textarea:focus-visible{outline:2px solid #88724d;outline-offset:4px}
 .furniture-home .home-callback__field.is-invalid textarea{border-color:#a13223}
 @media(max-width:720px){.furniture-home .fm-form-panel textarea{font-size:16px}}
+
+.fm-navigation a[aria-current="page"] { text-decoration:underline; text-underline-offset:5px; }
+.fm-messages:empty { display:none; }
+.fm-form-panel .home-callback__feedback { margin-top:12px; font-size:14px; line-height:1.5; color:#405533; }
+.fm-form-panel .home-callback__feedback--error { color:#a13223; }

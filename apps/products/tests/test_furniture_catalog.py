@@ -43,7 +43,7 @@ class FurnitureCatalogTests(TestCase):
     def test_empty_state_and_invalid_range_are_actionable(self):
         response = self.client.get(self.url, {'q': 'такого изделия нет'})
         self.assertContains(response, 'Подходящих изделий пока нет')
-        self.assertContains(response, '/#callback')
+        self.assertContains(response, 'href="#callback"')
         self.assertContains(response, 'Сбросить фильтры')
         response = self.client.get(self.url, {'price_min': '200', 'price_max': '100'}, HTTP_X_CATALOG_MODE='replace')
         self.assertContains(response, 'Проверьте диапазон')

@@ -13,7 +13,7 @@ class FurnitureAboutTests(TestCase):
             self.assertContains(response, text)
         for name in ['furniture_services', 'furniture_materials', 'catalog:catalog']:
             self.assertContains(response, 'href="' + reverse(name) + '"')
-        self.assertContains(response, 'href="' + reverse('home') + '#callback"')
+        self.assertContains(response, 'href="#callback"')
         self.assertNotContains(response, 'noindex')
         self.assertNotContains(response, 'themes/auto.css')
         self.assertNotContains(response, 'автомобиль')

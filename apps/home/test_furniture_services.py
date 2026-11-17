@@ -13,7 +13,7 @@ class FurnitureServicesTests(TestCase):
             self.assertContains(response,'id="'+group['id']+'"')
             self.assertContains(response,'href="#'+group['id']+'"')
             for title,_ in group['items']:self.assertContains(response,title)
-        self.assertContains(response,reverse('home')+'#callback')
+        self.assertContains(response,'href="#callback"')
         self.assertContains(response,reverse('catalog:catalog'))
         self.assertContains(response,'furniture-services.css')
         self.assertNotContains(response,'themes/auto.css')

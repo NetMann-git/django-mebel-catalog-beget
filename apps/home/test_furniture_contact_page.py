@@ -20,7 +20,7 @@ class FurnitureContactPageTests(TestCase):
         self.assertContains(response, self.record.address)
         self.assertContains(response, self.record.map_url)
         self.assertContains(response, self.record.telegram_url)
-        self.assertContains(response, 'href="' + reverse('home') + '#callback"')
+        self.assertContains(response, 'href="#callback"')
         self.assertNotContains(response, 'noindex')
         self.assertNotContains(response, 'themes/auto.css')
 

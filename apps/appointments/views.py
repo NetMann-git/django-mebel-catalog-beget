@@ -9,6 +9,7 @@ from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.utils import timezone
+from django.utils.http import url_has_allowed_host_and_scheme
 from .callback_filters import clean_query, search_callbacks, filter_query, due_follow_ups, PAGE_SIZE
 
 from apps.products.models import Product
@@ -227,21 +228,26 @@ def appointment_submit(request):
 
 @require_POST
 def callback_submit(request):
-    """Принимает короткую заявку на обратный звонок с главной страницы."""
+    """Принимает заявку из общей формы обратного звонка."""
     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
+    return_to = request.POST.get('return_to', '').split('#', 1)[0]
+    if (not return_to.startswith('/') or return_to.startswith('//') or '\\' in return_to
+            or not url_has_allowed_host_and_scheme(return_to, allowed_hosts=set())):
+        return_to = reverse('home')
+    return_url = f'{return_to}#callback'
 
     # Простое honeypot-поле: обычный посетитель его не видит и не заполняет.
     if request.POST.get('website', '').strip():
         message = 'Спасибо! Заявка принята. Мы свяжемся с вами в ближайшее время.'
         if is_ajax:
             return JsonResponse({'success': True, 'message': message})
-        messages.success(request, message)
-        return redirect(f"{reverse('home')}#callback")
+        messages.success(request, message, extra_tags='callback')
+        return redirect(return_url)
 
     form = CallbackRequestForm(request.POST)
     if form.is_valid():
         callback = form.save(commit=False)
-        callback.source = 'homepage'
+        callback.source = 'homepage' if return_to.split('?', 1)[0] == reverse('home') else 'site_callback'
         callback.save()
 
         # Заявка уже сохранена в БД. Ошибка SMTP не влияет на результат формы.
@@ -251,8 +257,8 @@ def callback_submit(request):
         if is_ajax:
             return JsonResponse({'success': True, 'message': message})
 
-        messages.success(request, message)
-        return redirect(f"{reverse('home')}#callback")
+        messages.success(request, message, extra_tags='callback')
+        return redirect(return_url)
 
     errors = {
         field: [str(error) for error in field_errors]
@@ -270,8 +276,8 @@ def callback_submit(request):
         )
 
     first_error = next((items[0] for items in errors.values() if items), 'Проверьте заполнение формы.')
-    messages.error(request, first_error)
-    return redirect(f"{reverse('home')}#callback")
+    messages.error(request, first_error, extra_tags='callback')
+    return redirect(return_url)
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def callback_request_list(request):

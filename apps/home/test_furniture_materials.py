@@ -10,7 +10,7 @@ class FurnitureMaterialsTests(TestCase):
         for text in ['ЛДСП и МДФ', 'Натуральный массив дерева', 'Фурнитура',
                      'Внешний вид и бюджет', 'С чего начать подбор']:
             self.assertContains(response, text)
-        self.assertContains(response, 'href="' + reverse('home') + '#callback"')
+        self.assertContains(response, 'href="#callback"')
         self.assertContains(response, 'href="' + reverse('furniture_services') + '"')
         self.assertNotContains(response, 'noindex')
         self.assertNotContains(response, 'themes/auto.css')
