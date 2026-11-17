@@ -66,3 +66,19 @@ class SimilarProjectTests(TestCase):
         inquiry = CallbackRequest.objects.get(source='similar_project')
         self.assertContains(response, f'Номер заявки: <strong>#{inquiry.pk}</strong>')
         self.assertFalse(hasattr(inquiry, 'reference_photo'))
+
+    @patch('apps.appointments.views._notify_saved_inquiry')
+    def test_known_dimensions_reach_manager_and_invalid_sizes_are_rejected(self, notify):
+        for size in ('-1', '10001', '150см'):
+            response = self.client.post(self.url, {**self.fields, 'width_cm': size})
+            self.assertEqual(response.status_code, 400)
+        self.assertFalse(CallbackRequest.objects.exists())
+        notify.assert_not_called()
+
+        response = self.client.post(self.url, {
+            **self.fields, 'width_cm': '180', 'depth_cm': '60', 'comment': 'Светлые фасады',
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertTrue(response.json()['success'])
+        inquiry = CallbackRequest.objects.get()
+        self.assertEqual(inquiry.comment, 'Примерные размеры: ширина 180 см, глубина 60 см.\n\nСветлые фасады')
+        notify.assert_called_once_with(inquiry)

@@ -118,12 +118,29 @@ class CallbackWorkflowForm(forms.ModelForm):
 
 
 class SimilarProjectForm(CarInquiryForm):
+    width_cm = forms.IntegerField(label='Ширина, см', required=False, min_value=1, max_value=10000)
+    height_cm = forms.IntegerField(label='Высота, см', required=False, min_value=1, max_value=10000)
+    depth_cm = forms.IntegerField(label='Глубина, см', required=False, min_value=1, max_value=10000)
     reference_photo = forms.FileField(
         label='Фото помещения или эскиз (необязательно)',
         required=False,
         help_text='JPG, PNG или WebP, до 5 МБ.',
         widget=forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png,image/webp'}),
     )
+
+    def clean(self):
+        data = super().clean()
+        dimensions = [
+            f'{label} {data[field]} см'
+            for field, label in (
+                ('width_cm', 'ширина'), ('height_cm', 'высота'), ('depth_cm', 'глубина'),
+            )
+            if data.get(field) is not None
+        ]
+        if dimensions and 'comment' in data:
+            summary = 'Примерные размеры: ' + ', '.join(dimensions) + '.'
+            data['comment'] = '\n\n'.join(filter(None, (summary, data['comment'])))
+        return data
 
     def clean_reference_photo(self):
         from io import BytesIO
