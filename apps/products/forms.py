@@ -56,7 +56,7 @@ class ProductForm(AutoSlugMixin, ProductModelForm):
         model = Product
         fields = [
             'title', 'slug', 'category', 'brand', 'car_model', 'price', 'currency',
-            'short_description', 'description', 'is_active', 'is_featured',
+            'short_description', 'description', 'is_active', 'is_featured', 'is_portfolio',
             'availability_status', 'article', 'product_type', 'meta_title', 'meta_description',
             'badges', 'equipment'
         ]

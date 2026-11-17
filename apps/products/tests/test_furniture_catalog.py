@@ -30,7 +30,7 @@ class FurnitureCatalogTests(TestCase):
         self.assertNotContains(response, 'themes/auto.css')
         self.assertNotContains(response, 'home/images/logo.png')
         self.assertNotContains(response, self.hidden.title)
-        self.assertContains(response, 'href="/#portfolio"')
+        self.assertContains(response, 'href="/portfolio/"')
         self.assertContains(response, 'href="/wishlist/"')
 
     def test_category_search_price_and_sort_together(self):

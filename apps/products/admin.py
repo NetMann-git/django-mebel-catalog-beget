@@ -190,6 +190,7 @@ class ProductAdmin(admin.ModelAdmin):
         "brand",
         "availability_status",
         "is_featured",
+        "is_portfolio",
         "is_active",
     )
     search_fields = (
@@ -251,6 +252,7 @@ class ProductAdmin(admin.ModelAdmin):
             {
                 "fields": (
                     "is_featured",
+                    "is_portfolio",
                     "is_active",
                     "availability_status",
                 )

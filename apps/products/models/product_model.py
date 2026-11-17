@@ -88,6 +88,12 @@ class Product(models.Model):
         verbose_name="Показывать на главной"
     )
 
+    is_portfolio = models.BooleanField(
+        default=False,
+        verbose_name='Показывать в портфолио',
+        help_text='Отметьте выполненную работу. Для показа нужна публикация и хотя бы одна фотография.',
+    )
+
     availability_status = models.CharField(
         max_length=20,
         choices=AVAILABILITY_CHOICES,

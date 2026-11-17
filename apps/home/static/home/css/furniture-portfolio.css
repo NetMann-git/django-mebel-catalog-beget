@@ -1,0 +1,8 @@
+.fp-portfolio .fc-heading { margin-bottom: 22px; }
+.fp-filters, .fp-actions { display: flex; align-items: center; flex-wrap: wrap; gap: 10px; }
+.fp-filters { margin: 18px 0; }
+.fp-filters a, .fp-actions a { padding: 9px 12px; border: 1px solid #d6dacc; border-radius: 5px; }
+.fp-filters a[aria-current], .fp-actions a:last-child { background: #e6ecd9; color: #33492e; }
+.fp-portfolio .fc-card-body { display: grid; align-content: start; gap: 10px; }
+.fp-portfolio .fc-card-body h2 { font-size: 19px; line-height: 1.35; }
+.fp-portfolio .fc-card-body p { overflow-wrap: anywhere; }
