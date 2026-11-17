@@ -152,12 +152,14 @@ class CallbackRequestTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 200)
+        callback = CallbackRequest.objects.get()
         self.assertJSONEqual(response.content, {
             'success': True,
-            'message': 'Спасибо! Заявка принята. Мы свяжемся с вами в ближайшее время.',
+            'message': (
+                'Спасибо! Заявка принята. Мы свяжемся с вами в ближайшее время. '
+                f'Номер заявки: #{callback.pk}.'
+            ),
         })
-        self.assertEqual(CallbackRequest.objects.count(), 1)
-        callback = CallbackRequest.objects.get()
         self.assertEqual(callback.name, 'Иван')
         self.assertEqual(callback.phone, '+7 (999) 123-45-67')
         self.assertEqual(callback.source, 'homepage')
@@ -242,7 +244,8 @@ class CarInquiryTests(TestCase):
         self.assertContains(response, 'Спасибо!')
         self.assertContains(response, 'Заявка получена. Менеджер свяжется с вами.')
         self.assertNotContains(response, 'aria-labelledby="car-inquiry-title" hidden')
-        self.assertEqual(CallbackRequest.objects.filter(source='product_order').count(), 1)
+        inquiry = CallbackRequest.objects.get(source='product_order')
+        self.assertContains(response, f'Номер заявки: <strong>#{inquiry.pk}</strong>')
 
         refreshed = self.client.get(self.product.get_absolute_url())
         self.assertContains(refreshed, 'aria-labelledby="car-inquiry-title" hidden')

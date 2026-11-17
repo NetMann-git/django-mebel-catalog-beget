@@ -74,11 +74,12 @@ def car_inquiry(request, product_id):
             inquiry.save()
             _notify_saved_inquiry(inquiry)
 
-            message = 'Заявка получена. Менеджер свяжется с вами.'
+            message = f'Заявка получена. Менеджер свяжется с вами. Номер заявки: #{inquiry.pk}.'
             if is_ajax:
                 return JsonResponse({'success': True, 'message': message})
             if is_order:
                 request.session['car_order_success_product_id'] = product.pk
+                request.session['car_order_success_request_id'] = inquiry.pk
                 return redirect(product.get_absolute_url())
             messages.success(request, message)
             return redirect(product.get_absolute_url())
@@ -270,7 +271,10 @@ def callback_submit(request):
         # Заявка уже сохранена в БД. Ошибка SMTP не влияет на результат формы.
         _notify_saved_inquiry(callback)
 
-        message = 'Спасибо! Заявка принята. Мы свяжемся с вами в ближайшее время.'
+        message = (
+            'Спасибо! Заявка принята. Мы свяжемся с вами в ближайшее время. '
+            f'Номер заявки: #{callback.pk}.'
+        )
         if is_ajax:
             return JsonResponse({'success': True, 'message': message})
 

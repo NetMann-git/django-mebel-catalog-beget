@@ -155,9 +155,10 @@ def recently_viewed_list(request):
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
     context = {"product": product, "page": product}
-    context["car_order_success"] = (
-        request.session.pop('car_order_success_product_id', None) == product.pk
-    )
+    if request.session.get('car_order_success_product_id') == product.pk:
+        request.session.pop('car_order_success_product_id')
+        context["car_order_success"] = True
+        context["car_order_success_request_id"] = request.session.pop('car_order_success_request_id', None)
 
     if request.user.is_authenticated:
             wishlist_ids = list(request.user.favorites.values_list("product_id", flat=True))

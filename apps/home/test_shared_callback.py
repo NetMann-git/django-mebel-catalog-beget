@@ -47,7 +47,9 @@ class SharedCallbackTests(TestCase):
         valid = client.post(url, {**data, 'phone': '+79991234567'}, follow=True)
         self.assertEqual(valid.redirect_chain, [(page + '#callback', 302)])
         self.assertContains(valid, 'home-callback__feedback--success')
-        self.assertEqual(CallbackRequest.objects.get().source, 'site_callback')
+        callback = CallbackRequest.objects.get()
+        self.assertEqual(callback.source, 'site_callback')
+        self.assertContains(valid, f'Номер заявки: #{callback.pk}.')
 
     def test_plain_submit_rejects_external_destinations(self):
         for target in ('//example.test', 'https://example.test', '/\\example.test'):
