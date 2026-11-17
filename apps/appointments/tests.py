@@ -395,6 +395,7 @@ class CarInquiryTests(TestCase):
     MANAGER_EMAILS=["manager1@example.com", "manager2@example.com"],
 )
 class CallbackEmailNotificationTests(TestCase):
+    @override_settings(SITE_URL="https://lustrid.test")
     def test_send_email_notification(self):
         callback = CallbackRequest.objects.create(
             name="Иван",
@@ -421,6 +422,9 @@ class CallbackEmailNotificationTests(TestCase):
         self.assertIn("Комментарий: Не указан", message.body)
         self.assertEqual(len(message.alternatives), 1)
         self.assertEqual(message.alternatives[0].mimetype, "text/html")
+        url = f"https://lustrid.test/appointments/callbacks/?q=%23{callback.pk}"
+        self.assertIn(url, message.body)
+        self.assertIn(f'href="{url}"', message.alternatives[0].content)
 
     @patch(
         "apps.appointments.notifications.EmailMultiAlternatives.send",
@@ -471,6 +475,7 @@ class CallbackTelegramNotificationTests(TestCase):
         self.assertEqual(mocked_post.call_count, 2)
 
     @patch("apps.appointments.notifications.requests.post")
+    @override_settings(SITE_URL="https://lustrid.test")
     def test_send_telegram_notification(self, mocked_post):
         mocked_post.return_value.raise_for_status.return_value = None
         callback = CallbackRequest.objects.create(
@@ -494,6 +499,10 @@ class CallbackTelegramNotificationTests(TestCase):
         self.assertIn("Иван Иванов", kwargs["data"]["text"])
         self.assertIn(r"+7 \(999\) 123\-45\-67", kwargs["data"]["text"])
         self.assertIn("Комментарий:* Не указан", kwargs["data"]["text"])
+        self.assertIn(
+            f"[Открыть обращение №{callback.pk}](https://lustrid.test/appointments/callbacks/?q=%23{callback.pk})",
+            kwargs["data"]["text"],
+        )
 
     @patch(
         "apps.appointments.notifications.requests.post",
@@ -517,6 +526,7 @@ class CallbackTelegramNotificationTests(TestCase):
 )
 class CallbackMaxNotificationTests(TestCase):
     @patch("apps.appointments.notifications.requests.post")
+    @override_settings(SITE_URL="https://lustrid.test")
     def test_send_max_notification(self, mocked_post):
         mocked_post.return_value.raise_for_status.return_value = None
         callback = CallbackRequest.objects.create(
@@ -539,7 +549,8 @@ class CallbackMaxNotificationTests(TestCase):
                     "📞 *Новая заявка на звонок*\n"
                     "*Имя:* Иван Иванов\n"
                     "*Телефон:* +7 (999) 123-45-67\n"
-                    "*Комментарий:* Не указан"
+                    "*Комментарий:* Не указан\n\n"
+                    f"Открыть обращение №{callback.pk}: https://lustrid.test/appointments/callbacks/?q=%23{callback.pk}"
                 ),
                 "format": "markdown",
             },

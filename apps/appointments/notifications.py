@@ -1,15 +1,23 @@
 import logging
 import re
 from html import escape
+from urllib.parse import urlencode
 
 import requests
 
 from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.utils import timezone
+from django.urls import reverse
 
 
 logger = logging.getLogger(__name__)
+
+
+def _callback_inbox_url(callback_request):
+    path = reverse('appointments:callback_request_list')
+    query = urlencode({'q': f'#{callback_request.pk}'})
+    return f"{settings.SITE_URL.rstrip('/')}{path}?{query}"
 
 
 def _car_inquiry_details(callback_request) -> tuple[str, str]:
@@ -76,6 +84,7 @@ def send_email_notification(callback_request) -> bool:
             f'<p><strong>Город / населённый пункт:</strong> {escape(callback_request.city)}</p>'
             f'<p><strong>Email:</strong> {escape(callback_request.email or "Не указан")}</p>'
         )
+    inbox_url = _callback_inbox_url(callback_request)
     text_body = (
         f"{heading}.\n\n"
         f"Имя: {name}\n"
@@ -83,6 +92,7 @@ def send_email_notification(callback_request) -> bool:
         f"{car_details}"
         f"Комментарий: {comment}\n"
         f"Дата создания: {created_at_text}\n"
+        f"Открыть обращение №{callback_request.pk}: {inbox_url}\n"
     )
     html_body = (
         f"<h2>{heading}</h2>"
@@ -91,6 +101,7 @@ def send_email_notification(callback_request) -> bool:
         f"{html_details}"
         f"<p><strong>Комментарий:</strong><br>{escape(comment).replace(chr(10), '<br>')}</p>"
         f"<p><strong>Дата создания:</strong> {escape(created_at_text)}</p>"
+        f'<p><a href="{escape(inbox_url, quote=True)}">Открыть обращение №{callback_request.pk}</a></p>'
     )
 
     try:
@@ -156,12 +167,15 @@ def send_telegram_notification(callback_request) -> bool:
         if callback_request.source == 'product_order'
         else "📞 *Новая заявка на звонок*\n"
     )
+    # MarkdownV2 link destinations only escape closing parentheses and backslashes.
+    inbox_url = _callback_inbox_url(callback_request).replace("\\", "\\\\").replace(")", "\\)")
     text = (
         title +
         f"*Имя:* {_escape_markdown_v2(name)}\n"
         f"*Телефон:* {_escape_markdown_v2(phone)}\n"
         f"{extra}"
-        f"*Комментарий:* {_escape_markdown_v2(comment)}"
+        f"*Комментарий:* {_escape_markdown_v2(comment)}\n\n"
+        f"[Открыть обращение №{callback_request.pk}]({inbox_url})"
     )
 
     url = f"https://api.telegram.org/bot{bot_token}/sendMessage"
@@ -235,7 +249,8 @@ def send_max_notification(callback_request) -> bool:
         f"*Имя:* {name}\n"
         f"*Телефон:* {phone}\n"
         f"{extra}"
-        f"*Комментарий:* {comment}"
+        f"*Комментарий:* {comment}\n\n"
+        f"Открыть обращение №{callback_request.pk}: {_callback_inbox_url(callback_request)}"
     )
 
     try:

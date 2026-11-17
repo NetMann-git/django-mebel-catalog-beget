@@ -15,7 +15,7 @@
   </nav>
   <form method="get" class="fm-callbacks__filter" aria-label="Фильтр обращений">
     {% if due %}<input type="hidden" name="due" value="1">{% endif %}
-    <div class="fm-callbacks__search"><label for="callback-query">Поиск по обращениям</label><input id="callback-query" type="search" name="q" value="{{ query }}" maxlength="200" placeholder="Клиент, телефон, email, изделие или текст" autocomplete="off"></div>
+    <div class="fm-callbacks__search"><label for="callback-query">Поиск по обращениям</label><input id="callback-query" type="search" name="q" value="{{ query }}" maxlength="200" placeholder="№ обращения (#123), клиент, телефон или изделие" autocomplete="off"></div>
     <div><label for="callback-status">Статус обращения</label><select id="callback-status" name="status"><option value="">Все статусы</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
     <button type="submit" class="fm-callbacks__button">Показать</button>
     {% if status or query %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}{% if due %}?due=1{% endif %}">Сбросить фильтр</a>{% endif %}

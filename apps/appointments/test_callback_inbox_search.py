@@ -68,3 +68,24 @@ class CallbackInboxSearchTests(TestCase):
         customer=get_user_model().objects.create_user('inbox-client');outsider.force_login(customer)
         r=outsider.get(self.url,{'q':'Анна'})
         self.assertEqual(r.status_code,302);self.assertNotIn(self.item.phone,r.content.decode())
+
+    def test_exact_number_and_login_return(self):
+        from urllib.parse import urlencode
+
+        self.assertEqual(self.ids(self.client.get(self.url, {'q': f'#{self.item.pk}'})), {self.item.pk})
+        self.assertFalse(self.ids(self.client.get(self.url, {'q': '#9223372036854775808'})))
+
+        manager = get_user_model().objects.get(username='inbox-manager')
+        manager.set_password('test-password')
+        manager.save(update_fields=['password'])
+        self.client.logout()
+        target = self.url + '?' + urlencode({'q': f'#{self.item.pk}'})
+        guest = self.client.get(target)
+        login = reverse('users:login')
+        self.assertEqual(urlsplit(guest['Location']).path, login)
+        self.assertEqual(parse_qs(urlsplit(guest['Location']).query), {'next': [target]})
+        response = self.client.post(login, {
+            'username': manager.username, 'password': 'test-password', 'next': target,
+        }, follow=True)
+        self.assertEqual(response.redirect_chain, [(target, 302)])
+        self.assertEqual(self.ids(response), {self.item.pk})

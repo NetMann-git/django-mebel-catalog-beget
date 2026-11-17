@@ -16,6 +16,11 @@ def clean_query(value):
 def search_callbacks(queryset, query):
     if not query:
         return queryset
+    if re.fullmatch(r'#[0-9]+', query):
+        number = query[1:].lstrip('0')
+        if not number or len(number) > 19 or int(number) > 9223372036854775807:
+            return queryset.none()
+        return queryset.filter(pk=int(number))
     # A literal, escaped pattern gives Unicode-insensitive matching on SQLite too.
     pattern = re.escape(query)
     match = Q()

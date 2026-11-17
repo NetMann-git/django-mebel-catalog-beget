@@ -4,6 +4,7 @@ import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from django.urls import Resolver404, resolve, reverse
 from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
@@ -294,6 +295,7 @@ def callback_submit(request):
     messages.error(request, first_error, extra_tags='callback')
     return redirect(return_url)
 
+@login_required(login_url='users:login')
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def callback_request_list(request):
     """Список заявок на обратный звонок для менеджера и администратора."""
