@@ -1,7 +1,7 @@
 from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.test import Client, TestCase
+from django.test import Client, TestCase, override_settings
 from django.urls import reverse
 
 from apps.appointments.models import CallbackRequest
@@ -62,3 +62,54 @@ class SharedCallbackTests(TestCase):
         product = Product.objects.create(title='Шкаф', slug='preview-callback', price=10, is_active=False)
         response = self.client.get(reverse('catalog:product_preview', args=[product.pk]))
         self.assertNotContains(response, 'id="home-callback-form"')
+
+    @patch('apps.appointments.views._notify_saved_inquiry')
+    def test_product_callback_reaches_inbox_with_the_selected_product(self, notify):
+        product = Product.objects.create(title='Шкаф «Север»', slug='callback-north', price=10)
+        page = product.get_absolute_url() + '?rating=5'
+        self.assertContains(self.client.get(page), 'Изделие в заявке: <strong>Шкаф «Север»</strong>')
+        response = self.client.post(reverse('appointments:callback_submit'), {
+            'phone': '+79991234567', 'return_to': page, 'comment': 'Нужен в другом размере',
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertTrue(response.json()['success'])
+        inquiry = CallbackRequest.objects.get()
+        self.assertEqual(inquiry.product, product)
+        self.assertEqual(inquiry.source, 'product_callback')
+        self.assertEqual(inquiry.comment, 'Нужен в другом размере')
+        notify.assert_called_once_with(inquiry)
+
+        self.client.force_login(get_user_model().objects.create_superuser('callback-inbox'))
+        inbox = self.client.get(reverse('appointments:callback_request_list'))
+        self.assertContains(inbox, 'Обратный звонок по изделию')
+        self.assertContains(inbox, product.title)
+
+    @patch('apps.appointments.views._notify_saved_inquiry')
+    def test_callback_from_stale_product_page_is_still_saved(self, notify):
+        product = Product.objects.create(title='Черновик', slug='callback-draft', price=10, is_active=False)
+        response = self.client.post(reverse('appointments:callback_submit'), {
+            'phone': '+79991234567', 'return_to': product.get_absolute_url(),
+            'product': product.pk, 'source': 'product_order',
+        }, HTTP_X_REQUESTED_WITH='XMLHttpRequest')
+        self.assertTrue(response.json()['success'])
+        inquiry = CallbackRequest.objects.get()
+        self.assertIsNone(inquiry.product_id)
+        self.assertEqual(inquiry.source, 'site_callback')
+        notify.assert_called_once_with(inquiry)
+
+    @override_settings(
+        EMAIL_BACKEND='django.core.mail.backends.locmem.EmailBackend',
+        MANAGER_EMAILS=['manager@example.test'],
+        SITE_URL='https://lustrid.ru',
+    )
+    def test_email_for_product_callback_contains_product_title_and_link(self):
+        from django.core import mail
+        from apps.appointments.notifications import send_email_notification
+
+        product = Product.objects.create(title='Шкаф «Север»', slug='callback-mail', price=10)
+        inquiry = CallbackRequest.objects.create(
+            phone='+79991234567', source='product_callback', product=product,
+        )
+        self.assertTrue(send_email_notification(inquiry))
+        self.assertIn('Обратный звонок по изделию', mail.outbox[0].subject)
+        self.assertIn(product.title, mail.outbox[0].body)
+        self.assertIn('https://lustrid.ru' + product.get_absolute_url(), mail.outbox[0].body)

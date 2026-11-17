@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 def _car_inquiry_details(callback_request) -> tuple[str, str]:
     """Детали изделия для уведомления менеджеру, если он выбран."""
-    if callback_request.source not in ('product_detail', 'product_order'):
+    if callback_request.source not in ('product_detail', 'product_order', 'product_callback'):
         return '', ''
     product = callback_request.product
     product_title = product.title if product else 'Изделие удалено'
@@ -50,19 +50,18 @@ def send_email_notification(callback_request) -> bool:
     created_at = timezone.localtime(callback_request.created_at)
     created_at_text = created_at.strftime("%d.%m.%Y %H:%M")
 
-    if callback_request.source == 'product_order':
-        subject = f'Заявка на изготовление мебели от {name}'
-    elif callback_request.source == 'product_detail':
-        subject = f'Запрос стоимости изделия от {name}'
-    else:
-        subject = f'Новая заявка на обратный звонок от {name}'
+    heading = {
+        'product_order': 'Получена заявка на изготовление мебели',
+        'product_detail': 'Получен запрос стоимости изделия',
+        'product_callback': 'Получена заявка на обратный звонок по изделию',
+    }.get(callback_request.source, 'Получена новая заявка на обратный звонок')
+    subject = {
+        'product_order': 'Заявка на изготовление мебели',
+        'product_detail': 'Запрос стоимости изделия',
+        'product_callback': 'Обратный звонок по изделию',
+    }.get(callback_request.source, 'Новая заявка на обратный звонок')
+    subject = f'{subject} от {name}'
     car_details, product_url = _car_inquiry_details(callback_request)
-    heading = (
-        'Получена заявка на изготовление мебели'
-        if callback_request.source == 'product_order'
-        else 'Получен запрос стоимости изделия'
-        if car_details else 'Получена новая заявка на обратный звонок'
-    )
     html_details = ''
     if car_details:
         title = (

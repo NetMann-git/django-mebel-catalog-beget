@@ -225,6 +225,7 @@ def product_detail(request, slug):
         {'value': '3', 'label': '3 ★ и выше'},
     ]
 
+    context["callback_product"] = product
     context["review_form"] = ReviewForm(user=request.user)
     context["gallery_images"] = product.gallery.exclude(image=product.image.name or '')
     context["furniture_photos"] = furniture_photos(product, context["gallery_images"])

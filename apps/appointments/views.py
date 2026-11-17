@@ -4,7 +4,7 @@ import logging
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from django.urls import reverse
+from django.urls import Resolver404, resolve, reverse
 from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
 from django.core.paginator import Paginator
@@ -226,6 +226,16 @@ def appointment_submit(request):
     context = {'form': form}
     return render(request, 'appointments/appointment_form.html', context)
 
+def _callback_product(path):
+    try:
+        match = resolve(path)
+    except Resolver404:
+        return None
+    if match.view_name == 'catalog:product_detail':
+        return Product.objects.filter(slug=match.kwargs['slug'], is_active=True).first()
+    return None
+
+
 @require_POST
 def callback_submit(request):
     """Принимает заявку из общей формы обратного звонка."""
@@ -247,7 +257,12 @@ def callback_submit(request):
     form = CallbackRequestForm(request.POST)
     if form.is_valid():
         callback = form.save(commit=False)
-        callback.source = 'homepage' if return_to.split('?', 1)[0] == reverse('home') else 'site_callback'
+        origin_path = return_to.split('?', 1)[0]
+        callback.product = _callback_product(origin_path)
+        if callback.product:
+            callback.source = 'product_callback'
+        else:
+            callback.source = 'homepage' if origin_path == reverse('home') else 'site_callback'
         callback.save()
 
         # Заявка уже сохранена в БД. Ошибка SMTP не влияет на результат формы.
