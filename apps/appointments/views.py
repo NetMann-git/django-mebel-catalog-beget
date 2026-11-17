@@ -6,18 +6,20 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.urls import Resolver404, resolve, reverse
-from django.views.decorators.http import require_http_methods, require_POST
-from django.http import JsonResponse
+from django.views.decorators.http import require_http_methods, require_POST, require_safe
+from django.views.decorators.cache import never_cache
+from django.http import HttpResponse, JsonResponse
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
-from django.db.models import Count
+from django.db import transaction
+from django.db.models import Count, Exists, OuterRef
 from .callback_filters import clean_query, search_callbacks, filter_query, callback_queue, follow_up_queues, PAGE_SIZE
 
 from apps.products.models import Product
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
 from apps.users.decorators import role_required
-from .forms import AppointmentForm, CallbackRequestForm, CarInquiryForm, CallbackWorkflowForm
+from .forms import AppointmentForm, CallbackRequestForm, CarInquiryForm, CallbackWorkflowForm, SimilarProjectForm
 from .notifications import (
     send_email_notification,
     send_telegram_notification,
@@ -29,7 +31,7 @@ from django.conf import settings
 from django.template.loader import render_to_string
 
 from datetime import datetime, timedelta
-from .models import Appointment, CallbackRequest, WorkingHours
+from .models import Appointment, CallbackRequest, CallbackReferencePhoto, WorkingHours
 
 
 logger = logging.getLogger(__name__)
@@ -57,8 +59,10 @@ def car_inquiry(request, product_id):
     """Принимает вопрос о стоимости или заявку на изготовление выбранного изделия."""
     product = get_object_or_404(Product, pk=product_id, is_active=True)
     is_order = request.GET.get('type') == 'order'
+    is_similar = request.GET.get('type') == 'similar'
     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
-    form = CarInquiryForm(request.POST if request.method == 'POST' else None)
+    form_class = SimilarProjectForm if is_similar else CarInquiryForm
+    form = form_class(request.POST, request.FILES) if request.method == 'POST' else form_class()
 
     if request.method == 'POST':
         # Невидимое поле не мешает посетителю, но отсекает простых ботов.
@@ -70,14 +74,17 @@ def car_inquiry(request, product_id):
         if form.is_valid():
             inquiry = form.save(commit=False)
             inquiry.product = product
-            inquiry.source = 'product_order' if is_order else 'product_detail'
-            inquiry.save()
+            inquiry.source = 'similar_project' if is_similar else 'product_order' if is_order else 'product_detail'
+            with transaction.atomic():
+                inquiry.save()
+                if photo := form.cleaned_data.get('reference_photo'):
+                    CallbackReferencePhoto.objects.create(callback=inquiry, content=photo)
             _notify_saved_inquiry(inquiry)
 
             message = f'Заявка получена. Менеджер свяжется с вами. Номер заявки: #{inquiry.pk}.'
             if is_ajax:
                 return JsonResponse({'success': True, 'message': message})
-            if is_order:
+            if is_order or is_similar:
                 request.session['car_order_success_product_id'] = product.pk
                 request.session['car_order_success_request_id'] = inquiry.pk
                 return redirect(product.get_absolute_url())
@@ -91,7 +98,7 @@ def car_inquiry(request, product_id):
     return render(
         request,
         template,
-        {'form': form, 'product': product, 'is_order': is_order},
+        {'form': form, 'product': product, 'is_order': is_order, 'is_similar': is_similar},
         status=400 if request.method == 'POST' else 200,
     )
 
@@ -308,7 +315,9 @@ def callback_request_list(request):
     valid_statuses = {value for value, _label in CallbackRequest.STATUS_CHOICES}
 
     query = clean_query(request.GET.get('q'))
-    callbacks = CallbackRequest.objects.select_related('product').order_by('-created_at', '-pk')
+    callbacks = CallbackRequest.objects.select_related('product').annotate(
+        has_reference_photo=Exists(CallbackReferencePhoto.objects.filter(callback_id=OuterRef('pk'))),
+    ).order_by('-created_at', '-pk')
     if status in valid_statuses:
         callbacks = callbacks.filter(status=status)
     else:
@@ -374,3 +383,14 @@ def callback_request_status_update(request, pk):
         redirect_url = f"{redirect_url}?{params}"
 
     return redirect(redirect_url)
+
+@never_cache
+@require_safe
+@login_required(login_url='users:login')
+@role_required(ROLE_MANAGER, ROLE_ADMIN)
+def callback_reference_photo(request, pk):
+    photo = get_object_or_404(CallbackReferencePhoto, callback_id=pk)
+    response = HttpResponse(photo.content, content_type='image/jpeg')
+    response['Content-Disposition'] = f'attachment; filename="reference-{pk}.jpg"'
+    response['X-Content-Type-Options'] = 'nosniff'
+    return response

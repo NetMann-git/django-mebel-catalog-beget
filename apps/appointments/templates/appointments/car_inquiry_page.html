@@ -1,4 +1,4 @@
 {% extends 'home/furniture_base.html' %}{% load static %}
-{% block title %}{% if is_order %}Заявка на изготовление{% else %}Запрос стоимости{% endif %} — {{ product.title }} — LUSTRID.RU{% endblock %}
+{% block title %}{% if is_similar %}Рассчитать похожее{% elif is_order %}Заявка на изготовление{% else %}Запрос стоимости{% endif %} — {{ product.title }} — LUSTRID.RU{% endblock %}
 {% block extra_css %}<link rel="stylesheet" href="{% static 'appointments/css/car_inquiry.css' %}"><link rel="stylesheet" href="{% static 'products/css/furniture-detail.css' %}">{% endblock %}
 {% block furniture_content %}<div class="fm-container"><section class="car-inquiry__page"><a class="fd-back" href="{{ product.get_absolute_url }}">← Вернуться к изделию</a>{% include 'appointments/_car_inquiry_form.html' %}</section></div>{% endblock %}

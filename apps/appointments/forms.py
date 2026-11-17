@@ -115,3 +115,35 @@ class CallbackWorkflowForm(forms.ModelForm):
             for name in ('follow_up_on', 'manager_note'):
                 if name not in self.data:
                     del self.fields[name]
+
+
+class SimilarProjectForm(CarInquiryForm):
+    reference_photo = forms.FileField(
+        label='Фото помещения или эскиз (необязательно)',
+        required=False,
+        help_text='JPG, PNG или WebP, до 5 МБ.',
+        widget=forms.ClearableFileInput(attrs={'accept': 'image/jpeg,image/png,image/webp'}),
+    )
+
+    def clean_reference_photo(self):
+        from io import BytesIO
+
+        from PIL import Image, ImageOps
+
+        upload = self.cleaned_data['reference_photo']
+        if not upload:
+            return None
+        if upload.size > 5 * 1024 * 1024:
+            raise forms.ValidationError('Размер файла должен быть не больше 5 МБ.')
+        try:
+            with Image.open(upload) as image:
+                if (image.format not in ('JPEG', 'PNG', 'WEBP')
+                        or image.width * image.height > 24_000_000
+                        or getattr(image, 'is_animated', False)):
+                    raise ValueError
+                image.thumbnail((1600, 1600))
+                result = BytesIO()
+                ImageOps.exif_transpose(image).convert('RGB').save(result, format='JPEG', quality=85)
+                return result.getvalue()
+        except (OSError, ValueError, Image.DecompressionBombError):
+            raise forms.ValidationError('Загрузите обычное фото JPG, PNG или WebP размером до 24 мегапикселей.')

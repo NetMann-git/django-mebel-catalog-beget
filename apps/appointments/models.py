@@ -172,3 +172,10 @@ class CallbackRequest(models.Model):
 
     def __str__(self):
         return f'{self.name or "Без имени"} — {self.phone}'
+
+
+class CallbackReferencePhoto(models.Model):
+    """A private, normalized image attached to a request."""
+
+    callback = models.OneToOneField(CallbackRequest, on_delete=models.CASCADE, related_name='reference_photo')
+    content = models.BinaryField()

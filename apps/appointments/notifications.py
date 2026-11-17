@@ -22,7 +22,7 @@ def _callback_inbox_url(callback_request):
 
 def _car_inquiry_details(callback_request) -> tuple[str, str]:
     """Детали изделия для уведомления менеджеру, если он выбран."""
-    if callback_request.source not in ('product_detail', 'product_order', 'product_callback'):
+    if callback_request.source not in ('product_detail', 'product_order', 'product_callback', 'similar_project'):
         return '', ''
     product = callback_request.product
     product_title = product.title if product else 'Изделие удалено'
@@ -59,11 +59,13 @@ def send_email_notification(callback_request) -> bool:
     created_at_text = created_at.strftime("%d.%m.%Y %H:%M")
 
     heading = {
+        'similar_project': 'Получен запрос на расчёт похожего изделия',
         'product_order': 'Получена заявка на изготовление мебели',
         'product_detail': 'Получен запрос стоимости изделия',
         'product_callback': 'Получена заявка на обратный звонок по изделию',
     }.get(callback_request.source, 'Получена новая заявка на обратный звонок')
     subject = {
+        'similar_project': 'Расчёт похожего изделия',
         'product_order': 'Заявка на изготовление мебели',
         'product_detail': 'Запрос стоимости изделия',
         'product_callback': 'Обратный звонок по изделию',
