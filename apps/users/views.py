@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.urls import reverse
 from django.utils import timezone
 
+from apps.appointments.callback_filters import due_follow_ups
 from apps.appointments.models import Appointment, CallbackRequest
 from apps.products.models import Product
 from .decorators import role_required
@@ -32,14 +33,15 @@ def manager_dashboard(request):
         published=Count('pk', filter=Q(is_active=True)),
         drafts=Count('pk', filter=Q(is_active=False)),
     )
+    today = timezone.localdate()
     callback_stats = CallbackRequest.objects.aggregate(
         total=Count('pk'),
         new=Count('pk', filter=Q(status=CallbackRequest.STATUS_NEW)),
+        due=Count('pk', filter=due_follow_ups(today)),
         processed=Count('pk', filter=Q(status=CallbackRequest.STATUS_PROCESSED)),
         cancelled=Count('pk', filter=Q(status=CallbackRequest.STATUS_CANCELLED)),
     )
 
-    today = timezone.now().date()
     week_ago = today - timedelta(days=7)
     month_ago = today - timedelta(days=30)
     

@@ -3,6 +3,7 @@ import re
 from urllib.parse import urlencode
 from django.db.models import F, Q, Value
 from django.db.models.functions import Replace
+from .models import CallbackRequest
 
 QUERY_LIMIT = 200
 PAGE_SIZE = 20
@@ -31,8 +32,12 @@ def search_callbacks(queryset, query):
     return queryset.filter(match)
 
 
-def filter_query(status, query, page=None):
-    params = {}
+def due_follow_ups(today):
+    return Q(status=CallbackRequest.STATUS_NEW, follow_up_on__lte=today)
+
+
+def filter_query(status, query, page=None, *, due=False):
+    params = {'due': '1'} if due else {}
     if status:
         params['status'] = status
     if query:

@@ -8,12 +8,13 @@ from django.urls import reverse
 from django.views.decorators.http import require_http_methods, require_POST
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from .callback_filters import clean_query, search_callbacks, filter_query, PAGE_SIZE
+from django.utils import timezone
+from .callback_filters import clean_query, search_callbacks, filter_query, due_follow_ups, PAGE_SIZE
 
 from apps.products.models import Product
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
 from apps.users.decorators import role_required
-from .forms import AppointmentForm, CallbackRequestForm, CarInquiryForm
+from .forms import AppointmentForm, CallbackRequestForm, CarInquiryForm, CallbackWorkflowForm
 from .notifications import (
     send_email_notification,
     send_telegram_notification,
@@ -285,13 +286,21 @@ def callback_request_list(request):
     else:
         status = ""
 
+    today = timezone.localdate()
+    due = request.GET.get('due') == '1'
+    if due:
+        callbacks = callbacks.filter(due_follow_ups(today)).order_by('follow_up_on', 'created_at', 'pk')
+
     callbacks = search_callbacks(callbacks, query)
     page_obj = Paginator(callbacks, PAGE_SIZE).get_page(request.GET.get('page'))
     context = {
         "callbacks": page_obj.object_list,
         "page_obj": page_obj,
         "query": query,
-        "pagination_query": filter_query(status, query),
+        "pagination_query": filter_query(status, query, due=due),
+        "due": due,
+        "today": today,
+        "due_count": CallbackRequest.objects.filter(due_follow_ups(today)).count(),
         "matched_total": page_obj.paginator.count,
         "status": status,
         "status_choices": CallbackRequest.STATUS_CHOICES,
@@ -305,24 +314,26 @@ def callback_request_list(request):
 @require_POST
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
 def callback_request_status_update(request, pk):
-    """Изменяет статус заявки на обратный звонок."""
+    """Сохраняет статус, дату контакта и внутреннюю заметку."""
     callback = get_object_or_404(CallbackRequest, pk=pk)
-    status = request.POST.get("status", "").strip()
+    form = CallbackWorkflowForm(request.POST, instance=callback)
     valid_statuses = {value for value, _label in CallbackRequest.STATUS_CHOICES}
 
-    if status not in valid_statuses:
-        messages.error(request, "Некорректный статус заявки.")
-    elif callback.status != status:
-        callback.status = status
-        callback.save(update_fields=["status", "updated_at"])
-        messages.success(request, "Статус заявки изменён.")
+    if form.is_valid():
+        if form.changed_data:
+            callback.save(update_fields=[*form.changed_data, 'updated_at'])
+            messages.success(request, "Обращение обновлено.")
+    else:
+        for field, errors in form.errors.items():
+            label = form.fields[field].label
+            messages.error(request, f"{label}: {errors[0]}")
 
     redirect_url = reverse("appointments:callback_request_list")
     current_filter = request.POST.get("current_filter", "").strip()
     if current_filter not in valid_statuses:
         current_filter = ''
     params = filter_query(current_filter, clean_query(request.POST.get('current_query')),
-                          request.POST.get('current_page'))
+                          request.POST.get('current_page'), due=request.POST.get('current_due') == '1')
     if params:
         redirect_url = f"{redirect_url}?{params}"
 

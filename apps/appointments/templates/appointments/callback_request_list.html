@@ -2,18 +2,23 @@
 {% load static %}
 {% block title %}Обращения клиентов — LUSTRID.RU{% endblock %}
 {% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'appointments/css/furniture-callbacks.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'appointments/css/furniture-callbacks.css' %}?v=105">{% endblock %}
 {% block furniture_content %}
 <section class="fm-container fm-callbacks" aria-labelledby="callbacks-title">
   <a class="fm-callbacks__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
   <p class="fm-callbacks__eyebrow">Мебельная мастерская</p>
   <h1 id="callbacks-title">Обращения клиентов</h1>
   <p class="fm-callbacks__counts">Всего обращений: <strong>{{ total }}</strong> · Новых: <strong>{{ new_count }}</strong></p>
+  <nav class="fm-callbacks__queues" aria-label="Очереди обращений">
+    <a href="{% url 'appointments:callback_request_list' %}"{% if not due %} aria-current="page"{% endif %}>Все обращения</a>
+    <a href="{% url 'appointments:callback_request_list' %}?due=1"{% if due %} aria-current="page"{% endif %}>На сегодня и просроченные <strong>{{ due_count }}</strong></a>
+  </nav>
   <form method="get" class="fm-callbacks__filter" aria-label="Фильтр обращений">
+    {% if due %}<input type="hidden" name="due" value="1">{% endif %}
     <div class="fm-callbacks__search"><label for="callback-query">Поиск по обращениям</label><input id="callback-query" type="search" name="q" value="{{ query }}" maxlength="200" placeholder="Клиент, телефон, email, изделие или текст" autocomplete="off"></div>
     <div><label for="callback-status">Статус обращения</label><select id="callback-status" name="status"><option value="">Все статусы</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
     <button type="submit" class="fm-callbacks__button">Показать</button>
-    {% if status or query %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}">Сбросить фильтр</a>{% endif %}
+    {% if status or query %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}{% if due %}?due=1{% endif %}">Сбросить фильтр</a>{% endif %}
   </form>
   <p class="fm-callbacks__shown">Показано: {{ callbacks|length }} из {{ matched_total }}</p>
   <div class="fm-callbacks__list">
@@ -21,7 +26,13 @@
     <article class="fm-callbacks__card" aria-labelledby="callback-title-{{ callback.pk }}">
       <header class="fm-callbacks__card-header">
         <div><h2 id="callback-title-{{ callback.pk }}">Обращение №{{ callback.pk }}</h2><time datetime="{{ callback.created_at|date:'c' }}">{{ callback.created_at|date:"d.m.Y H:i" }}</time></div>
-        <span class="fm-callbacks__status fm-callbacks__status--{{ callback.status }}">{{ callback.get_status_display }}</span>
+        <div class="fm-callbacks__badges">
+          <span class="fm-callbacks__status fm-callbacks__status--{{ callback.status }}">{{ callback.get_status_display }}</span>
+          {% if callback.status == 'new' and callback.follow_up_on %}
+            {% if callback.follow_up_on < today %}<span class="fm-callbacks__status fm-callbacks__status--overdue">Просрочено</span>
+            {% elif callback.follow_up_on == today %}<span class="fm-callbacks__status fm-callbacks__status--new">Связаться сегодня</span>{% endif %}
+          {% endif %}
+        </div>
       </header>
       <div class="fm-callbacks__card-body">
         <section aria-labelledby="contact-title-{{ callback.pk }}"><h3 id="contact-title-{{ callback.pk }}">Контакты клиента</h3><dl>
@@ -38,12 +49,18 @@
       </div>
       <form method="post" action="{% url 'appointments:callback_request_status_update' callback.pk %}" class="fm-callbacks__status-form">
         {% csrf_token %}<input type="hidden" name="current_filter" value="{{ status }}"><input type="hidden" name="current_query" value="{{ query }}"><input type="hidden" name="current_page" value="{{ page_obj.number }}">
+        {% if due %}<input type="hidden" name="current_due" value="1">{% endif %}
         <div><label for="status-{{ callback.pk }}">Изменить статус</label><select name="status" id="status-{{ callback.pk }}" aria-label="Статус обращения {{ callback.pk }}">{% for value, label in status_choices %}<option value="{{ value }}"{% if callback.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
-        <button type="submit" class="fm-callbacks__button" aria-label="Сохранить статус обращения {{ callback.pk }}">Сохранить статус</button>
+        <div><label for="follow-up-{{ callback.pk }}">Дата следующего контакта</label><input type="date" id="follow-up-{{ callback.pk }}" name="follow_up_on" value="{{ callback.follow_up_on|date:'Y-m-d' }}"></div>
+        <div class="fm-callbacks__note">
+          <label for="manager-note-{{ callback.pk }}">Внутренняя заметка</label>
+          <textarea id="manager-note-{{ callback.pk }}" name="manager_note" rows="2" maxlength="2000" placeholder="Например, согласовали размеры. Перезвонить с расчётом.">{{ callback.manager_note }}</textarea>
+        </div>
+        <button type="submit" class="fm-callbacks__button" aria-label="Сохранить обращение {{ callback.pk }}">Сохранить</button>
       </form>
     </article>
     {% empty %}
-    <div class="fm-callbacks__empty"><h2>{% if query %}Обращения не найдены{% elif status %}Нет обращений с этим статусом{% else %}Обращений пока нет{% endif %}</h2><p>{% if status or query %}Измените поиск, выберите другой статус или сбросьте фильтр.{% else %}Здесь появятся обращения, отправленные через формы сайта.{% endif %}</p></div>
+    <div class="fm-callbacks__empty"><h2>{% if query %}Обращения не найдены{% elif status %}Нет обращений с этим статусом{% elif due %}Нет контактов на сегодня и просроченных{% else %}Обращений пока нет{% endif %}</h2><p>{% if status or query %}Измените поиск, выберите другой статус или сбросьте фильтр.{% elif due %}Здесь появятся открытые обращения, дата контакта по которым наступила.{% else %}Здесь появятся обращения, отправленные через формы сайта.{% endif %}</p></div>
     {% endfor %}
   </div>
   {% if page_obj.has_other_pages %}<nav class="fm-callbacks__pagination" aria-label="Страницы обращений">

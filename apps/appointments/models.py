@@ -160,6 +160,8 @@ class CallbackRequest(models.Model):
         default='homepage',
         verbose_name='Источник',
     )
+    follow_up_on = models.DateField(null=True, blank=True, db_index=True, verbose_name='Дата следующего контакта')
+    manager_note = models.TextField(max_length=2000, blank=True, verbose_name='Внутренняя заметка')
     created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name='Создана')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='Изменена')
 

@@ -164,8 +164,8 @@ class WorkingHoursAdmin(admin.ModelAdmin):
 
 @admin.register(CallbackRequest)
 class CallbackRequestAdmin(admin.ModelAdmin):
-    list_display = ('name', 'phone', 'city', 'product', 'status', 'source', 'created_at')
-    list_filter = ('status', 'source', 'created_at')
+    list_display = ('name', 'phone', 'city', 'product', 'status', 'source', 'created_at', 'follow_up_on')
+    list_filter = ('status', 'source', 'created_at', 'follow_up_on')
     search_fields = ('name', 'phone', 'email', 'city', 'product__title')
     readonly_fields = ('source', 'product', 'created_at', 'updated_at')
     list_editable = ('status',)
@@ -173,5 +173,6 @@ class CallbackRequestAdmin(admin.ModelAdmin):
 
     fieldsets = (
         (None, {'fields': ('name', 'phone', 'email', 'city', 'comment', 'status')}),
+        ('Работа с обращением', {'fields': ('follow_up_on', 'manager_note')}),
         ('Изделие и источник', {'fields': ('product', 'source', 'created_at', 'updated_at')}),
     )

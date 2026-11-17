@@ -100,3 +100,18 @@ class CarInquiryForm(CallbackRequestForm):
             'email': 'Электронная почта (необязательно)',
             'comment': 'Комментарий (необязательно)',
         }
+
+class CallbackWorkflowForm(forms.ModelForm):
+    """Only the manager can update the follow-up plan."""
+
+    class Meta:
+        model = CallbackRequest
+        fields = ('status', 'follow_up_on', 'manager_note')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Older clients of the status endpoint submit only the status.
+        if self.is_bound:
+            for name in ('follow_up_on', 'manager_note'):
+                if name not in self.data:
+                    del self.fields[name]

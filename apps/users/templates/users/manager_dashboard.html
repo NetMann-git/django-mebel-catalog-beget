@@ -17,6 +17,7 @@
   <nav class="fm-workshop__links" aria-label="Управление мастерской">
     <a href="{% url 'catalog:product_list_manage' %}"><strong>Изделия</strong><span>Название, описание, цена и фотографии</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'appointments:callback_request_list' %}"><strong>Обращения клиентов</strong><span>Вопросы, заказы и обратные звонки</span><b aria-hidden="true">→</b></a>
+    <a href="{% url 'appointments:callback_request_list' %}?due=1"><strong>Следующие контакты · {{ callback_stats.due }}</strong><span>На сегодня и просроченные</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'catalog:category_list_manage' %}"><strong>Категории</strong><span>Направления мебельного каталога</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'catalog:attribute_type_list_manage' %}"><strong>Характеристики</strong><span>Справочник параметров изделий</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'catalog:brand_list_manage' %}"><strong>Бренды</strong><span>Управление справочником брендов</span><b aria-hidden="true">→</b></a>

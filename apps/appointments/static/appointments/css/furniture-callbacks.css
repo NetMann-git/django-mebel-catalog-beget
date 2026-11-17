@@ -10,3 +10,26 @@
 .fm-callbacks__pagination { display:flex; flex-wrap:wrap; justify-content:center; align-items:center; gap:12px 20px; margin-top:28px; font-size:14px; }
 .fm-callbacks__pagination a { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 14px; border:1px solid #d2d6c9; border-radius:4px; }
 .fm-callbacks__pagination a:hover { background:#f0eee7; }
+
+.fm-callbacks__queues { display:flex; flex-wrap:wrap; gap:8px 12px; margin-bottom:16px; }
+.fm-callbacks__queues a { display:inline-flex; align-items:center; gap:8px; min-height:44px; padding:8px 12px; border:1px solid #d2d6c9; border-radius:5px; }
+.fm-callbacks__queues [aria-current] { background:#e6ecd9; border-color:#899875; }
+.fm-callbacks__badges { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; }
+.fm-callbacks__status--overdue { background:#f5e2da; color:#853c2c; }
+.fm-callbacks__status-form input[type="date"], .fm-callbacks__note textarea {
+    min-height:44px;
+    max-width:100%;
+    padding:8px 10px;
+    border:1px solid #d2d6c9;
+    border-radius:4px;
+    background:#fff;
+    color:#29312a;
+    font:inherit;
+    font-size:16px;
+}
+.fm-callbacks__note { flex:1 1 240px; min-width:0; }
+.fm-callbacks__note textarea { display:block; width:100%; resize:vertical; }
+.fm-callbacks__note textarea:focus-visible { outline:2px solid #5e714f; outline-offset:4px; }
+@media(max-width:600px) {
+    .fm-callbacks__status-form input[type="date"] { width:100%; }
+}

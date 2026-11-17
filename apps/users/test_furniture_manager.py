@@ -35,7 +35,7 @@ class FurnitureManagerTests(TestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context['catalog_stats'], {'total': 3, 'published': 2, 'drafts': 1})
-        self.assertEqual(response.context['callback_stats'], {'total': 3, 'new': 1, 'processed': 1, 'cancelled': 1})
+        self.assertEqual(response.context['callback_stats'], {'total': 3, 'new': 1, 'processed': 1, 'cancelled': 1, 'due': 0})
         self.assertEqual(response.context['stats']['total'], 1)
         self.assertEqual(response.context['review_stats']['avg_rating'], 4.5)
         self.assertContains(response, reverse('appointments:callback_request_list') + '?status=new')
