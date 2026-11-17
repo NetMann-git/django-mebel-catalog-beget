@@ -1,10 +1,13 @@
 # apps/search/services.py
 
+from hashlib import sha256
+from urllib.parse import urlencode
+
 from django.core.cache import cache
-from django.db import connections
-from django.db.models import Q
+from django.urls import reverse
 from apps.products.image_variants import image_variant
 from apps.products.models import Product, Category, Badge, ProductAttribute
+from .matching import match_products, match_text, query_words
 from .models import SearchQuery
 
 
@@ -12,61 +15,22 @@ class SearchService:
     LIMIT = 8
 
     @staticmethod
-    def _matches_product(product, folded_query):
-        return any(folded_query in (getattr(product, field) or '').casefold()
-                   for field in ('title', 'article', 'short_description', 'description'))
-
-    @staticmethod
-    def _thumbnail_url(image, size=(80, 120)):
-        """Возвращает URL миниатюры для изображения."""
-        if not image:
-            return None
-        return image_variant(image, 'thumb')
+    def _thumbnail_url(image):
+        return image_variant(image, 'thumb') if image else None
 
     @staticmethod
     def search(query):
-        """
-        Поиск товаров по запросу (для страницы результатов).
-        """
-        if not query:
-            return []
-
-        products = Product.objects.filter(is_active=True)
-        if connections[products.db].vendor == 'sqlite':
-            # SQLite LIKE is not case-insensitive for Cyrillic. Reuse the
-            # suggestion matcher locally; MySQL retains the existing SQL path.
-            folded_query = query.casefold()
-            candidates = products.only('pk', 'title', 'article', 'short_description', 'description')
-            ids = [product.pk for product in candidates.iterator(chunk_size=200)
-                   if SearchService._matches_product(product, folded_query)]
-            return products.filter(pk__in=ids)
-        
-        q = Q()
-        q |= Q(title__icontains=query)
-        q |= Q(article__icontains=query)
-        q |= Q(short_description__icontains=query)
-        q |= Q(description__icontains=query)
-        
-        return Product.objects.filter(q, is_active=True)
+        return match_products(Product.objects.filter(is_active=True), query)
 
     @staticmethod
     def suggest(query, request=None):
-        cache_key = f"search_suggest_v74_{query.lower()}"
-        results = cache.get(cache_key)
-        if results is not None:
-            return results
+        words = query_words(query)
+        if not words or len(words) > 16:
+            return []
 
-        # Нормализуем запрос (регистронезависимое сравнение)
-        q = query.casefold()
-
-        # 1. Товары – фильтрация в Python
-        products = Product.objects.filter(is_active=True).select_related('category', 'brand').prefetch_related('badges')
-        matched_products = []
-        for product in products:
-            if SearchService._matches_product(product, q):
-                matched_products.append(product)
-            if len(matched_products) >= SearchService.LIMIT:
-                break
+        matched_products = SearchService.search(query).select_related(
+            'category', 'brand',
+        ).prefetch_related('badges')[:SearchService.LIMIT]
 
         product_results = []
         for product in matched_products:
@@ -83,45 +47,24 @@ class SearchService:
                 'brand': product.brand.name if product.brand else None,
             })
 
-        # 2. Категории – фильтрация в Python
-        categories = Category.objects.all()
-        matched_categories = []
-        for cat in categories:
-            if q in (cat.title or "").casefold():
-                matched_categories.append(cat)
-            if len(matched_categories) >= 3:
-                break
+        catalog_url = reverse('catalog:catalog')
+        categories = match_text(Category.objects.order_by('title', 'pk'), words, 'title')
         category_results = [
-            {'type': 'category', 'title': c.title, 'url': '/catalog/?category=' + str(c.pk)}
-            for c in matched_categories
+            {'type': 'category', 'title': category.title,
+             'url': catalog_url + '?' + urlencode({'category': category.pk})}
+            for category in categories[:3]
         ]
-
-        # 3. Бейджи – фильтрация в Python
-        badges = Badge.objects.all()
-        matched_badges = []
-        for badge in badges:
-            if q in (badge.title or "").casefold():
-                matched_badges.append(badge)
-            if len(matched_badges) >= 3:
-                break
+        badges = match_text(Badge.objects.order_by('title', 'pk'), words, 'title')
         badge_results = [
-            {'type': 'badge', 'title': b.title, 'url': '/catalog/?badge=' + b.slug}
-            for b in matched_badges
+            {'type': 'badge', 'title': badge.title,
+             'url': catalog_url + '?' + urlencode({'q': badge.title})}
+            for badge in badges[:3]
         ]
 
-        # 4. Характеристики – фильтрация в Python
-        attrs = ProductAttribute.objects.select_related('product', 'attribute_type', 'attribute_value').all()
-        matched_attrs = []
-        for attr in attrs:
-            product = attr.product
-            if not product or not product.is_active:
-                continue
-            if (q in (attr.attribute_type.name or "").casefold() or
-                q in (attr.attribute_value.value or "").casefold()):
-                matched_attrs.append(attr)
-            if len(matched_attrs) >= 5:
-                break
-
+        attributes = ProductAttribute.objects.filter(
+            product__is_active=True, attribute_value__isnull=False,
+        ).select_related('product', 'attribute_type', 'attribute_value').order_by('sort_order', 'pk')
+        matched_attrs = match_text(attributes, words, 'attribute_type__name', 'attribute_value__value')[:5]
         attribute_results = []
         for attr in matched_attrs:
             product = attr.product
@@ -135,21 +78,15 @@ class SearchService:
                 'currency': product.currency,
             })
 
-        # Собираем все результаты
-        results = product_results + category_results + badge_results + attribute_results
-        results = results[:10]
-
-        cache.set(cache_key, results, 300)
-
-        # Сохраняем историю
         if request:
-            SearchService.save_query(query, request)
+            query_key = sha256(query.lower().encode()).hexdigest()
+            if cache.add(f'search_history:{query_key}', True, 300):
+                SearchService.save_query(query, request)
 
-        return results
+        return (product_results + category_results + badge_results + attribute_results)[:10]
 
     @staticmethod
     def get_popular_queries(limit=10):
-        from .models import SearchQuery
         from django.db.models import Sum
 
         return list(

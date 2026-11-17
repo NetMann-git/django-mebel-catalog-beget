@@ -1,9 +1,9 @@
 """Validated filters for the furniture catalog."""
 from decimal import Decimal, InvalidOperation
-from django.db import connection
 from django.db.models.functions import Lower
 from django.http import QueryDict
 from apps.products.models import Brand
+from apps.search.matching import match_products
 
 CATALOG_FILTER_KEYS = ('q', 'category', 'brand', 'availability', 'price_min', 'price_max', 'sort')
 CATALOG_SORTS = ('price_asc', 'price_desc', 'title_asc', 'title_desc')
@@ -70,12 +70,7 @@ class CatalogFilter:
             if upper is not None:
                 queryset = queryset.filter(price__lte=upper)
         if self.query:
-            if connection.vendor == 'sqlite' and not self.query.isascii():
-                needle = self.query.casefold()
-                matching_ids = [pk for pk, title in queryset.values_list('pk', 'title') if needle in title.casefold()]
-                queryset = queryset.filter(pk__in=matching_ids)
-            else:
-                queryset = queryset.filter(title__icontains=self.query)
+            queryset = match_products(queryset, self.query)
         ordering = {
             'price_asc': ('price', 'pk'), 'price_desc': ('-price', 'pk'),
             'title_asc': (Lower('title'), 'pk'), 'title_desc': (Lower('title').desc(), 'pk'),

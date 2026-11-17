@@ -3,7 +3,6 @@
 from django.core.paginator import EmptyPage, PageNotAnInteger, Paginator
 from django.template.response import TemplateResponse
 from django.http import JsonResponse
-from django.views.decorators.cache import cache_page
 from django.views.decorators.vary import vary_on_headers
 from django.views.decorators.csrf import ensure_csrf_cookie
 from apps.wishlist.services import wishlist_products
@@ -25,7 +24,7 @@ def suggest(request):
     AJAX-эндпоинт для автодополнения поиска.
     Возвращает JSON со списком товаров, категорий, бейджей.
     """
-    query = request.GET.get('q', '').strip()
+    query = request.GET.get('q', '').strip()[:255]
     if len(query) < 2:
         return JsonResponse({'results': []}, status=200)
 
@@ -43,13 +42,13 @@ def search(request):
     """
     Страница результатов поиска по товарам (без Wagtail).
     """
-    search_query = request.GET.get("query", "").strip()
+    search_query = request.GET.get("query", "").strip()[:255]
     page = request.GET.get("page", 1)
 
     # Поиск по товарам
     if search_query:
         service = SearchService()
-        search_results = service.search(search_query).select_related('category', 'brand').prefetch_related('badges').order_by('title', 'pk')
+        search_results = service.search(search_query).select_related('category', 'brand').prefetch_related('badges')
     else:
         search_results = []
 
