@@ -93,3 +93,28 @@ class CallbackFollowUpTests(TestCase):
         self.assertEqual(new_request.status, 'new')
         self.assertEqual(new_request.manager_note, '')
         self.assertIsNone(new_request.follow_up_on)
+
+    def test_future_and_unplanned_queues_and_return_after_scheduling(self):
+        later = CallbackRequest.objects.create(
+            phone='+79991234568', follow_up_on=self.today + timedelta(days=3),
+        )
+        sooner = CallbackRequest.objects.create(
+            phone='+79991234569', follow_up_on=self.today + timedelta(days=1),
+        )
+        CallbackRequest.objects.create(phone='+79991234560', status='processed')
+        future = self.inbox + '?queue=upcoming'
+        unplanned = self.inbox + '?queue=unplanned'
+
+        response = self.client.get(future)
+        self.assertEqual(list(response.context['callbacks']), [sooner, later])
+        self.assertEqual(response.context['pagination_query'], 'queue=upcoming')
+        self.assertEqual(response.context['counts']['upcoming'], 2)
+        self.assertEqual(list(self.client.get(unplanned).context['callbacks']), [self.request])
+
+        self.assertRedirects(self.client.post(self.update, {
+            'status': 'new',
+            'follow_up_on': self.today.isoformat(),
+            'current_queue': 'unplanned',
+        }), unplanned)
+        self.assertFalse(list(self.client.get(unplanned).context['callbacks']))
+        self.assertEqual(list(self.client.get(self.inbox + '?due=1').context['callbacks']), [self.request])

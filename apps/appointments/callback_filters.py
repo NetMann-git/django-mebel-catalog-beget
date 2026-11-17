@@ -41,8 +41,27 @@ def due_follow_ups(today):
     return Q(status=CallbackRequest.STATUS_NEW, follow_up_on__lte=today)
 
 
-def filter_query(status, query, page=None, *, due=False):
-    params = {'due': '1'} if due else {}
+def follow_up_queues(today):
+    open_requests = Q(status=CallbackRequest.STATUS_NEW)
+    return {
+        'due': due_follow_ups(today),
+        'upcoming': open_requests & Q(follow_up_on__gt=today),
+        'unplanned': open_requests & Q(follow_up_on__isnull=True),
+    }
+
+
+def callback_queue(due, queue):
+    if due == '1':
+        return 'due'
+    return queue if queue in ('upcoming', 'unplanned') else ''
+
+
+def filter_query(status, query, page=None, *, queue=''):
+    params = {}
+    if queue == 'due':
+        params['due'] = '1'
+    elif queue:
+        params['queue'] = queue
     if status:
         params['status'] = status
     if query:

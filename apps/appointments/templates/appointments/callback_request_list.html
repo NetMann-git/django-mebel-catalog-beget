@@ -10,15 +10,17 @@
   <h1 id="callbacks-title">Обращения клиентов</h1>
   <p class="fm-callbacks__counts">Всего обращений: <strong>{{ total }}</strong> · Новых: <strong>{{ new_count }}</strong></p>
   <nav class="fm-callbacks__queues" aria-label="Очереди обращений">
-    <a href="{% url 'appointments:callback_request_list' %}"{% if not due %} aria-current="page"{% endif %}>Все обращения</a>
-    <a href="{% url 'appointments:callback_request_list' %}?due=1"{% if due %} aria-current="page"{% endif %}>На сегодня и просроченные <strong>{{ due_count }}</strong></a>
+    <a href="{% url 'appointments:callback_request_list' %}"{% if not queue %} aria-current="page"{% endif %}>Все обращения</a>
+    <a href="{% url 'appointments:callback_request_list' %}?due=1"{% if queue == 'due' %} aria-current="page"{% endif %}>На сегодня и просроченные <strong>{{ counts.due }}</strong></a>
+    <a href="{% url 'appointments:callback_request_list' %}?queue=upcoming"{% if queue == 'upcoming' %} aria-current="page"{% endif %}>Предстоящие <strong>{{ counts.upcoming }}</strong></a>
+    <a href="{% url 'appointments:callback_request_list' %}?queue=unplanned"{% if queue == 'unplanned' %} aria-current="page"{% endif %}>Без даты <strong>{{ counts.unplanned }}</strong></a>
   </nav>
   <form method="get" class="fm-callbacks__filter" aria-label="Фильтр обращений">
-    {% if due %}<input type="hidden" name="due" value="1">{% endif %}
+    {% if queue == 'due' %}<input type="hidden" name="due" value="1">{% elif queue %}<input type="hidden" name="queue" value="{{ queue }}">{% endif %}
     <div class="fm-callbacks__search"><label for="callback-query">Поиск по обращениям</label><input id="callback-query" type="search" name="q" value="{{ query }}" maxlength="200" placeholder="№ обращения (#123), клиент, телефон или изделие" autocomplete="off"></div>
     <div><label for="callback-status">Статус обращения</label><select id="callback-status" name="status"><option value="">Все статусы</option>{% for value, label in status_choices %}<option value="{{ value }}"{% if status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
     <button type="submit" class="fm-callbacks__button">Показать</button>
-    {% if status or query %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}{% if due %}?due=1{% endif %}">Сбросить фильтр</a>{% endif %}
+    {% if status or query %}<a class="fm-callbacks__reset" href="{% url 'appointments:callback_request_list' %}{% if queue_query %}?{{ queue_query }}{% endif %}">Сбросить фильтр</a>{% endif %}
   </form>
   <p class="fm-callbacks__shown">Показано: {{ callbacks|length }} из {{ matched_total }}</p>
   <div class="fm-callbacks__list">
@@ -49,7 +51,7 @@
       </div>
       <form method="post" action="{% url 'appointments:callback_request_status_update' callback.pk %}" class="fm-callbacks__status-form">
         {% csrf_token %}<input type="hidden" name="current_filter" value="{{ status }}"><input type="hidden" name="current_query" value="{{ query }}"><input type="hidden" name="current_page" value="{{ page_obj.number }}">
-        {% if due %}<input type="hidden" name="current_due" value="1">{% endif %}
+        {% if queue == 'due' %}<input type="hidden" name="current_due" value="1">{% elif queue %}<input type="hidden" name="current_queue" value="{{ queue }}">{% endif %}
         <div><label for="status-{{ callback.pk }}">Изменить статус</label><select name="status" id="status-{{ callback.pk }}" aria-label="Статус обращения {{ callback.pk }}">{% for value, label in status_choices %}<option value="{{ value }}"{% if callback.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
         <div><label for="follow-up-{{ callback.pk }}">Дата следующего контакта</label><input type="date" id="follow-up-{{ callback.pk }}" name="follow_up_on" value="{{ callback.follow_up_on|date:'Y-m-d' }}"></div>
         <div class="fm-callbacks__note">
@@ -60,7 +62,7 @@
       </form>
     </article>
     {% empty %}
-    <div class="fm-callbacks__empty"><h2>{% if query %}Обращения не найдены{% elif status %}Нет обращений с этим статусом{% elif due %}Нет контактов на сегодня и просроченных{% else %}Обращений пока нет{% endif %}</h2><p>{% if status or query %}Измените поиск, выберите другой статус или сбросьте фильтр.{% elif due %}Здесь появятся открытые обращения, дата контакта по которым наступила.{% else %}Здесь появятся обращения, отправленные через формы сайта.{% endif %}</p></div>
+    <div class="fm-callbacks__empty"><h2>{% if query %}Обращения не найдены{% elif status %}Нет обращений с этим статусом{% elif queue == 'due' %}Нет контактов на сегодня и просроченных{% elif queue == 'upcoming' %}Нет предстоящих контактов{% elif queue == 'unplanned' %}У всех новых обращений назначена дата{% else %}Обращений пока нет{% endif %}</h2><p>{% if status or query %}Измените поиск, выберите другой статус или сбросьте фильтр.{% elif queue %}Запланировать контакт можно в карточке открытого обращения.{% else %}Здесь появятся обращения, отправленные через формы сайта.{% endif %}</p></div>
     {% endfor %}
   </div>
   {% if page_obj.has_other_pages %}<nav class="fm-callbacks__pagination" aria-label="Страницы обращений">

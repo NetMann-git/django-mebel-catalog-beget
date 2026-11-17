@@ -11,7 +11,8 @@ from django.http import JsonResponse
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.utils.http import url_has_allowed_host_and_scheme
-from .callback_filters import clean_query, search_callbacks, filter_query, due_follow_ups, PAGE_SIZE
+from django.db.models import Count
+from .callback_filters import clean_query, search_callbacks, filter_query, callback_queue, follow_up_queues, PAGE_SIZE
 
 from apps.products.models import Product
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
@@ -310,9 +311,16 @@ def callback_request_list(request):
         status = ""
 
     today = timezone.localdate()
-    due = request.GET.get('due') == '1'
-    if due:
-        callbacks = callbacks.filter(due_follow_ups(today)).order_by('follow_up_on', 'created_at', 'pk')
+    queue = callback_queue(request.GET.get('due'), request.GET.get('queue'))
+    queues = follow_up_queues(today)
+    if queue:
+        callbacks = callbacks.filter(queues[queue])
+    if queue in ('due', 'upcoming'):
+        callbacks = callbacks.order_by('follow_up_on', 'created_at', 'pk')
+    counts = CallbackRequest.objects.aggregate(
+        total=Count('pk'),
+        **{name: Count('pk', filter=condition) for name, condition in queues.items()},
+    )
 
     callbacks = search_callbacks(callbacks, query)
     page_obj = Paginator(callbacks, PAGE_SIZE).get_page(request.GET.get('page'))
@@ -320,17 +328,16 @@ def callback_request_list(request):
         "callbacks": page_obj.object_list,
         "page_obj": page_obj,
         "query": query,
-        "pagination_query": filter_query(status, query, due=due),
-        "due": due,
+        "pagination_query": filter_query(status, query, queue=queue),
+        "queue": queue,
+        "queue_query": filter_query("", "", queue=queue),
         "today": today,
-        "due_count": CallbackRequest.objects.filter(due_follow_ups(today)).count(),
+        "counts": counts,
         "matched_total": page_obj.paginator.count,
         "status": status,
         "status_choices": CallbackRequest.STATUS_CHOICES,
-        "total": CallbackRequest.objects.count(),
-        "new_count": CallbackRequest.objects.filter(
-            status=CallbackRequest.STATUS_NEW
-        ).count(),
+        "total": counts['total'],
+        "new_count": counts['due'] + counts['upcoming'] + counts['unplanned'],
     }
     return render(request, "appointments/callback_request_list.html", context)
 
@@ -356,7 +363,9 @@ def callback_request_status_update(request, pk):
     if current_filter not in valid_statuses:
         current_filter = ''
     params = filter_query(current_filter, clean_query(request.POST.get('current_query')),
-                          request.POST.get('current_page'), due=request.POST.get('current_due') == '1')
+                          request.POST.get('current_page'), queue=callback_queue(
+                              request.POST.get('current_due'), request.POST.get('current_queue'),
+                          ))
     if params:
         redirect_url = f"{redirect_url}?{params}"
 
