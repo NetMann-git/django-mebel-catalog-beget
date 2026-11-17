@@ -516,12 +516,20 @@ def product_create(request):
     """Создание нового товара."""
 
     if request.method == 'POST':
-        form = ProductForm(request.POST, request.FILES)
+        preview_draft = request.POST.get('action') == 'preview_draft'
+        data = request.POST
+        if preview_draft:
+            data = data.copy()
+            data.pop('is_active', None)
+        form = ProductForm(data, request.FILES)
 
         if form.is_valid():
             product = form.save()
 
             CatalogCache.clear_catalog()
+
+            if preview_draft:
+                return redirect('catalog:product_preview', product_id=product.pk)
 
             messages.success(request, f'Изделие "{product.title}" создано.')
             return redirect('catalog:product_edit', product_id=product.id)

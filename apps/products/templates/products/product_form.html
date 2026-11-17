@@ -16,12 +16,15 @@
         <p><a href="#product-gallery">Добавить фотографии ↓</a></p>
         <p>В предпросмотре отображаются сохранённые данные изделия.</p>
     {% else %}
-        <p>Сохраните изделие, чтобы открыть предпросмотр. Для черновика снимите отметку «Активен».</p>
+        <p>Кнопка «Сохранить черновик и открыть предпросмотр» сохранит изделие скрытым от посетителей. Опубликовать его можно в редакторе, отметив «Активен» и сохранив изменения.</p>
     {% endif %}
     
     <!-- Кнопка Сохранить вверху -->
     <div style="margin-bottom: 20px;">
-        <button type="submit" form="product-form" class="btn-save">💾 Сохранить изделие</button>
+        {% if not product %}
+            <button type="submit" form="product-form" name="action" value="preview_draft" class="btn-save">Сохранить черновик и открыть предпросмотр</button>
+        {% endif %}
+        <button type="submit" form="product-form" class="{% if product %}btn-save{% else %}btn-cancel{% endif %}">💾 Сохранить изделие</button>
         {% if product %}<a href="{% url 'catalog:product_preview' product.pk %}" class="btn-cancel" target="_blank" rel="noopener" title="Открыть сохранённое изделие в новой вкладке">Предпросмотр изделия</a>{% endif %}
         <a href="{% url 'catalog:product_list_manage' %}" class="btn-cancel">Отмена</a>
     </div>
@@ -99,8 +102,11 @@
     </section>
 
     <!-- Кнопка Сохранить внизу -->
-    <div style="margin-top: 20px; display: flex; gap: 15px;">
-        <button type="submit" form="product-form" class="btn-save">💾 Сохранить изделие</button>
+    <div style="margin-top: 20px; display: flex; flex-wrap: wrap; gap: 15px;">
+        {% if not product %}
+            <button type="submit" form="product-form" name="action" value="preview_draft" class="btn-save">Сохранить черновик и открыть предпросмотр</button>
+        {% endif %}
+        <button type="submit" form="product-form" class="{% if product %}btn-save{% else %}btn-cancel{% endif %}">💾 Сохранить изделие</button>
         <a href="{% url 'catalog:product_list_manage' %}" class="btn-cancel">Отмена</a>
     </div>
 </div>

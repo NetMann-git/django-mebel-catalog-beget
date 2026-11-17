@@ -95,6 +95,30 @@ class FurnitureFormTests(TestCase):
         self.assertNotEqual(product.slug, 'unexpected')
         self.assertEqual(list(product.equipment.all()), [self.option])
 
+    def test_create_draft_preview_and_publish(self):
+        create = reverse('catalog:product_create')
+        self.assertContains(
+            self.client.get(create), 'Сохранить черновик и открыть предпросмотр',
+        )
+        data = self.data(action='preview_draft', is_active='on', equipment=[self.option.pk])
+        response = self.client.post(create, {**data, 'price': ''})
+        self.assertContains(response, 'value="preview_draft"')
+        self.assertFalse(Product.objects.exists())
+
+        response = self.client.post(create, data, follow=True)
+        product = Product.objects.get()
+        preview = reverse('catalog:product_preview', args=[product.pk])
+        edit = reverse('catalog:product_edit', args=[product.pk])
+        self.assertEqual(response.redirect_chain, [(preview, 302)])
+        self.assertContains(response, 'Черновик')
+        self.assertContains(response, edit)
+        self.assertFalse(product.is_active)
+        self.assertEqual(list(product.equipment.all()), [self.option])
+        self.assertEqual(self.client.get(product.get_absolute_url()).status_code, 404)
+
+        self.assertRedirects(self.client.post(edit, self.data(is_active='on')), edit)
+        self.assertEqual(self.client.get(product.get_absolute_url()).status_code, 200)
+
     def test_anonymous_and_unprivileged_do_not_get_editor(self):
         self.client.logout()
         self.assertEqual(self.client.get(reverse('catalog:product_create')).status_code, 302)
