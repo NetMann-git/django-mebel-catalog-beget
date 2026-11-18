@@ -14,6 +14,7 @@
         <h3><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
         {% if product.short_description %}<p>{{ product.short_description|truncatechars:180 }}</p>{% endif %}
         {% if product.price > 0 %}<p><strong>Ориентир по цене:</strong> {{ product.price|price_format }} {% if product.currency == "RUB" %}₽{% else %}{{ product.currency }}{% endif %}</p>{% endif %}
+        {% if product.price_details %}<details class="fp-price-details"><summary>Что входит в стоимость</summary><div>{{ product.price_details|linebreaks }}</div></details>{% endif %}
         {% if product.portfolio_attributes %}
         <dl class="fp-specs">
           {% for attr in product.portfolio_attributes|slice:":4" %}

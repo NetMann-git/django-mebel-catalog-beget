@@ -14,3 +14,8 @@
 .fp-specs dd { margin:0; overflow-wrap:anywhere; }
 .fp-actions a { display:inline-flex; align-items:center; min-height:44px; }
 .fp-portfolio a:focus-visible { outline:2px solid #5e714f; outline-offset:3px; }
+
+.fp-price-details { font-size:14px; line-height:1.6; overflow-wrap:anywhere; }
+.fp-price-details summary { cursor:pointer; padding:10px 0; min-height:44px; text-decoration:underline; text-underline-offset:3px; }
+.fp-price-details summary:focus-visible { outline:2px solid #5e714f; outline-offset:3px; }
+.fp-price-details p { margin-bottom:8px; }

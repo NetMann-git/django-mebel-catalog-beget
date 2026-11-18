@@ -78,6 +78,13 @@ class Product(models.Model):
         verbose_name="Валюта"
     )
 
+    price_details = models.TextField(
+        blank=True,
+        max_length=1500,
+        verbose_name='Что входит в стоимость',
+        help_text='Укажите комплектацию этой цены и отдельно оплачиваемые работы. Например, корпус и фурнитура включены, доставка и монтаж рассчитываются отдельно.',
+    )
+
     # Статусы
     is_active = models.BooleanField(
         default=True,

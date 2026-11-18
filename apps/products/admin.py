@@ -234,6 +234,7 @@ class ProductAdmin(admin.ModelAdmin):
                 "fields": (
                     "price",
                     "currency",
+                    "price_details",
                     "badges",
                 )
             },

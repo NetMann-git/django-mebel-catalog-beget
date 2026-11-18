@@ -126,3 +126,32 @@ class FurnitureFormTests(TestCase):
         self.client.force_login(user)
         self.assertEqual(self.client.post(reverse('catalog:product_create'), self.data()).status_code, 302)
         self.assertFalse(Product.objects.exists())
+
+    def test_price_details_saved_from_editor_and_escaped_on_public_pages(self):
+        from apps.products.tests.image_fixtures import image_test_storage
+
+        image_test_storage(self, ['products/price-details.jpg'])
+        product = Product.objects.create(
+            title='Шкаф', slug='price-details', price=12345, is_portfolio=True,
+            image='products/price-details.jpg',
+        )
+        edit = reverse('catalog:product_edit', args=[product.pk])
+        details = 'Корпус и фурнитура включены.\nМонтаж отдельно. <script>test()</script>'
+        self.assertRedirects(self.client.post(edit, self.data(
+            is_active='on', is_portfolio='on', price_details=details,
+        )), edit)
+        product.refresh_from_db()
+        self.assertEqual(product.price_details, details)
+        for url in (product.get_absolute_url(), reverse('furniture_portfolio'), reverse('home'),
+                    reverse('catalog:product_preview', args=[product.pk])):
+            with self.subTest(url=url):
+                response = self.client.get(url)
+                self.assertContains(response, 'Корпус и фурнитура включены.')
+                self.assertContains(response, '&lt;script&gt;test()&lt;/script&gt;')
+                self.assertNotContains(response, '<script>test()</script>')
+        self.assertContains(self.client.get(reverse('admin:products_product_change', args=[product.pk])), 'name="price_details"')
+        response = self.client.post(edit, self.data(price_details='x' * 1501))
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('price_details', response.context['form'].errors)
+        product.refresh_from_db()
+        self.assertEqual(product.price_details, details)

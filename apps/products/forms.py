@@ -55,7 +55,7 @@ class ProductForm(AutoSlugMixin, ProductModelForm):
     class Meta:
         model = Product
         fields = [
-            'title', 'slug', 'category', 'brand', 'car_model', 'price', 'currency',
+            'title', 'slug', 'category', 'brand', 'car_model', 'price', 'currency', 'price_details',
             'short_description', 'description', 'is_active', 'is_featured', 'is_portfolio',
             'availability_status', 'article', 'product_type', 'meta_title', 'meta_description',
             'badges', 'equipment'
@@ -76,6 +76,7 @@ class ProductForm(AutoSlugMixin, ProductModelForm):
             'category': forms.Select(attrs={'class': 'form-control'}),
             'brand': forms.Select(attrs={'class': 'form-control'}),
             'price': forms.NumberInput(attrs={'class': 'form-control', 'step': '0.01'}),
+            'price_details': forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
             'currency': forms.Select(attrs={'class': 'form-control'}),
             'short_description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 6}),
