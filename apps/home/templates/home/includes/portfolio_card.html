@@ -1,0 +1,29 @@
+{% load image_variants price_format %}
+    <article class="fc-card">
+      {% with photo=product.portfolio_photos.0 %}
+      <a class="fc-card-image" href="{{ product.get_absolute_url }}">
+        {% if product.image %}
+        <img src="{{ product.image|image_variant:'card' }}" alt="{{ product.title }}" loading="lazy" decoding="async">
+        {% else %}
+        <img src="{{ photo.image|image_variant:'card' }}" alt="{{ product.title }}" loading="lazy" decoding="async">
+        {% endif %}
+      </a>
+      {% endwith %}
+      <div class="fc-card-body">
+        {% if product.category %}<p class="fm-eyebrow">{{ product.category.title }}</p>{% endif %}
+        <h3><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
+        {% if product.short_description %}<p>{{ product.short_description|truncatechars:180 }}</p>{% endif %}
+        {% if product.price > 0 %}<p><strong>Ориентир по цене:</strong> {{ product.price|price_format }} {% if product.currency == "RUB" %}₽{% else %}{{ product.currency }}{% endif %}</p>{% endif %}
+        {% if product.portfolio_attributes %}
+        <dl class="fp-specs">
+          {% for attr in product.portfolio_attributes|slice:":4" %}
+          <div><dt>{{ attr.attribute_type.name }}</dt><dd>{{ attr.attribute_value.value }}</dd></div>
+          {% endfor %}
+        </dl>
+        {% endif %}
+        <div class="fp-actions">
+          <a href="{{ product.get_absolute_url }}">Смотреть работу</a>
+          <a href="{% url 'appointments:car_inquiry' product.pk %}?type=similar">Рассчитать похожее</a>
+        </div>
+      </div>
+    </article>

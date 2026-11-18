@@ -3,6 +3,6 @@
 
 {% block seo_meta %}<meta name="description" content="Мебель и столярные изделия на заказ: кухни, шкафы, гардеробные, прилавки. Индивидуальные размеры, подбор материалов и сборка."><meta property="og:title" content="LUSTRID.RU — мебель на заказ"><meta property="og:description" content="Продуманная мебель для вашего пространства. От проекта до установки."><meta property="og:type" content="website"><meta property="og:url" content="{{ request.build_absolute_uri }}"><meta property="og:locale" content="ru_RU">{% endblock %}
 {% block body_class %}furniture-home{% endblock %}{% block body_theme_class %}{% endblock %}
-{% block furniture_showcase_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-showcase.css' %}">{% endblock %}
+{% block furniture_showcase_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'home/css/furniture-portfolio.css' %}?v=114"><link rel="stylesheet" href="{% static 'home/css/furniture-showcase.css' %}">{% endblock %}
 {% block furniture_content %}{% include 'home/sections/furniture_hero.html' %}{% include 'home/sections/furniture_sections.html' %}{% endblock %}
 {% block extra_js %}{% endblock %}

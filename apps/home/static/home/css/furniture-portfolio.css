@@ -6,3 +6,11 @@
 .fp-portfolio .fc-card-body { display: grid; align-content: start; gap: 10px; }
 .fp-portfolio .fc-card-body h2 { font-size: 19px; line-height: 1.35; }
 .fp-portfolio .fc-card-body p { overflow-wrap: anywhere; }
+
+.fp-portfolio .fc-card-body h3 { font-size:19px; line-height:1.35; }
+.fp-specs { margin:0; font-size:14px; line-height:1.5; }
+.fp-specs > div { display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:12px; padding:6px 0; border-bottom:1px solid #e5e7df; }
+.fp-specs dt { color:#626d5c; }
+.fp-specs dd { margin:0; overflow-wrap:anywhere; }
+.fp-actions a { display:inline-flex; align-items:center; min-height:44px; }
+.fp-portfolio a:focus-visible { outline:2px solid #5e714f; outline-offset:3px; }

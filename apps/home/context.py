@@ -10,6 +10,7 @@ from apps.reviews.models import Review
 
 from .models import ClientShowcase, ContactSettings, TeamMember
 from .furniture_showcase import category_images
+from .portfolio import portfolio_projects
 
 
 class HomeContextBuilder:
@@ -56,6 +57,7 @@ class HomeContextBuilder:
         category_urls = furniture_category_urls()
         return {
             "featured_products": featured_products,
+            "portfolio_projects": list(portfolio_projects()[:4]),
             "featured_brands": featured_brands,
             "reviews": reviews[:4],
             "clients": clients,

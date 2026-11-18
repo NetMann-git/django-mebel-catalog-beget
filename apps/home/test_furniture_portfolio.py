@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from apps.products.models import Category, Product, ProductGalleryImage
+from apps.products.models import AttributeType, AttributeValue, Category, Product, ProductAttribute, ProductGalleryImage
 from apps.products.tests.image_fixtures import image_test_storage
 
 
@@ -44,3 +44,20 @@ class FurniturePortfolioTests(TestCase):
         self.assertContains(response, reverse('appointments:car_inquiry', args=[work.pk]) + '?type=similar')
         self.assertContains(response, work.get_absolute_url())
         self.assertEqual(list(self.client.get(url, {'category': kitchens.slug}).context['page_obj']), [gallery_work])
+
+    def test_home_shows_selected_completed_work_and_its_specifications(self):
+        image_test_storage(self, ['products/home-project.jpg'])
+        work = Product.objects.create(
+            title='Реальная гардеробная', slug='home-completed', price=120000,
+            image='products/home-project.jpg', is_portfolio=True,
+        )
+        kind = AttributeType.objects.create(name='Материал', slug='portfolio-material')
+        value = AttributeValue.objects.create(attribute_type=kind, value='Массив дуба')
+        ProductAttribute.objects.create(product=work, attribute_type=kind, attribute_value=value)
+        response = self.client.get('/')
+        self.assertContains(response, 'id="completed-projects"', count=1)
+        self.assertContains(response, 'Массив дуба')
+        self.assertContains(response, reverse('appointments:car_inquiry', args=[work.pk]) + '?type=similar')
+        work.is_active = False
+        work.save(update_fields=['is_active'])
+        self.assertNotContains(self.client.get('/'), 'id="completed-projects"')

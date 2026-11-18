@@ -1,0 +1,13 @@
+{% if portfolio_projects %}
+<section class="fm-section fp-portfolio" id="completed-projects" aria-labelledby="completed-projects-title">
+  <div class="fm-container">
+    <div class="fm-section-heading">
+      <div><h2 id="completed-projects-title">Выполненные работы</h2><p>Фотографии и детали проектов мастерской.</p></div>
+      <a class="fm-section-link" href="{% url 'furniture_portfolio' %}">Все выполненные работы {% include 'home/includes/furniture_icon.html' with icon='arrow' icon_class='fm-action-icon' %}</a>
+    </div>
+    <div class="fc-product-grid">
+      {% for product in portfolio_projects %}{% include 'home/includes/portfolio_card.html' %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

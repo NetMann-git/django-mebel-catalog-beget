@@ -10,6 +10,7 @@
     <div><p class="fm-manage__eyebrow">Мебельная мастерская</p><h1 id="manage-title">Управление изделиями</h1></div>
     <a class="fm-manage__button fm-manage__button--primary" href="{% url 'catalog:product_create' %}">Добавить изделие</a>
   </div>
+  <p><a href="{% url 'furniture_portfolio' %}" target="_blank" rel="noopener">Открыть портфолио на сайте ↗</a></p>
   <form method="get" class="fm-manage__search" role="search" aria-label="Поиск изделий для управления">
     <div><label for="manage-search">Название, артикул или категория</label><input type="search" id="manage-search" name="search" value="{{ search }}" placeholder="Например, шкаф"></div>
     <button class="fm-manage__button fm-manage__button--primary" type="submit">Найти</button>
@@ -23,7 +24,7 @@
     <tbody>{% for product in products %}
       <tr>
         <td class="fm-manage__photo">{% if product.image %}<img src="{{ product.image|image_variant:"table" }}" alt="{{ product.title }}" width="112" height="84" loading="lazy">{% else %}<span class="fm-manage__no-photo">Нет фото</span>{% endif %}</td>
-        <td class="fm-manage__name"><a href="{% url 'catalog:product_edit' product.pk %}">{{ product.title }}</a></td>
+        <td class="fm-manage__name"><a href="{% url 'catalog:product_edit' product.pk %}">{{ product.title }}</a>{% if product.is_portfolio %}<p class="fm-manage__eyebrow">Выбрано для портфолио</p>{% endif %}</td>
         <td><span class="fm-manage__label" aria-hidden="true">Артикул</span>{{ product.article|default:"—" }}</td>
         <td class="fm-manage__price"><span class="fm-manage__label" aria-hidden="true">Цена</span><span>{{ product.price|price_format }} {{ product.currency }}</span></td>
         <td><span class="fm-manage__label" aria-hidden="true">Категория</span>{{ product.category.title|default:"—" }}</td>
