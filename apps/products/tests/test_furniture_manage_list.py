@@ -111,3 +111,35 @@ class FurnitureManageListTests(TestCase):
         response = self.client.get(self.url, {'search': text})
         self.assertNotContains(response, text)
         self.assertContains(response, '&lt;script&gt;')
+
+    def test_portfolio_queues_match_public_visibility_and_preserve_search(self):
+        from apps.home.portfolio import portfolio_projects
+        from apps.products.models import ProductGalleryImage
+
+        self.draft.is_portfolio = True
+        self.draft.save(update_fields=['is_portfolio'])
+        self.published.is_portfolio = True
+        self.published.save(update_fields=['is_portfolio'])
+        ProductGalleryImage.objects.create(product=self.published, image='products/gallery/ready.jpg')
+        selected = self.client.get(self.url, {'portfolio': 'selected'})
+        self.assertEqual(selected.context['total'], 2)
+        self.assertContains(selected, 'Для портфолио — опубликуйте изделие')
+        self.assertContains(selected, 'Для портфолио — добавьте фотографию')
+        self.assertContains(selected, 'Фото в галерее')
+
+        ready = self.client.get(self.url, {'portfolio': 'ready'})
+        self.assertEqual(list(ready.context['products']), list(portfolio_projects()))
+        self.assertEqual(ready.context['portfolio_counts'], {'all': 2, 'selected': 2, 'ready': 1, 'preparation': 1})
+        preparation = self.client.get(self.url, {'portfolio': 'preparation'})
+        self.assertEqual(list(preparation.context['products']), [self.draft])
+
+        Product.objects.bulk_create([
+            Product(title=f'Подборка {i}', slug=f'portfolio-manage-{i}', price=1, is_portfolio=True)
+            for i in range(21)
+        ])
+        page = self.client.get(self.url, {'portfolio': 'preparation', 'search': 'подборка'})
+        link = BeautifulSoup(page.content, 'html.parser').select_one('[aria-label="Следующая страница"]')['href']
+        self.assertEqual(parse_qs(urlparse(link).query), {
+            'page': ['2'], 'portfolio': ['preparation'], 'search': ['подборка'],
+        })
+        self.assertEqual(len(self.client.get(self.url + link).context['products']), 1)

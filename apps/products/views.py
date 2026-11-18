@@ -492,22 +492,54 @@ def brand_delete(request, brand_id):
 def product_list_manage(request):
     """Список товаров для управления (менеджер)."""
     
-    products = Product.objects.select_related('category').order_by('-id')
-    
-    search = request.GET.get('search', '')
+    import re
+    from urllib.parse import urlencode
+    from django.db.models import Count
+    from .portfolio import visible_portfolio, with_portfolio_photo
+
+    products = with_portfolio_photo(Product.objects.select_related('category')).order_by('-id')
+    ready = visible_portfolio()
+    needs_preparation = Q(is_portfolio=True) & ~ready
+    counts = products.aggregate(
+        all=Count('pk'),
+        selected=Count('pk', filter=Q(is_portfolio=True)),
+        ready=Count('pk', filter=ready),
+        preparation=Count('pk', filter=needs_preparation),
+    )
+    portfolio_filter = request.GET.get('portfolio', '')
+    filters = {
+        'selected': Q(is_portfolio=True),
+        'ready': ready,
+        'preparation': needs_preparation,
+    }
+    if portfolio_filter in filters:
+        products = products.filter(filters[portfolio_filter])
+    else:
+        portfolio_filter = ''
+
+    search = request.GET.get('search', '').strip()[:200]
     if search:
+        pattern = re.escape(search)
         products = products.filter(
-            Q(title__icontains=search) |
-            Q(article__icontains=search) |
-            Q(category__title__icontains=search)
+            Q(title__iregex=pattern) | Q(article__iregex=pattern) | Q(category__title__iregex=pattern)
         )
-    
+    params = {}
+    if portfolio_filter:
+        params['portfolio'] = portfolio_filter
+    queue_query = urlencode(params)
+    if search:
+        params['search'] = search
+
     paginator = Paginator(products, 20)
     page = request.GET.get('page')
     products_page = paginator.get_page(page)
     
     context = {
         'products': products_page,
+        'portfolio_filter': portfolio_filter,
+        'portfolio_counts': counts,
+        'pagination_query': urlencode(params),
+        'queue_query': queue_query,
         'search': search,
         'total': products.count(),
     }

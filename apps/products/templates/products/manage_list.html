@@ -2,7 +2,7 @@
 {% load price_format static %}
 {% block title %}Управление изделиями — LUSTRID.RU{% endblock %}
 {% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
-{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-manage-list.css' %}">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-manage-list.css' %}?v=115">{% endblock %}
 {% block furniture_content %}
 <section class="fm-container fm-manage" aria-labelledby="manage-title">
   <a class="fm-manage__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
@@ -11,20 +11,32 @@
     <a class="fm-manage__button fm-manage__button--primary" href="{% url 'catalog:product_create' %}">Добавить изделие</a>
   </div>
   <p><a href="{% url 'furniture_portfolio' %}" target="_blank" rel="noopener">Открыть портфолио на сайте ↗</a></p>
+  <nav class="fm-manage__queues" aria-label="Подборка портфолио">
+    <a href="{% url 'catalog:product_list_manage' %}"{% if not portfolio_filter %} aria-current="page"{% endif %}>Все изделия <strong>{{ portfolio_counts.all }}</strong></a>
+    <a href="?portfolio=selected"{% if portfolio_filter == 'selected' %} aria-current="page"{% endif %}>Выбраны для портфолио <strong>{{ portfolio_counts.selected }}</strong></a>
+    <a href="?portfolio=ready"{% if portfolio_filter == 'ready' %} aria-current="page"{% endif %}>Видны в портфолио <strong>{{ portfolio_counts.ready }}</strong></a>
+    <a href="?portfolio=preparation"{% if portfolio_filter == 'preparation' %} aria-current="page"{% endif %}>Требуют подготовки <strong>{{ portfolio_counts.preparation }}</strong></a>
+  </nav>
   <form method="get" class="fm-manage__search" role="search" aria-label="Поиск изделий для управления">
+    {% if portfolio_filter %}<input type="hidden" name="portfolio" value="{{ portfolio_filter }}">{% endif %}
     <div><label for="manage-search">Название, артикул или категория</label><input type="search" id="manage-search" name="search" value="{{ search }}" placeholder="Например, шкаф"></div>
     <button class="fm-manage__button fm-manage__button--primary" type="submit">Найти</button>
-    {% if search %}<a class="fm-manage__button" href="{% url 'catalog:product_list_manage' %}">Сбросить поиск</a>{% endif %}
+    {% if search %}<a class="fm-manage__button" href="{% url 'catalog:product_list_manage' %}{% if queue_query %}?{{ queue_query }}{% endif %}">Сбросить поиск</a>{% endif %}
   </form>
-  <p class="fm-manage__count">{% if search %}Найдено{% else %}Всего изделий{% endif %}: <strong>{{ total }}</strong></p>
+  <p class="fm-manage__count">{% if search or portfolio_filter %}Найдено{% else %}Всего изделий{% endif %}: <strong>{{ total }}</strong></p>
   {% if products %}
   <table class="fm-manage__table">
     <caption class="fm-manage__sr">Изделия мастерской, страница {{ products.number }}</caption>
     <thead><tr><th scope="col">Фото</th><th scope="col">Изделие</th><th scope="col">Артикул</th><th scope="col">Цена</th><th scope="col">Категория</th><th scope="col">Видимость</th><th scope="col">Действия</th></tr></thead>
     <tbody>{% for product in products %}
       <tr>
-        <td class="fm-manage__photo">{% if product.image %}<img src="{{ product.image|image_variant:"table" }}" alt="{{ product.title }}" width="112" height="84" loading="lazy">{% else %}<span class="fm-manage__no-photo">Нет фото</span>{% endif %}</td>
-        <td class="fm-manage__name"><a href="{% url 'catalog:product_edit' product.pk %}">{{ product.title }}</a>{% if product.is_portfolio %}<p class="fm-manage__eyebrow">Выбрано для портфолио</p>{% endif %}</td>
+        <td class="fm-manage__photo">{% if product.image %}<img src="{{ product.image|image_variant:"table" }}" alt="{{ product.title }}" width="112" height="84" loading="lazy">{% elif product.has_portfolio_photo %}<span class="fm-manage__no-photo">Фото в галерее</span>{% else %}<span class="fm-manage__no-photo">Нет фото</span>{% endif %}</td>
+        <td class="fm-manage__name"><a href="{% url 'catalog:product_edit' product.pk %}">{{ product.title }}</a>{% if product.is_portfolio %}<div class="fm-manage__portfolio-state">
+          {% if product.is_active and product.has_portfolio_photo %}<p>Видно в портфолио</p>{% else %}
+          {% if not product.is_active %}<p>Для портфолио — опубликуйте изделие</p>{% endif %}
+          {% if not product.has_portfolio_photo %}<p>Для портфолио — добавьте фотографию</p>{% endif %}
+          {% endif %}
+        </div>{% endif %}</td>
         <td><span class="fm-manage__label" aria-hidden="true">Артикул</span>{{ product.article|default:"—" }}</td>
         <td class="fm-manage__price"><span class="fm-manage__label" aria-hidden="true">Цена</span><span>{{ product.price|price_format }} {{ product.currency }}</span></td>
         <td><span class="fm-manage__label" aria-hidden="true">Категория</span>{{ product.category.title|default:"—" }}</td>
@@ -40,13 +52,13 @@
   </table>
   {% if products.paginator.num_pages > 1 %}
   <nav class="fm-manage__pagination" aria-label="Страницы списка изделий">
-    {% if products.has_previous %}<a href="?page=1{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Первая страница">«</a><a href="?page={{ products.previous_page_number }}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Предыдущая страница">Назад</a>{% endif %}
+    {% if products.has_previous %}<a href="?page=1{% if pagination_query %}&amp;{{ pagination_query }}{% endif %}" aria-label="Первая страница">«</a><a href="?page={{ products.previous_page_number }}{% if pagination_query %}&amp;{{ pagination_query }}{% endif %}" aria-label="Предыдущая страница">Назад</a>{% endif %}
     <span aria-current="page">{{ products.number }} из {{ products.paginator.num_pages }}</span>
-    {% if products.has_next %}<a href="?page={{ products.next_page_number }}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Следующая страница">Далее</a><a href="?page={{ products.paginator.num_pages }}{% if search %}&amp;search={{ search|urlencode }}{% endif %}" aria-label="Последняя страница">»</a>{% endif %}
+    {% if products.has_next %}<a href="?page={{ products.next_page_number }}{% if pagination_query %}&amp;{{ pagination_query }}{% endif %}" aria-label="Следующая страница">Далее</a><a href="?page={{ products.paginator.num_pages }}{% if pagination_query %}&amp;{{ pagination_query }}{% endif %}" aria-label="Последняя страница">»</a>{% endif %}
   </nav>
   {% endif %}
   {% else %}
-  <div class="fm-manage__empty"><h2>{% if search %}Изделия не найдены{% else %}В каталоге пока нет изделий{% endif %}</h2><p>{% if search %}Измените запрос или сбросьте поиск.{% else %}Добавьте первое изделие, затем загрузите его фотографии в редакторе.{% endif %}</p></div>
+  <div class="fm-manage__empty"><h2>{% if search or portfolio_filter %}Изделия не найдены{% else %}В каталоге пока нет изделий{% endif %}</h2><p>{% if search or portfolio_filter %}Измените поиск или выберите другую подборку. Чтобы добавить работу, отметьте «Показывать в портфолио» в редакторе изделия.{% else %}Добавьте первое изделие, затем загрузите его фотографии в редакторе.{% endif %}</p></div>
   {% endif %}
 </section>
 {% endblock %}
