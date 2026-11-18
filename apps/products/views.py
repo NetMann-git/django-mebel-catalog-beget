@@ -502,13 +502,13 @@ def product_list_manage(request):
     needs_preparation = Q(is_portfolio=True) & ~ready
     counts = products.aggregate(
         all=Count('pk'),
-        selected=Count('pk', filter=Q(is_portfolio=True)),
         ready=Count('pk', filter=ready),
         preparation=Count('pk', filter=needs_preparation),
     )
     portfolio_filter = request.GET.get('portfolio', '')
+    if portfolio_filter == 'selected':
+        portfolio_filter = 'ready'
     filters = {
-        'selected': Q(is_portfolio=True),
         'ready': ready,
         'preparation': needs_preparation,
     }

@@ -13,8 +13,7 @@
   <p><a href="{% url 'furniture_portfolio' %}" target="_blank" rel="noopener">Открыть портфолио на сайте ↗</a></p>
   <nav class="fm-manage__queues" aria-label="Подборка портфолио">
     <a href="{% url 'catalog:product_list_manage' %}"{% if not portfolio_filter %} aria-current="page"{% endif %}>Все изделия <strong>{{ portfolio_counts.all }}</strong></a>
-    <a href="?portfolio=selected"{% if portfolio_filter == 'selected' %} aria-current="page"{% endif %}>Выбраны для портфолио <strong>{{ portfolio_counts.selected }}</strong></a>
-    <a href="?portfolio=ready"{% if portfolio_filter == 'ready' %} aria-current="page"{% endif %}>Видны в портфолио <strong>{{ portfolio_counts.ready }}</strong></a>
+    <a href="?portfolio=ready"{% if portfolio_filter == 'ready' %} aria-current="page"{% endif %}>В портфолио <strong>{{ portfolio_counts.ready }}</strong></a>
     <a href="?portfolio=preparation"{% if portfolio_filter == 'preparation' %} aria-current="page"{% endif %}>Требуют подготовки <strong>{{ portfolio_counts.preparation }}</strong></a>
   </nav>
   <form method="get" class="fm-manage__search" role="search" aria-label="Поиск изделий для управления">
