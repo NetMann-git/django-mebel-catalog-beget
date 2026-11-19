@@ -45,3 +45,26 @@ class ContactSettingsAdmin(admin.ModelAdmin):
 
     def has_delete_permission(self, request, obj=None):
         return False
+
+
+from django.urls import reverse
+from django.utils.html import format_html
+from .models import EditablePage
+from .copy_registry import PAGES
+
+
+@admin.register(EditablePage)
+class EditablePageAdmin(admin.ModelAdmin):
+    list_display=('key','updated_at','published_at','editor_link')
+
+    @admin.display(description='Редактор текстов')
+    def editor_link(self,obj):
+        return format_html('<a href="{}">{}</a>',reverse('home:copy_edit',args=[obj.key]),PAGES.get(obj.key,{}).get('title',obj.key))
+
+    def has_view_permission(self,request,obj=None):
+        return (request.user.is_superuser or getattr(getattr(request.user,'profile',None),'role',None) in ('manager','admin')) and super().has_view_permission(request,obj)
+
+    def has_add_permission(self,request):return False
+    def has_change_permission(self,request,obj=None):return False
+    def has_delete_permission(self,request,obj=None):return False
+    def get_readonly_fields(self,request,obj=None):return [field.name for field in self.model._meta.fields]

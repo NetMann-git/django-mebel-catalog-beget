@@ -1,10 +1,13 @@
 from django.urls import path
 
-from . import manage_views
+from . import manage_views, copy_views
 
 app_name = "home"
 
 urlpatterns = [
+    path('pages/', copy_views.copy_list, name='copy_list'),
+    path('pages/<slug:key>/', copy_views.copy_edit, name='copy_edit'),
+    path('pages/<slug:key>/preview/', copy_views.copy_preview, name='copy_preview'),
     path("contacts/", manage_views.contacts_manage, name="contacts_manage"),
     path("team/", manage_views.team_list_manage, name="team_list_manage"),
     path("team/create/", manage_views.team_create, name="team_create"),

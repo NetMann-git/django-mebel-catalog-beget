@@ -14,7 +14,7 @@
     <a href="{% url 'appointments:callback_request_list' %}?status=new" class="fm-workshop__stat fm-workshop__stat--accent"><strong>{{ callback_stats.new }}</strong><span>Новые обращения</span></a>
   </div>
   <h2>Рабочие разделы</h2>
-  <nav class="fm-workshop__links" aria-label="Управление мастерской"><a href="{% url 'appointments:order_list' %}"><strong>Заказы</strong><span>Этапы работ, ответственные, сроки и оплата</span><b aria-hidden="true">→</b></a>
+  <nav class="fm-workshop__links" aria-label="Управление мастерской"><a href="{% url 'home:copy_list' %}"><strong>Содержимое сайта</strong><span>Тексты страниц, услуги и вопросы-ответы</span><b aria-hidden="true">→</b></a><a href="{% url 'appointments:order_list' %}"><strong>Заказы</strong><span>Этапы работ, ответственные, сроки и оплата</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'catalog:product_list_manage' %}"><strong>Изделия</strong><span>Название, описание, цена и фотографии</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'appointments:callback_request_list' %}"><strong>Обращения клиентов</strong><span>Вопросы, заказы и обратные звонки</span><b aria-hidden="true">→</b></a>
     <a href="{% url 'appointments:callback_request_list' %}?due=1"><strong>Следующие контакты · {{ callback_stats.due }}</strong><span>На сегодня и просроченные</span><b aria-hidden="true">→</b></a>

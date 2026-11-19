@@ -12,7 +12,10 @@ def home(request):
 
 def services(request):
     from .services_content import SERVICE_GROUPS
-    return render(request, "home/services.html", {"service_groups": SERVICE_GROUPS})
+    from .editable_copy import page_text
+    copy=page_text('services',request)
+    groups=[{**group,'items':[(title,copy[f"service_{group['id']}_{index}"]) for index,(title,_) in enumerate(group['items'])]} for group in SERVICE_GROUPS]
+    return render(request, "home/services.html", {"service_groups": groups})
 
 
 def materials(request):

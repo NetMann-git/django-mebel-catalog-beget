@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 
 class ClientShowcase(models.Model):
@@ -128,3 +129,21 @@ class ContactSettings(models.Model):
 
     def __str__(self):
         return "Контакты главной страницы"
+
+
+class EditablePage(models.Model):
+    """Draft and published plain-text settings; public pages never read drafts."""
+    key = models.SlugField(max_length=30, unique=True, verbose_name='Раздел')
+    draft = models.JSONField(default=dict, blank=True, verbose_name='Черновик')
+    published = models.JSONField(default=dict, blank=True, verbose_name='Опубликованные тексты')
+    revision = models.PositiveIntegerField(default=0, editable=False)
+    updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Редактор')
+    updated_at = models.DateTimeField(auto_now=True)
+    published_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        verbose_name = 'Тексты страницы'
+        verbose_name_plural = 'Тексты страниц'
+
+    def __str__(self):
+        return self.key

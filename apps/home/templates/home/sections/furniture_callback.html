@@ -1,8 +1,8 @@
-{% load callback_form_tags %}
+{% load editable_copy %}{% editable_copy 'callback' as callback_copy %}{% load callback_form_tags %}
 {% if not callback_form %}{% callback_request_form as callback_form %}{% endif %}
 <section class="fm-callback" id="callback" aria-labelledby="fm-callback-title">
 {% include 'home/includes/editorial_photo.html' with name='callback' photo_class='fm-callback-photo' width='1536' height='1024' small_width='768' sizes='100vw' decorative=True %}
-<div class="fm-container fm-callback-inner"><div class="fm-callback-copy"><h2 id="fm-callback-title">Расскажите, какую мебель вы хотите</h2><p>Оставьте заявку — мы подберём решение,<br>подготовим расчёт и свяжемся с вами.</p><ul><li>Подбор решения</li><li>Обсуждение проекта</li><li>Консультация</li></ul></div>
+<div class="fm-container fm-callback-inner"><div class="fm-callback-copy"><h2 id="fm-callback-title">{{ callback_copy.heading|linebreaksbr }}</h2><p>{{ callback_copy.intro|linebreaksbr }}</p><ul><li>Подбор решения</li><li>Обсуждение проекта</li><li>Консультация</li></ul></div>
 <div class="fm-form-panel"><form id="home-callback-form" method="post" action="{% url 'appointments:callback_submit' %}" novalidate>{% csrf_token %}
 <input type="hidden" name="return_to" value="{{ request.get_full_path }}">
 {% if callback_product %}<p class="fm-form-legal">Изделие в заявке: <strong>{{ callback_product.title }}</strong></p>{% endif %}
