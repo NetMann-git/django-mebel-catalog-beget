@@ -176,3 +176,28 @@ class CallbackRequestAdmin(admin.ModelAdmin):
         ('Работа с обращением', {'fields': ('follow_up_on', 'manager_note')}),
         ('Изделие и источник', {'fields': ('product', 'source', 'created_at', 'updated_at')}),
     )
+
+
+from .models import WorkshopOrder
+
+
+@admin.register(WorkshopOrder)
+class WorkshopOrderAdmin(admin.ModelAdmin):
+    list_display = ('id','title','client_name','stage','responsible','due_on','agreed_total','paid')
+    list_filter = ('stage','responsible')
+    search_fields = ('title','client_name','phone')
+
+    def has_view_permission(self, request, obj=None):
+        return (request.user.is_superuser or getattr(getattr(request.user,'profile',None),'role',None) in ('manager','admin')) and super().has_view_permission(request,obj)
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
+
+    def get_readonly_fields(self, request, obj=None):
+        return [field.name for field in self.model._meta.fields]

@@ -319,7 +319,7 @@ def callback_request_list(request):
     valid_statuses = {value for value, _label in CallbackRequest.STATUS_CHOICES}
 
     query = clean_query(request.GET.get('q'))
-    callbacks = CallbackRequest.objects.select_related('product').annotate(
+    callbacks = CallbackRequest.objects.select_related('product', 'workshop_order').annotate(
         has_reference_photo=Exists(CallbackReferencePhoto.objects.filter(callback_id=OuterRef('pk'))),
     ).order_by('-created_at', '-pk')
     if status in valid_statuses:

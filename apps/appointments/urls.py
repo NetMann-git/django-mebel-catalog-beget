@@ -1,11 +1,14 @@
 # apps/appointments/urls.py
 
 from django.urls import path
-from . import views
+from . import views, order_views
 
 app_name = 'appointments'
 
 urlpatterns = [
+    path('orders/', order_views.order_list, name='order_list'),
+    path('orders/<int:pk>/', order_views.order_detail, name='order_detail'),
+    path('callbacks/<int:pk>/create-order/', order_views.order_from_inquiry, name='order_from_inquiry'),
     path('car-inquiry/<int:product_id>/', views.car_inquiry, name='car_inquiry'),
     path('form/', views.appointment_form, name='form'),
     path('form/<int:product_id>/', views.appointment_form, name='form_for_product'),

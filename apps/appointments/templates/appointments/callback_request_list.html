@@ -7,7 +7,7 @@
 <section class="fm-container fm-callbacks" aria-labelledby="callbacks-title">
   <a class="fm-callbacks__back" href="{% url 'users:manager_dashboard' %}">← Панель менеджера</a>
   <p class="fm-callbacks__eyebrow">Мебельная мастерская</p>
-  <h1 id="callbacks-title">Обращения клиентов</h1>
+  <h1 id="callbacks-title">Обращения клиентов</h1><p><a href="{% url 'appointments:order_list' %}">Заказы мастерской →</a></p>
   <p class="fm-callbacks__counts">Всего обращений: <strong>{{ total }}</strong> · Новых: <strong>{{ new_count }}</strong></p>
   <nav class="fm-callbacks__queues" aria-label="Очереди обращений">
     <a href="{% url 'appointments:callback_request_list' %}"{% if not queue %} aria-current="page"{% endif %}>Все обращения</a>
@@ -50,6 +50,7 @@
           {% if callback.comment %}<details class="fm-callbacks__comment"><summary>Комментарий клиента</summary><div>{{ callback.comment|linebreaksbr }}</div></details>{% else %}<p class="fm-callbacks__no-comment">Комментарий не оставлен.</p>{% endif %}
         </section>
       </div>
+      <div class="fm-callbacks__order">{% if callback.workshop_order %}<p><a class="fm-callbacks__button" href="{% url 'appointments:order_detail' callback.workshop_order.pk %}">Открыть заказ №{{ callback.workshop_order.pk }}</a></p>{% elif callback.status != 'cancelled' %}<form method="post" action="{% url 'appointments:order_from_inquiry' callback.pk %}">{% csrf_token %}<button class="fm-callbacks__button" type="submit" title="Создать заказ из этого обращения с контактами и пожеланиями клиента. Повторное нажатие откроет уже созданный заказ.">Создать заказ</button></form>{% endif %}</div>
       <form method="post" action="{% url 'appointments:callback_request_status_update' callback.pk %}" class="fm-callbacks__status-form">
         {% csrf_token %}<input type="hidden" name="current_filter" value="{{ status }}"><input type="hidden" name="current_query" value="{{ query }}"><input type="hidden" name="current_page" value="{{ page_obj.number }}">
         {% if queue == 'due' %}<input type="hidden" name="current_due" value="1">{% elif queue %}<input type="hidden" name="current_queue" value="{{ queue }}">{% endif %}

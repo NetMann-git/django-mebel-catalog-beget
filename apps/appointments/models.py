@@ -179,3 +179,6 @@ class CallbackReferencePhoto(models.Model):
 
     callback = models.OneToOneField(CallbackRequest, on_delete=models.CASCADE, related_name='reference_photo')
     content = models.BinaryField()
+
+# Keep model discovery and app migration state in the existing appointments app.
+from .order_models import WorkshopOrder, OrderEvent

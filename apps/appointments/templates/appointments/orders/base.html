@@ -1,0 +1,5 @@
+{% extends 'home/furniture_base.html' %}{% load static %}
+{% block title %}Заказы мастерской — LUSTRID.RU{% endblock %}
+{% block seo_meta %}<meta name="robots" content="noindex, nofollow">{% endblock %}
+{% block extra_css %}<link rel="stylesheet" href="{% static 'appointments/css/workshop-orders.css' %}">{% endblock %}
+{% block furniture_content %}<section class="fm-container wo-page"><nav class="wo-nav" aria-label="Управление заказами"><a href="{% url 'users:manager_dashboard' %}">Панель мастерской</a><a href="{% url 'appointments:callback_request_list' %}">Обращения клиентов</a><a href="{% url 'appointments:order_list' %}">Заказы</a></nav>{% block order_content %}{% endblock %}</section>{% endblock %}
