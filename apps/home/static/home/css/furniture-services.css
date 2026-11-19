@@ -18,3 +18,5 @@
 .fs-project{background:#f0ede5;border-radius:4px;padding:32px;max-width:900px}
 .fs-project .fm-button{margin-top:24px;background:#65705b}
 @media(max-width:720px){.fs-page{padding-top:20px;padding-bottom:40px}.fs-grid{grid-template-columns:1fr}.fs-heading{margin-bottom:28px}.fs-directions{flex-direction:column;margin-bottom:32px}.fs-directions a{justify-content:space-between}.fs-service,.fs-project{padding:22px}.fs-group h2,.fs-project h2{font-size:23px}.fs-group{margin-bottom:32px}.fs-actions{gap:15px}}
+
+.fs-kitchen-link{display:inline-block;margin-top:16px;font-weight:600;text-decoration:underline;text-underline-offset:4px;line-height:1.5}

@@ -1,0 +1,4 @@
+Кухня Интеграто. Мебельная фабрика «Мария».
+https://www.marya.ru/catalog/kuhni/design/integrato/
+Исходное изображение и URL зафиксированы в apps/products/data/southern_examples/catalog.json (EXAMPLE-119-08).
+Визуальный ориентир производителя, не фотография работы LUSTRID.RU.
