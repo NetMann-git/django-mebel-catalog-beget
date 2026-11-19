@@ -82,7 +82,7 @@ function initializeSmartSearch() {
                         <div class="search-item-content">
                             <div class="search-item-title">${highlightText(item.title, query)}</div>
                             <div class="search-item-meta">
-                                ${item.price ? `<span class="price">${formatPrice(item.price)} ${escapeHTML(item.currency)}</span>` : ''}
+                                ${item.price ? `<span class="price">${Number(item.price) > 0 ? formatPrice(item.price) + ' ' + escapeHTML(item.currency) : 'По запросу'}</span>` : ''}
                                 ${item.category ? `<span class="category">${escapeHTML(item.category)}</span>` : ''}
                             </div>
                             ${item.badges && item.badges.length ? `<div class="search-item-badges">${item.badges.map(b => `<span class="badge badge-${escapeHTML(b.slug)}">${escapeHTML(b.title)}</span>`).join('')}</div>` : ''}
@@ -98,7 +98,7 @@ function initializeSmartSearch() {
                         <div class="search-item-content">
                             <div class="search-item-title">${highlightText(item.title, query)}</div>
                             <div class="search-item-meta">
-                                ${item.price ? `<span class="price">${formatPrice(item.price)} ${escapeHTML(item.currency)}</span>` : ''}
+                                ${item.price ? `<span class="price">${Number(item.price) > 0 ? formatPrice(item.price) + ' ' + escapeHTML(item.currency) : 'По запросу'}</span>` : ''}
                                 <span class="search-item-type">Характеристика</span>
                             </div>
                         </div>

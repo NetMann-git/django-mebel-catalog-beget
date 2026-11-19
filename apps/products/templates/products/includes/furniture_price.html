@@ -1,0 +1,1 @@
+{% load price_format %}{% if product.price > 0 %}{{ product.price|price_format }} {% if product.currency == 'RUB' %}₽{% elif product.currency == 'USD' %}${% elif product.currency == 'EUR' %}€{% else %}{{ product.currency }}{% endif %}{% else %}По запросу{% endif %}

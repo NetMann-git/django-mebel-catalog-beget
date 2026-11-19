@@ -37,7 +37,7 @@
           {% endif %}
         </div>{% endif %}</td>
         <td><span class="fm-manage__label" aria-hidden="true">Артикул</span>{{ product.article|default:"—" }}</td>
-        <td class="fm-manage__price"><span class="fm-manage__label" aria-hidden="true">Цена</span><span>{{ product.price|price_format }} {{ product.currency }}</span></td>
+        <td class="fm-manage__price"><span class="fm-manage__label" aria-hidden="true">Цена</span><span>{% if product.price > 0 %}{{ product.price|price_format }} {{ product.currency }}{% else %}По запросу{% endif %}</span></td>
         <td><span class="fm-manage__label" aria-hidden="true">Категория</span>{{ product.category.title|default:"—" }}</td>
         <td><span class="fm-manage__label" aria-hidden="true">Видимость</span><span class="fm-manage__status{% if not product.is_active %} fm-manage__status--draft{% endif %}">{% if product.is_active %}Опубликовано{% else %}Не опубликовано{% endif %}</span></td>
         <td class="fm-manage__actions">
