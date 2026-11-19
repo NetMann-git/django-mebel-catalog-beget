@@ -14,3 +14,8 @@
 }
 
 .fp-project-task{margin:14px 0;line-height:1.6}.fp-project-task strong{display:block}
+
+/* Visible estimate entry in the shared desktop and mobile menu. */
+.furniture-home .fm-navigation .fm-estimate-link{font-weight:600;color:#354334;border-bottom:2px solid #88724d;white-space:nowrap}
+.furniture-home .fm-navigation .fm-estimate-link[aria-current="page"]{background:#eeeee5;border-radius:4px}
+@media(min-width:1081px){.furniture-home .fm-navigation{flex-wrap:wrap;gap:0 22px}}
