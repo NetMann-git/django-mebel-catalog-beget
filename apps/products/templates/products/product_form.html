@@ -3,7 +3,7 @@
 {% load static %}
 
 {% block extra_css %}
-    <link rel="stylesheet" type="text/css" href="{% static 'products/css/manage.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'products/css/manage.css' %}?v=121">
     <link rel="stylesheet" href="{% static 'products/css/gallery-manager.css' %}?v=91">
 {% endblock %}
 
@@ -13,7 +13,7 @@
 <div class="form-container">
     <h1>{{ title }}</h1>
     {% if product %}
-        <p><a href="#product-gallery">Добавить фотографии ↓</a></p>
+        <p><a href="#product-gallery">Добавить фотографии ↓</a> · <a href="#project-story">Заполнить выполненный проект ↓</a></p>
         <p>В предпросмотре отображаются сохранённые данные изделия.</p>
     {% else %}
         <p>Кнопка «Сохранить черновик и открыть предпросмотр» сохранит изделие скрытым от посетителей. Опубликовать его можно в редакторе, отметив «Активен» и сохранив изменения.</p>
@@ -34,7 +34,7 @@
         {{ form.non_field_errors }}
         
         {% for field in form %}
-            {% if field.name != 'equipment' %}
+            {% if field.name != 'equipment' and field.name != 'project_task' and field.name != 'project_solution' and field.name != 'project_dimensions' and field.name != 'project_materials' %}
             <div class="form-group">
                 <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                 
@@ -54,6 +54,7 @@
             </div>
             {% endif %}
         {% endfor %}
+        {% include 'products/includes/project_editor.html' %}
     </form>
     
     {% if product %}{% include 'products/gallery/manager.html' %}{% endif %}

@@ -3,16 +3,16 @@
       {% with photo=product.portfolio_photos.0 %}
       <a class="fc-card-image" href="{{ product.get_absolute_url }}">
         {% if product.image %}
-        <img src="{{ product.image|image_variant:'card' }}" alt="{{ product.title }}" loading="lazy" decoding="async">
+        <img src="{{ product.image|image_variant:'card_small' }}" srcset="{{ product.image|image_variant:'card_small' }} 1x, {{ product.image|image_variant:'card' }} 2x" alt="{{ product.title }}" loading="lazy" decoding="async">
         {% else %}
-        <img src="{{ photo.image|image_variant:'card' }}" alt="{{ product.title }}" loading="lazy" decoding="async">
+        <img src="{{ photo.image|image_variant:'card_small' }}" srcset="{{ photo.image|image_variant:'card_small' }} 1x, {{ photo.image|image_variant:'card' }} 2x" alt="{{ product.title }}" loading="lazy" decoding="async">
         {% endif %}
       </a>
       {% endwith %}
       <div class="fc-card-body">
         {% if product.category %}<p class="fm-eyebrow">{{ product.category.title }}</p>{% endif %}
         <h3><a href="{{ product.get_absolute_url }}">{{ product.title }}</a></h3>
-        {% if product.short_description %}<p>{{ product.short_description|truncatechars:180 }}</p>{% endif %}
+        {% if product.project_task %}<p class="fp-project-task"><strong>Задача клиента</strong>{{ product.project_task|truncatechars:180 }}</p>{% elif product.short_description %}<p>{{ product.short_description|truncatechars:180 }}</p>{% endif %}
         {% if product.price > 0 %}<p><strong>Ориентир по цене:</strong> {{ product.price|price_format }} {% if product.currency == "RUB" %}₽{% else %}{{ product.currency }}{% endif %}</p>{% endif %}
         {% if product.price_details %}<details class="fp-price-details"><summary>Что входит в стоимость</summary><div>{{ product.price_details|linebreaks }}</div></details>{% endif %}
         {% if product.portfolio_attributes %}

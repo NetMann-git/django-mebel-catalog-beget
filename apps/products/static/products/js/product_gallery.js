@@ -10,6 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Элементы
     // =========================
     const mainImage = document.getElementById("main-image");
+    const projectCaption = document.getElementById("project-photo-caption");
     const thumbs = document.querySelectorAll(".gallery-thumb-vertical");
     const currentPhoto = document.getElementById("current-photo");
     const totalPhotos = document.getElementById("total-photos");
@@ -102,6 +103,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (imgData) {
             mainImage.src = imgData.src;
             mainImage.alt = imgData.alt;
+            if (projectCaption) projectCaption.textContent = imgData.alt;
         }
 
         updateCounter();

@@ -419,3 +419,5 @@
     border-color: #c0392b;
     background: #fde8e8;
 }
+
+.project-editor{border:1px solid #d2d5ca;padding:24px;border-radius:8px;margin-top:24px}.project-editor legend{font-size:22px;font-weight:600}.project-editor>p{line-height:1.7;margin-bottom:20px}.project-editor .helptext{display:block;font-size:13px;line-height:1.5;margin-top:6px;color:#586052}

@@ -228,6 +228,7 @@ class ProductAdmin(admin.ModelAdmin):
                 )
             },
         ),
+        ('Выполненный проект', {'fields': ('project_task', 'project_solution', 'project_dimensions', 'project_materials'), 'description': 'Для работ мастерской. Публикация управляется признаком «Показывать в портфолио». Состав цены укажите в поле «Что входит в стоимость».'}),
         (
             "Каталог",
             {

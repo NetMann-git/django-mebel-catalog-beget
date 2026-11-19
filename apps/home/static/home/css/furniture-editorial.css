@@ -12,3 +12,5 @@
  .fm-hero:after { background:linear-gradient(90deg,rgba(19,21,17,.82),rgba(19,21,17,.64)),linear-gradient(0deg,rgba(19,21,17,.72),transparent 55%); }
  .fm-callback:after { background:rgba(19,21,17,.76); }
 }
+
+.fp-project-task{margin:14px 0;line-height:1.6}.fp-project-task strong{display:block}
