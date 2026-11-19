@@ -17,16 +17,18 @@ from apps.products.models import AttributeType, AttributeValue, Badge, Category,
 DATA = Path(__file__).resolve().parents[2] / 'data' / 'furniture_examples'
 
 
-def catalog_data():
-    rows = json.loads((DATA / 'catalog.json').read_text(encoding='utf-8'))
+def catalog_data(data_dir=DATA, minimum_photos=2):
+    rows = json.loads((data_dir / 'catalog.json').read_text(encoding='utf-8'))
     if len(rows) != 20 or len({row['slug'] for row in rows}) != 20:
         raise CommandError('Ожидаются 20 разных примеров.')
     for row in rows:
-        if len(row['photos']) != 2:
-            raise CommandError('У каждого примера должны быть две фотографии.')
+        if len(row['photos']) < minimum_photos:
+            raise CommandError(f'У каждого примера должно быть минимум {minimum_photos} фотографий.')
+        if len({photo['sha256'] for photo in row['photos']}) != len(row['photos']):
+            raise CommandError('В галерее повторяется фотография: ' + row['article'])
         for photo in row['photos']:
-            path = (DATA / photo['file']).resolve()
-            if not path.is_relative_to((DATA / 'images').resolve()):
+            path = (data_dir / photo['file']).resolve()
+            if not path.is_relative_to((data_dir / 'images').resolve()):
                 raise CommandError('Недопустимый путь к фотографии.')
             if hashlib.sha256(path.read_bytes()).hexdigest() != photo['sha256']:
                 raise CommandError('Фотография повреждена: ' + photo['file'])
@@ -58,13 +60,17 @@ def new_examples(rows):
 class Command(BaseCommand):
     help = 'Добавить 20 примеров реальной мебели с фото и источниками. Повторный запуск сохраняет ручные правки.'
 
+    data_dir = DATA
+    minimum_photos = 2
+    collection = '118'
+
     def add_arguments(self, parser):
         mode = parser.add_mutually_exclusive_group(required=True)
         mode.add_argument('--check', action='store_true')
         mode.add_argument('--apply', action='store_true')
 
     def handle(self, *args, **options):
-        rows = catalog_data()
+        rows = catalog_data(self.data_dir, self.minimum_photos)
         categories_plan()
         pending = new_examples(rows)
         self.stdout.write(f'Добавить: {len(pending)}. Уже существуют: {20 - len(pending)}.')
@@ -73,7 +79,7 @@ class Command(BaseCommand):
         if options['check'] or not pending:
             return
 
-        backup = backup_database('step118-before-examples')
+        backup = backup_database(f'step{self.collection}-before-examples')
         self.stdout.write(f'Резервная копия БД: {backup}')
         written_files = []
         try:
@@ -109,15 +115,15 @@ class Command(BaseCommand):
                         kind = AttributeType.objects.filter(name=label).first()
                         if kind is None:
                             kind = AttributeType.objects.create(
-                                name=label, slug=f'example118-field-{order}', data_type='string',
+                                name=label, slug=f'example{self.collection}-field-{order}', data_type='string',
                             )
                         option, _ = AttributeValue.objects.get_or_create(attribute_type=kind, value=value)
                         ProductAttribute.objects.create(
                             product=product, attribute_type=kind, attribute_value=option, sort_order=order,
                         )
                     for index, photo in enumerate(row['photos']):
-                        raw = (DATA / photo['file']).read_bytes()
-                        name = f"products/examples118/{row['article']}-{index + 1}-{photo['sha256'][:12]}.jpg"
+                        raw = (self.data_dir / photo['file']).read_bytes()
+                        name = f"products/examples{self.collection}/{row['article']}-{index + 1}-{photo['sha256'][:12]}.jpg"
                         if default_storage.exists(name):
                             with default_storage.open(name, 'rb') as existing:
                                 if hashlib.sha256(existing.read()).hexdigest() != photo['sha256']:
@@ -132,7 +138,7 @@ class Command(BaseCommand):
                         else:
                             ProductGalleryImage.objects.create(
                                 product=product, image=name, image_sha256=photo['sha256'],
-                                alt=row['title'] + ' — фото производителя', sort_order=index,
+                                alt=(row['title'] + ' — ' + photo.get('caption', 'фото производителя'))[:255], sort_order=index,
                             )
                 transaction.on_commit(CatalogCache.clear_catalog)
         except Exception:
