@@ -1,0 +1,12 @@
+.fm-people-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.fm-person-card { min-width: 0; overflow: hidden; border: 1px solid #dfd7ca; border-radius: 14px; background: #fffdf9; }
+.fm-person-copy { padding: 20px; }
+.fm-person-copy h3 { margin: 0 0 8px; }
+.fm-person-copy p { margin: 0; color: #655f55; overflow-wrap: anywhere; }
+.fm-person-photo { display: block; width: 100%; height: auto; aspect-ratio: 4/3; object-fit: cover; }
+.fm-review-video { display: block; width: 100%; aspect-ratio: 16/9; height: auto; border: 0; }
+.fm-person-card .cookie-embed { aspect-ratio: 16/9; }
+.fm-person-card .cookie-embed__placeholder { background: #eee8dd; color: #4d473d; }
+.fm-person-card .cookie-embed__button { background: #59523f; border-color: #59523f; color: #fff; }
+@media (max-width: 960px) { .fm-people-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 640px) { .fm-people-grid { grid-template-columns: minmax(0, 1fr); } }

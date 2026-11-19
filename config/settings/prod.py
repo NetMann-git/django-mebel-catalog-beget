@@ -4,6 +4,10 @@ from .base import *
 
 DEBUG = False
 
+# Production is served over HTTPS; keep local HTTP development unchanged.
+SESSION_COOKIE_SECURE = config("SESSION_COOKIE_SECURE", default=True, cast=bool)
+CSRF_COOKIE_SECURE = config("CSRF_COOKIE_SECURE", default=True, cast=bool)
+
 
 def _env_list(name):
     """Читает список значений из .env, разделённых запятыми."""

@@ -3,6 +3,6 @@
 
 {% block seo_meta %}{% editable_copy 'home' as page_copy %}<meta name="description" content="{{ page_copy.seo_description }}"><meta property="og:title" content="{{ page_copy.seo_title }}"><meta property="og:description" content="{{ page_copy.seo_description }}"><meta property="og:type" content="website"><meta property="og:url" content="{{ request.build_absolute_uri }}"><meta property="og:locale" content="ru_RU">{% endblock %}
 {% block body_class %}furniture-home{% endblock %}{% block body_theme_class %}{% endblock %}
-{% block furniture_showcase_css %}<link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'home/css/furniture-portfolio.css' %}?v=117"><link rel="stylesheet" href="{% static 'home/css/furniture-showcase.css' %}">{% endblock %}
+{% block furniture_showcase_css %}<link rel="stylesheet" href="{% static 'home/css/furniture-people.css' %}?v=127"><link rel="stylesheet" href="{% static 'products/css/furniture-catalog.css' %}"><link rel="stylesheet" href="{% static 'home/css/furniture-portfolio.css' %}?v=117"><link rel="stylesheet" href="{% static 'home/css/furniture-showcase.css' %}">{% endblock %}
 {% block furniture_content %}{% editable_copy 'home' as page_copy %}{% include 'home/sections/furniture_hero.html' %}{% include 'home/sections/furniture_sections.html' %}{% endblock %}
 {% block extra_js %}{% endblock %}

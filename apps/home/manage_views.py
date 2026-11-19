@@ -5,12 +5,22 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
 
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
 from apps.users.decorators import role_required
 
 from .forms import ClientShowcaseForm, ContactSettingsForm, TeamMemberForm
 from .models import ClientShowcase, ContactSettings, TeamMember
+
+
+def _safe_return(request, fallback):
+    target = (request.POST.get("next") or "").strip()
+    if (target.startswith("/") and not target.startswith("//") and "\\" not in target
+            and url_has_allowed_host_and_scheme(target, allowed_hosts=set())):
+        return target
+    return reverse(fallback)
 
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
@@ -96,7 +106,7 @@ def client_toggle_published(request, client_id):
 
     state = "опубликован" if client.is_published else "снят с публикации"
     messages.success(request, f'Клиент «{client.name}» {state}.')
-    return redirect(request.POST.get("next") or "home:client_list_manage")
+    return redirect(_safe_return(request, "home:client_list_manage"))
 
 
 @require_POST
@@ -117,7 +127,7 @@ def client_move(request, client_id):
 
     target_index = current_index - 1 if direction == "up" else current_index + 1
     if not 0 <= target_index < len(ordered):
-        return redirect(request.POST.get("next") or "home:client_list_manage")
+        return redirect(_safe_return(request, "home:client_list_manage"))
 
     ordered[current_index], ordered[target_index] = ordered[target_index], ordered[current_index]
 
@@ -133,7 +143,7 @@ def client_move(request, client_id):
             ClientShowcase.objects.bulk_update(changed, ("sort_order",))
 
     messages.success(request, "Порядок карточек изменён.")
-    return redirect(request.POST.get("next") or "home:client_list_manage")
+    return redirect(_safe_return(request, "home:client_list_manage"))
 
 
 @require_POST
@@ -181,7 +191,7 @@ def client_delete(request, client_id):
 
     client.delete()
     messages.success(request, f'Клиент «{client_name}» удалён.')
-    return redirect(request.POST.get("next") or "home:client_list_manage")
+    return redirect(_safe_return(request, "home:client_list_manage"))
 
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)
@@ -254,7 +264,7 @@ def team_toggle_published(request, member_id):
     member.save(update_fields=("is_published", "updated_at"))
     state = "опубликован" if member.is_published else "снят с публикации"
     messages.success(request, f'Сотрудник «{member.name}» {state}.')
-    return redirect(request.POST.get("next") or "home:team_list_manage")
+    return redirect(_safe_return(request, "home:team_list_manage"))
 
 
 @require_POST
@@ -273,7 +283,7 @@ def team_move(request, member_id):
 
     target_index = current_index - 1 if direction == "up" else current_index + 1
     if not 0 <= target_index < len(ordered):
-        return redirect(request.POST.get("next") or "home:team_list_manage")
+        return redirect(_safe_return(request, "home:team_list_manage"))
 
     ordered[current_index], ordered[target_index] = ordered[target_index], ordered[current_index]
     changed = []
@@ -287,7 +297,7 @@ def team_move(request, member_id):
             TeamMember.objects.bulk_update(changed, ("sort_order",))
 
     messages.success(request, "Порядок сотрудников изменён.")
-    return redirect(request.POST.get("next") or "home:team_list_manage")
+    return redirect(_safe_return(request, "home:team_list_manage"))
 
 
 @require_POST
@@ -327,7 +337,7 @@ def team_delete(request, member_id):
         member.image.delete(save=False)
     member.delete()
     messages.success(request, f'Сотрудник «{name}» удалён.')
-    return redirect(request.POST.get("next") or "home:team_list_manage")
+    return redirect(_safe_return(request, "home:team_list_manage"))
 
 
 @role_required(ROLE_MANAGER, ROLE_ADMIN)

@@ -10,7 +10,7 @@ from .models import ClientShowcase, ContactSettings, TeamMember
 class ClientShowcaseForm(forms.ModelForm):
     class Meta:
         model = ClientShowcase
-        fields = ("name", "vehicle", "image", "rutube_url", "sort_order", "is_published")
+        fields = ("name", "vehicle", "image", "rutube_url", "sort_order", "is_published", "show_video_on_home")
         labels = {"vehicle": "Изделие или проект"}
         widgets = {
             "name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Например, Александр"}),

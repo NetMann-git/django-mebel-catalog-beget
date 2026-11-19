@@ -25,6 +25,11 @@ class ClientShowcase(models.Model):
         verbose_name="Ссылка на видеоотзыв Rutube",
         help_text="Оставьте пустым, если клиент не записывал видеоотзыв.",
     )
+    show_video_on_home = models.BooleanField(
+        default=False,
+        verbose_name="Показывать видеоотзыв на главной",
+        help_text="Включайте только для проверенного отзыва о мебельном проекте. Нужны публикация карточки и ссылка Rutube.",
+    )
     sort_order = models.PositiveIntegerField(
         default=100,
         db_index=True,

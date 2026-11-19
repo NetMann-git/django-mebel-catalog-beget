@@ -6,8 +6,8 @@ from .models import ClientShowcase, ContactSettings, TeamMember
 
 @admin.register(ClientShowcase)
 class ClientShowcaseAdmin(admin.ModelAdmin):
-    list_display = ("name", "project_title", "has_video_review", "sort_order", "is_published", "updated_at")
-    list_filter = ("is_published",)
+    list_display = ("name", "project_title", "has_video_review", "show_video_on_home", "sort_order", "is_published", "updated_at")
+    list_filter = ("is_published", "show_video_on_home")
     search_fields = ("name", "vehicle", "rutube_url")
 
     @admin.display(description="Изделие или проект", ordering="vehicle")

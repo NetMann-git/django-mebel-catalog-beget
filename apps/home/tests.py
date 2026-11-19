@@ -112,7 +112,7 @@ class ClientShowcaseTests(TestCase):
 class ClientVideoReviewTests(TestCase):
     def test_video_review_section_shows_only_published_clients_with_rutube(self):
         visible = ClientShowcase.objects.create(
-            name="Видео клиент", vehicle="KIA", legacy_image="x.webp",
+            name="Видео клиент", vehicle="Кухня", show_video_on_home=True,
             rutube_url="https://rutube.ru/play/embed/b01059d843b5c69740fb2ae3d1cd682d/",
             is_published=True,
         )
@@ -120,7 +120,7 @@ class ClientVideoReviewTests(TestCase):
             name="Без видео", vehicle="BMW", legacy_image="y.webp", is_published=True,
         )
         ClientShowcase.objects.create(
-            name="Скрытый видео", vehicle="Audi", legacy_image="z.webp",
+            name="Скрытый видео", vehicle="Шкаф", show_video_on_home=True,
             rutube_url="https://rutube.ru/play/embed/4217e2a2d92bf8fa77e850b174dc72ab/",
             is_published=False,
         )
@@ -171,7 +171,8 @@ class ClientMediaRulesTests(TestCase):
         )
         video_only = ClientShowcase.objects.create(
             name="Видео",
-            vehicle="Авто 2",
+            vehicle="Кухня",
+            show_video_on_home=True,
             rutube_url="https://rutube.ru/play/embed/f44e2211a5634fc5d83109157463b3c2/",
             is_published=True,
         )
@@ -189,6 +190,10 @@ class ClientMediaRulesTests(TestCase):
 
 
 class TeamMemberTests(TestCase):
+    def setUp(self):
+        # Historical migrations seed automotive staff; tests own their fixtures.
+        TeamMember.objects.all().delete()
+
     def create_user(self, username, role):
         user = get_user_model().objects.create_user(username=username, password="testpass123")
         user.profile.role = role
@@ -196,8 +201,10 @@ class TeamMemberTests(TestCase):
         return user
 
     def test_home_shows_only_published_team_members(self):
-        TeamMember.objects.create(name="Виден", position="Менеджер", legacy_image="x.webp", is_published=True)
-        TeamMember.objects.create(name="Скрыт", position="Менеджер", legacy_image="y.webp", is_published=False)
+        from apps.products.tests.image_fixtures import image_test_storage
+        image_test_storage(self, ["team/visible.jpg", "team/hidden.jpg"])
+        TeamMember.objects.create(name="Виден", position="Мастер", image="team/visible.jpg", is_published=True)
+        TeamMember.objects.create(name="Скрыт", position="Мастер", image="team/hidden.jpg", is_published=False)
         response = self.client.get(reverse("home"))
         self.assertContains(response, "Виден")
         self.assertNotContains(response, "Скрыт")

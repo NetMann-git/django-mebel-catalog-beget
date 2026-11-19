@@ -31,7 +31,9 @@ class HomeContextBuilder:
         clients = published_clients.filter(
             Q(image__isnull=False, image__gt="")
         ).order_by("sort_order", "id")
-        video_clients = published_clients.exclude(rutube_url="").order_by("sort_order", "id")
+        video_clients = [client for client in published_clients.filter(
+            show_video_on_home=True
+        ).exclude(rutube_url="").order_by("sort_order", "id") if client.rutube_embed_url][:6]
 
         team_members = TeamMember.objects.filter(is_published=True).filter(
             Q(image__isnull=False, image__gt="")

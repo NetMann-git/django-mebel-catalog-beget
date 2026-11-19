@@ -1,0 +1,31 @@
+{% load image_variants %}
+{% if video_clients %}
+<section class="fm-section fm-tinted" id="video-reviews" aria-labelledby="fm-video-title">
+  <div class="fm-container">
+    <div class="fm-section-heading"><div><h2 id="fm-video-title">Видеоотзывы о мебельных проектах</h2><p>Клиенты рассказывают о своей мебели и работе с мастерской.</p></div></div>
+    <div class="fm-people-grid">
+      {% for client in video_clients %}
+      <article class="fm-person-card">
+        <iframe class="fm-review-video" data-consent-src="{{ client.rutube_embed_url }}" title="Видеоотзыв: {{ client.name }} — {{ client.vehicle }}" loading="lazy" allow="fullscreen; picture-in-picture" allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>
+        <div class="fm-person-copy"><h3>{{ client.name }}</h3><p>{{ client.vehicle }}</p></div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% if team_members %}
+<section class="fm-section" id="team" aria-labelledby="fm-team-title">
+  <div class="fm-container">
+    <div class="fm-section-heading"><div><h2 id="fm-team-title">Команда мастерской</h2><p>Люди, которые работают над вашей мебелью.</p></div></div>
+    <div class="fm-people-grid">
+      {% for member in team_members %}
+      <article class="fm-person-card">
+        <img class="fm-person-photo" src="{{ member.image|image_variant:'card_small' }}" srcset="{{ member.image|image_variant:'card_small' }} 400w, {{ member.image|image_variant:'card' }} 800w" sizes="(max-width: 640px) 90vw, (max-width: 960px) 44vw, 28vw" width="400" height="300" alt="{{ member.name }}" loading="lazy">
+        <div class="fm-person-copy"><h3>{{ member.name }}</h3><p>{{ member.position }}</p></div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
