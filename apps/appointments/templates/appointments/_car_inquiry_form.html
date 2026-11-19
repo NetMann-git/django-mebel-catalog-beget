@@ -8,16 +8,10 @@
 {% endif %}
 <p class="car-inquiry__product">Изделие: <strong>{{ product.title }}</strong></p>
 
-<form action="{% url 'appointments:car_inquiry' product.id %}{% if is_similar %}?type=similar{% elif is_order %}?type=order{% endif %}" method="post"{% if is_similar %} enctype="multipart/form-data"{% endif %} class="car-inquiry__form">
+<p class="estimate-full-link"><a href="{% url 'furniture_request' %}?product={{ product.pk }}&amp;purpose={% if is_order %}order{% elif is_similar %}similar{% else %}detail{% endif %}" title="Открыть подробную заявку отдельной страницей с сохранением выбранного изделия.">Открыть заявку отдельной страницей →</a></p>
+<form action="{% url 'appointments:car_inquiry' product.id %}{% if is_similar %}?type=similar{% elif is_order %}?type=order{% endif %}" method="post" enctype="multipart/form-data" class="car-inquiry__form">
     {% csrf_token %}
-    {% for field in form %}
-        <div class="car-inquiry__field">
-            <label for="{{ field.id_for_label }}">{{ field.label }}{% if field.field.required %} *{% endif %}</label>
-            {{ field }}
-            {% if field.help_text %}<small>{{ field.help_text }}</small>{% endif %}
-            {% for error in field.errors %}<span class="car-inquiry__error">{{ error }}</span>{% endfor %}
-        </div>
-    {% endfor %}
+    {% include 'appointments/estimate_fields.html' %}
     <div class="car-inquiry__honeypot" aria-hidden="true">
         <label for="car-inquiry-website">Сайт</label>
         <input type="text" name="website" id="car-inquiry-website" autocomplete="off" tabindex="-1">

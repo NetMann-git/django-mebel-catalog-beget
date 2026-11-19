@@ -1,6 +1,8 @@
 # apps/appointments/views.py
 
 import logging
+from urllib.parse import urlsplit, parse_qs
+from apps.products.filters import valid_id
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
@@ -19,6 +21,8 @@ from .callback_filters import clean_query, search_callbacks, filter_query, callb
 from apps.products.models import Product
 from apps.users.constants import ROLE_ADMIN, ROLE_MANAGER
 from apps.users.decorators import role_required
+from .estimate_forms import EstimateRequestForm
+from .estimate_service import save_estimate
 from .forms import AppointmentForm, CallbackRequestForm, CarInquiryForm, CallbackWorkflowForm, SimilarProjectForm
 from .notifications import (
     send_email_notification,
@@ -61,8 +65,8 @@ def car_inquiry(request, product_id):
     is_order = request.GET.get('type') == 'order'
     is_similar = request.GET.get('type') == 'similar'
     is_ajax = request.headers.get('x-requested-with') == 'XMLHttpRequest'
-    form_class = SimilarProjectForm if is_similar else CarInquiryForm
-    form = form_class(request.POST, request.FILES) if request.method == 'POST' else form_class()
+    initial = {'direction': product.category.slug if product.category else ''}
+    form = EstimateRequestForm(request.POST, request.FILES) if request.method == 'POST' else EstimateRequestForm(initial=initial)
 
     if request.method == 'POST':
         # Невидимое поле не мешает посетителю, но отсекает простых ботов.
@@ -72,14 +76,7 @@ def car_inquiry(request, product_id):
             return redirect(product.get_absolute_url())
 
         if form.is_valid():
-            inquiry = form.save(commit=False)
-            inquiry.product = product
-            inquiry.source = 'similar_project' if is_similar else 'product_order' if is_order else 'product_detail'
-            with transaction.atomic():
-                inquiry.save()
-                if photo := form.cleaned_data.get('reference_photo'):
-                    CallbackReferencePhoto.objects.create(callback=inquiry, content=photo)
-            _notify_saved_inquiry(inquiry)
+            inquiry = save_estimate(form, product=product, source='similar_project' if is_similar else 'product_order' if is_order else 'product_detail', notify=_notify_saved_inquiry)
 
             message = f'Заявка получена. Менеджер свяжется с вами. Номер заявки: #{inquiry.pk}.'
             if is_ajax:
@@ -238,9 +235,16 @@ def appointment_submit(request):
 
 def _callback_product(path):
     try:
-        match = resolve(path)
+        parts = urlsplit(path)
+        match = resolve(parts.path)
     except Resolver404:
         return None
+    if match.view_name == 'furniture_request':
+        try:
+            product_id = parse_qs(parts.query, max_num_fields=20).get('product', [''])[-1]
+        except ValueError:
+            return None
+        return Product.objects.filter(pk=product_id, is_active=True).first() if valid_id(product_id) else None
     if match.view_name == 'catalog:product_detail':
         return Product.objects.filter(slug=match.kwargs['slug'], is_active=True).first()
     return None
@@ -268,7 +272,7 @@ def callback_submit(request):
     if form.is_valid():
         callback = form.save(commit=False)
         origin_path = return_to.split('?', 1)[0]
-        callback.product = _callback_product(origin_path)
+        callback.product = _callback_product(return_to)
         if callback.product:
             callback.source = 'product_callback'
         else:

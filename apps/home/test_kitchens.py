@@ -112,7 +112,7 @@ class KitchenPageTests(TestCase):
     def test_attachment_failure_rolls_back_inquiry(self, notify):
         buffer = BytesIO()
         Image.new('RGB', (60, 40), 'green').save(buffer, 'PNG')
-        with patch('apps.home.kitchens.CallbackReferencePhoto.objects.create', side_effect=OSError('failure')):
+        with patch('apps.appointments.estimate_service.CallbackReferencePhoto.objects.create', side_effect=OSError('failure')):
             with self.assertRaises(OSError):
                 self.client.post(self.url, self.payload(reference_photo=SimpleUploadedFile('room.png', buffer.getvalue())))
         self.assertFalse(CallbackRequest.objects.exists())
